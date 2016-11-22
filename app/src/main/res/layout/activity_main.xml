@@ -9,9 +9,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.stevennl.tastysnake.ui.MainActivity">
-
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="@string/bluetooth_test"
+        android:layout_centerInParent="true"
+        android:textAllCaps="false"
+        android:id="@+id/main_bluetooth_test_btn"/>
 </RelativeLayout>

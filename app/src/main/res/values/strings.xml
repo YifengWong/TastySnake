@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TastySnake</string>
+
+    <string name="restart">Restart</string>
+    <string name="connect">Connect</string>
+
+    <string name="bluetooth_test">Test Bluetooth</string>
+    <string name="input_device_name_connect">Device name to connect</string>
 </resources>
