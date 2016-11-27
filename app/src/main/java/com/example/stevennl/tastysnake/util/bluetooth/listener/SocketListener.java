@@ -10,7 +10,6 @@ public interface SocketListener {
 
     /**
      * Called when a connection socket is established.
-     * Author: LCY
      *
      * @param socket the connection socket
      */

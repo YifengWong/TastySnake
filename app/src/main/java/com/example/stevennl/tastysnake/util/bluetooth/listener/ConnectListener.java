@@ -15,25 +15,21 @@ public interface ConnectListener {
 
     /**
      * Called when the client socket is established.
-     * Author: LCY
      */
     void onClientSocketEstablished();
 
     /**
      * Called when the server socket is established.
-     * Author: LCY
      */
     void onServerSocketEstablished();
 
     /**
      * Called when the data transfer channel is established.
-     * Author: LCY
      */
     void onDataChannelEstablished();
 
     /**
      * Called when receiving data from remote device
-     * Author: LCY
      *
      * @param bytesCount the number of bytes received
      * @param data the data received
@@ -42,7 +38,6 @@ public interface ConnectListener {
 
     /**
      * Called when error occurs.
-     * Author: LCY
      *
      * @param code the error code. Refer to the static final fields in this interface.
      * @param e the exception

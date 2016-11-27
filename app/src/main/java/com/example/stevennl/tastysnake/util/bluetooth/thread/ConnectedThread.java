@@ -22,7 +22,6 @@ public class ConnectedThread extends Thread {
 
     /**
      * Initialize the thread.
-     * Author: LCY
      *
      * @param socket the socket of the connection
      * @param connListener a connection listener
@@ -45,7 +44,6 @@ public class ConnectedThread extends Thread {
 
     /**
      * Keep listening to the InputStream until an exception occurs.
-     * Author: LCY
      */
     @Override
     public void run() {
@@ -70,7 +68,6 @@ public class ConnectedThread extends Thread {
 
     /**
      * Write data to remote device.
-     * Author: LCY
      *
      * @param data the data to be sent
      */

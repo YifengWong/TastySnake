@@ -24,7 +24,6 @@ public class AcceptThread extends Thread {
 
     /**
      * Initialize the thread.
-     * Author: LCY
      *
      * @param adapter the bluetooth adapter
      * @param socketListener a socket listener
@@ -49,7 +48,6 @@ public class AcceptThread extends Thread {
 
     /**
      * Keep listening until exception occurs or a socket is returned
-     * Author: LCY
      */
     @Override
     public void run() {
@@ -84,7 +82,6 @@ public class AcceptThread extends Thread {
 
     /**
      * Cancel the listening socket and cause the thread to finish.
-     * Author: LCY
      */
     public void cancel() {
         try {
