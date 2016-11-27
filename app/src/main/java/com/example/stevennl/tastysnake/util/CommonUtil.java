@@ -3,6 +3,9 @@ package com.example.stevennl.tastysnake.util;
 import android.content.Context;
 import android.widget.Toast;
 
+/**
+ * Commonly used methods.
+ */
 public class CommonUtil {
     private static final String TAG = "CommonUtil";
 

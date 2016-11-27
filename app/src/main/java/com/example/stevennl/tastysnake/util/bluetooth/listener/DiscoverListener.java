@@ -10,7 +10,6 @@ public interface DiscoverListener {
 
     /**
      * Called when a device is discovered.
-     * Author: LCY
      *
      * @param device the discovered device
      */

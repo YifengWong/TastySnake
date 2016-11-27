@@ -21,6 +21,7 @@ import java.util.Set;
  * A class to control bluetooth discovery, connection and data transfer.
  * Implemented as a singleton.
  * Reference: https://developer.android.com/guide/topics/connectivity/bluetooth.html
+ * Author: LCY
  */
 public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
@@ -36,7 +37,6 @@ public class BluetoothManager {
 
     /**
      * Initialize.
-     * Author: LCY
      */
     private BluetoothManager() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -44,7 +44,6 @@ public class BluetoothManager {
 
     /**
      * Return the only instance.
-     * Author: LCY
      */
     public static BluetoothManager getInstance() {
         if (instance == null) {
@@ -55,7 +54,6 @@ public class BluetoothManager {
 
     /**
      * Return true if the device supports bluetooth.
-     * Author: LCY
      */
     public boolean isSupport() {
         return bluetoothAdapter != null;
@@ -63,7 +61,6 @@ public class BluetoothManager {
 
     /**
      * Return true if bluetooth is currently enabled and ready for use.
-     * Author: LCY
      */
     public boolean isEnabled() {
         return bluetoothAdapter.isEnabled();
@@ -72,7 +69,6 @@ public class BluetoothManager {
     /**
      * Return an intent that asks the user to enable bluetooth.
      * The intent should be used with startActivityForResult().
-     * Author: LCY
      */
     public Intent getEnableIntent() {
         return new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -80,7 +76,6 @@ public class BluetoothManager {
 
     /**
      * Return the bonded devices set.
-     * Author: LCY
      */
     public Set<BluetoothDevice> getBondedDevices() {
         return bluetoothAdapter.getBondedDevices();
@@ -89,7 +84,6 @@ public class BluetoothManager {
     /**
      * Start device discovery. (keep discovering for about 12s)
      * The device discovered will be sent as broadcast.
-     * Author: LCY
      *
      * @return true on success, false on error
      */
@@ -99,7 +93,6 @@ public class BluetoothManager {
 
     /**
      * Cancel device discovery.
-     * Author: LCY
      */
     public void cancelDiscovery() {
         bluetoothAdapter.cancelDiscovery();
@@ -107,7 +100,6 @@ public class BluetoothManager {
 
     /**
      * Return true if bluetooth is discovering.
-     * Author: LCY
      */
     public boolean isDiscovering() {
         return bluetoothAdapter.isDiscovering();
@@ -115,7 +107,6 @@ public class BluetoothManager {
 
     /**
      * Register a BroadcastReceiver to handle discovered devices.
-     * Author: LCY
      *
      * @param context the context
      * @param listener be called when a device has been found
@@ -140,7 +131,6 @@ public class BluetoothManager {
 
     /**
      * Unregister the BroadcastReceiver to handle discovered devices.
-     * Author: LCY
      *
      * @param context the context
      */
@@ -154,7 +144,6 @@ public class BluetoothManager {
     /**
      * Return an intent that asks the user to make the device discoverable.
      * The intent should be used with startActivityForResult().
-     * Author: LCY
      *
      * @param discoverableSeconds the time(seconds) that the device can be discovered
      */
@@ -166,7 +155,6 @@ public class BluetoothManager {
 
     /**
      * Run a bluetooth server thread to listen to the connection request.
-     * Author: LCY
      *
      * @param connListener a connection listener
      */
@@ -182,7 +170,6 @@ public class BluetoothManager {
 
     /**
      * Stop current running bluetooth server.
-     * Author: LCY
      */
     public void stopServer() {
         if (acceptThread != null && acceptThread.isAlive()) {
@@ -192,7 +179,6 @@ public class BluetoothManager {
 
     /**
      * Connect a bluetooth server.
-     * Author: LCY
      *
      * @param device the device to connect
      * @param connListener a connection listener
@@ -211,7 +197,6 @@ public class BluetoothManager {
 
     /**
      * Stop current connection.
-     * Author: LCY
      */
     public void stopConnection() {
         if (connectThread != null && connectThread.isAlive()) {
@@ -224,7 +209,6 @@ public class BluetoothManager {
 
     /**
      * Send data to remote device.
-     * Author: LCY
      *
      * @param data the data to be send
      */
@@ -236,7 +220,6 @@ public class BluetoothManager {
 
     /**
      * Manage a connected socket asynchronously.
-     * Author: LCY
      *
      * @param socket a connected socket
      * @param connListener a connection listener

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="drawable_grid_attr">
+        <attr name="rowCount" format="integer" />
+        <attr name="colCount" format="integer" />
+        <attr name="showGridLine" format="boolean" />
+        <attr name="gridLineColor" format="color" />
+    </declare-styleable>
+</resources>

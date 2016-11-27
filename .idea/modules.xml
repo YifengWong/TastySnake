@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TastySnake.iml" filepath="$PROJECT_DIR$/TastySnake.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/drawablegrid/drawablegrid.iml" filepath="$PROJECT_DIR$/drawablegrid/drawablegrid.iml" />
     </modules>
   </component>
 </project>

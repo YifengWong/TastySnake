@@ -23,7 +23,6 @@ public class ConnectThread extends Thread {
 
     /**
      * Initialize the thread.
-     * Author: LCY
      *
      * @param device the device to connect
      * @param socketListener a socket listener
@@ -47,7 +46,6 @@ public class ConnectThread extends Thread {
 
     /**
      * Connect the device and get the socket.
-     * Author: LCY
      */
     @Override
     public void run() {
@@ -77,7 +75,6 @@ public class ConnectThread extends Thread {
 
     /**
      * Cancel an in-progress connection and close the socket.
-     * Author: LCY
      */
     public void cancel() {
         try {
