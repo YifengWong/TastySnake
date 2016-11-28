@@ -108,8 +108,8 @@ public class BluetoothManager {
     /**
      * Register a BroadcastReceiver to handle discovered devices.
      *
-     * @param context the context
-     * @param listener be called when a device has been found
+     * @param context The context
+     * @param listener Called when a device has been found
     */
     public void registerDiscoveryReceiver(Context context, final DiscoverListener listener) {
         if (discoveryReceiver == null) {
@@ -132,7 +132,7 @@ public class BluetoothManager {
     /**
      * Unregister the BroadcastReceiver to handle discovered devices.
      *
-     * @param context the context
+     * @param context The context
      */
     public void unregisterDiscoveryReceiver(Context context) {
         if (discoveryReceiver != null) {
@@ -156,7 +156,7 @@ public class BluetoothManager {
     /**
      * Run a bluetooth server thread to listen to the connection request.
      *
-     * @param connListener a connection listener
+     * @param connListener A connection listener
      */
     public void runServerAsync(final ConnectListener connListener) {
         acceptThread = new AcceptThread(bluetoothAdapter, new SocketListener() {
@@ -180,8 +180,8 @@ public class BluetoothManager {
     /**
      * Connect a bluetooth server.
      *
-     * @param device the device to connect
-     * @param connListener a connection listener
+     * @param device The device to connect
+     * @param connListener A connection listener
      */
     public void connectDeviceAsync(BluetoothDevice device, final ConnectListener connListener) {
         cancelDiscovery();  // Discovery process will slow down the connection
@@ -210,7 +210,7 @@ public class BluetoothManager {
     /**
      * Send data to remote device.
      *
-     * @param data the data to be send
+     * @param data The data to be send
      */
     public void sendToRemote(byte[] data) {
         if (connectedThread != null && connectedThread.isAlive()) {
@@ -221,8 +221,8 @@ public class BluetoothManager {
     /**
      * Manage a connected socket asynchronously.
      *
-     * @param socket a connected socket
-     * @param connListener a connection listener
+     * @param socket A connected socket
+     * @param connListener A connection listener
      */
     private void manageConnectedSocket(BluetoothSocket socket, ConnectListener connListener) {
         connectedThread = new ConnectedThread(socket, connListener);

@@ -31,16 +31,16 @@ public interface ConnectListener {
     /**
      * Called when receiving data from remote device
      *
-     * @param bytesCount the number of bytes received
-     * @param data the data received
+     * @param bytesCount The number of bytes received
+     * @param data The data received
      */
     void onReceive(int bytesCount, byte[] data);
 
     /**
      * Called when error occurs.
      *
-     * @param code the error code. Refer to the static final fields in this interface.
-     * @param e the exception
+     * @param code The error code. Refer to the static final fields in this interface.
+     * @param e The exception
      */
     void onError(int code, Exception e);
 }

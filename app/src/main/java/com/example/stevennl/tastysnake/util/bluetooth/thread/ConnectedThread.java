@@ -23,8 +23,8 @@ public class ConnectedThread extends Thread {
     /**
      * Initialize the thread.
      *
-     * @param socket the socket of the connection
-     * @param connListener a connection listener
+     * @param socket The socket of the connection
+     * @param connListener A connection listener
      */
     public ConnectedThread(BluetoothSocket socket, ConnectListener connListener) {
         this.socket = socket;
@@ -69,7 +69,7 @@ public class ConnectedThread extends Thread {
     /**
      * Write data to remote device.
      *
-     * @param data the data to be sent
+     * @param data The data to be sent
      */
     public void write(byte[] data) {
         try {

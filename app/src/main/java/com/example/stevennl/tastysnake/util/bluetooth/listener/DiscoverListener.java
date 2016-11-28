@@ -11,7 +11,7 @@ public interface DiscoverListener {
     /**
      * Called when a device is discovered.
      *
-     * @param device the discovered device
+     * @param device The discovered device
      */
     void onDiscover(BluetoothDevice device);
 }

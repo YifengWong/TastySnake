@@ -15,9 +15,6 @@ import java.util.Random;
 
 public class DrawableGridTestActivity extends AppCompatActivity {
     private static final String TAG = "GridTestActivity";
-    private int x, y;
-    private boolean flag = true;
-    private Runnable r;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,28 +24,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
     }
 
     private void initDrawableGrid() {
-        final DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
-        final DrawableGridInfo[][] infos = grid.getInfos();
-        final int col = grid.getColCount(), row = grid.getRowCount();
-        final Random rand = new Random();
-        final Handler handler = new Handler();
-        x = y = 0;
-        r = new Runnable() {
-            @Override
-            public void run() {
-                int c = Color.rgb(rand.nextInt() * 255, rand.nextInt() * 255, rand.nextInt() * 255);
-                if (flag) {
-                    infos[x++][y].color = c;
-                } else {
-                    infos[x][y++].color = c;
-                }
-                flag = !flag;
-                grid.invalidate();
-                if (!(x == row || y == col)) {
-                    handler.postDelayed(r, 50);
-                }
-            }
-        };
-        handler.postDelayed(r, 1000);
+        DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
+        DrawableGridInfo[][] infos = grid.getInfos();
+        for (int i = 0; i < DrawableGridInfo.Type.values().length; ++i) {
+            infos[i][i].color = Color.rgb(204, 0, 0);
+            infos[i][i].type = DrawableGridInfo.Type.values()[i];
+        }
+        grid.invalidate();
     }
 }

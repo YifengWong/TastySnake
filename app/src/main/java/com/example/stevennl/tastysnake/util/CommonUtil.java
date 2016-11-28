@@ -11,8 +11,8 @@ public class CommonUtil {
 
     /**
      * Show a Toast message
-     * @param context the context
-     * @param strId the string resource id
+     * @param context The context
+     * @param strId The string resource id
      */
     public static void showToast(Context context, int strId) {
         showToast(context, context.getString(strId));
@@ -20,8 +20,8 @@ public class CommonUtil {
 
     /**
      * Show a Toast message
-     * @param context the context
-     * @param str the string content
+     * @param context The context
+     * @param str The string content
      */
     public static void showToast(Context context, String str) {
         if (context != null) {

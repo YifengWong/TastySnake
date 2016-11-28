@@ -11,7 +11,7 @@ public interface SocketListener {
     /**
      * Called when a connection socket is established.
      *
-     * @param socket the connection socket
+     * @param socket The connection socket
      */
     void onSocketEstablished(BluetoothSocket socket);
 }

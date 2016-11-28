@@ -10,7 +10,7 @@
         android:id="@+id/drawablegrid_test_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        drawablegrid:rowCount="30"
-        drawablegrid:colCount="20"
+        drawablegrid:rowCount="50"
+        drawablegrid:colCount="30"
         drawablegrid:showGridLine="true" />
 </RelativeLayout>

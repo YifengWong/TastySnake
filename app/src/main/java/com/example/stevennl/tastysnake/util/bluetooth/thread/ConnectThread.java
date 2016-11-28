@@ -24,9 +24,9 @@ public class ConnectThread extends Thread {
     /**
      * Initialize the thread.
      *
-     * @param device the device to connect
-     * @param socketListener a socket listener
-     * @param connListener a connection listener
+     * @param device The device to connect
+     * @param socketListener A socket listener
+     * @param connListener A connection listener
      */
     public ConnectThread(BluetoothDevice device,
                          SocketListener socketListener,

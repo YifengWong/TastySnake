@@ -25,9 +25,9 @@ public class AcceptThread extends Thread {
     /**
      * Initialize the thread.
      *
-     * @param adapter the bluetooth adapter
-     * @param socketListener a socket listener
-     * @param connListener a connection listener
+     * @param adapter The bluetooth adapter
+     * @param socketListener A socket listener
+     * @param connListener A connection listener
      */
     public AcceptThread(BluetoothAdapter adapter,
                         SocketListener socketListener,
