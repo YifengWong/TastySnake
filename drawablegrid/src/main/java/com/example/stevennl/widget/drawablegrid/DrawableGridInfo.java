@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 /**
  * The information stored in each grid.
+ * Author: LCY
  */
 public class DrawableGridInfo {
     public int color = Color.TRANSPARENT;

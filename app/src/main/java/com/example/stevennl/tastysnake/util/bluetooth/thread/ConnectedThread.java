@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Thread to manage a connected socket.
+ * Thread to control a connected socket to implement data transfer.
  * Author: LCY
  */
 public class ConnectedThread extends Thread {
@@ -83,7 +83,6 @@ public class ConnectedThread extends Thread {
 
     /**
      * Shutdown the connection.
-     * Author: LCY
      */
     public void cancel() {
         try {

@@ -4,8 +4,11 @@
     <string name="restart">Restart</string>
     <string name="connect">Connect</string>
 
+    <string name="not_implement">Not Implemented</string>
+
     <!-- Testing -->
     <string name="bluetooth_test">Test Bluetooth</string>
     <string name="input_device_name_connect">Device name to connect</string>
     <string name="drawable_grid_test">Test DrawableGrid</string>
+    <string name="sensor_test">Test Sensor</string>
 </resources>

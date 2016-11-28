@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.test.BluetoothTestActivity" />
-        <activity android:name=".ui.test.DrawableGridTestActivity"></activity>
+        <activity android:name=".ui.test.DrawableGridTestActivity" />
+        <activity android:name=".ui.test.SensorTestActivity" />
     </application>
 
 </manifest>

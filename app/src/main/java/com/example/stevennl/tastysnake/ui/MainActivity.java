@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.ui.test.BluetoothTestActivity;
 import com.example.stevennl.tastysnake.ui.test.DrawableGridTestActivity;
+import com.example.stevennl.tastysnake.ui.test.SensorTestActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -34,6 +35,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DrawableGridTestActivity.class));
+            }
+        });
+
+        Button sensorBtn = (Button) findViewById(R.id.main_sensor_test_btn);
+        sensorBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SensorTestActivity.class));
             }
         });
     }
