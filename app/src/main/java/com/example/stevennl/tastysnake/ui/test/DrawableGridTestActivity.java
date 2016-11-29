@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Direction;
+import com.example.stevennl.tastysnake.model.Pair;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.widget.drawablegrid.DrawableGrid;
 import com.example.stevennl.widget.drawablegrid.DrawableGridInfo;
@@ -17,7 +19,8 @@ import java.util.Random;
 public class DrawableGridTestActivity extends AppCompatActivity {
     private static final String TAG = "GridTestActivity";
     private Snake snake;
-
+    private DrawableGridInfo[][] infos;
+    private DrawableGrid grid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,17 +30,31 @@ public class DrawableGridTestActivity extends AppCompatActivity {
     }
 
     private void initDrawableGrid() {
-        DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
-        DrawableGridInfo[][] infos = grid.getInfos();
+        grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
+        infos = grid.getInfos();
+        /*
         for (int i = 0; i < DrawableGridInfo.Type.values().length; ++i) {
             infos[i][i].color = Color.rgb(204, 0, 0);
             infos[i][i].type = DrawableGridInfo.Type.values()[i];
         }
+        */
         grid.invalidate();
     }
 
+    void drawSnake(DrawableGridInfo[][] infos, Snake snake) {
+        for (int i = 0; i < infos.length; i ++)
+            for (int j = 0; j < infos[0].length; j ++)
+                infos[i][j].color = Color.rgb(255, 255, 255);
+        for (Pair i : snake.body) {
+            infos[i.getX()][i.getY()].color = Color.rgb(204, 0, 0);
+            infos[i.getX()][i.getY()].type = DrawableGridInfo.Type.BODY_HOR;
+        }
+    }
+
     private void initSnake() {
-        snake = new Snake();
-        // TODO
+        snake = new Snake(0, grid.getRowCount(), grid.getColCount());
+        drawSnake(infos, snake);
+        snake.move(Direction.NONE);
+        drawSnake(infos, snake);
     }
 }
