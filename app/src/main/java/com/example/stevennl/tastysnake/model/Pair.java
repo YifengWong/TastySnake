@@ -34,4 +34,16 @@ public class Pair implements Cloneable {
     public int getY() {
         return y;
     }
+    public boolean onLeftOf(Pair a) {
+        return x == a.getX() && y == a.getY() - 1;
+    }
+    public boolean onRightOf(Pair a) {
+        return x == a.getX() && y == a.getY() + 1;
+    }
+    public boolean onUpOf(Pair a) {
+        return x == a.getX() - 1 && y == a.getY();
+    }
+    public boolean onDownOf(Pair a) {
+        return x == a.getX() + 1 && y == a.getY();
+    }
 }

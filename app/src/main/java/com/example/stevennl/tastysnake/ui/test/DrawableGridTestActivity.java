@@ -45,16 +45,24 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         for (int i = 0; i < infos.length; i ++)
             for (int j = 0; j < infos[0].length; j ++)
                 infos[i][j].color = Color.rgb(255, 255, 255);
-        for (Pair i : snake.body) {
+        for (int idx = 0; idx < snake.body.size(); idx ++) {
+            Pair i = snake.body.get(idx);
             infos[i.getX()][i.getY()].color = Color.rgb(204, 0, 0);
-            infos[i.getX()][i.getY()].type = DrawableGridInfo.Type.BODY_HOR;
+            infos[i.getX()][i.getY()].type = snake.type.get(idx);
         }
+        grid.invalidate();
     }
 
     private void initSnake() {
         snake = new Snake(0, grid.getRowCount(), grid.getColCount());
         drawSnake(infos, snake);
         snake.move(Direction.NONE);
+        drawSnake(infos, snake);
+        snake.move(Direction.RIGHT);
+        drawSnake(infos, snake);
+        snake.move(Direction.NONE);
+        drawSnake(infos, snake);
+        snake.move(Direction.LEFT);
         drawSnake(infos, snake);
     }
 }
