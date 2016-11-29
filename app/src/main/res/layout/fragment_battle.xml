@@ -1,0 +1,16 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_drawable_grid_test"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.stevennl.tastysnake.ui.online.OnlineGameActivity">
+    <com.example.stevennl.widget.drawablegrid.DrawableGrid
+        xmlns:drawablegrid="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/battle_drawableGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        drawablegrid:rowCount="50"
+        drawablegrid:colCount="30"
+        drawablegrid:showGridLine="true" />
+</RelativeLayout>
+

@@ -29,4 +29,10 @@
         android:text="@string/sensor_test"
         android:textAllCaps="false"
         android:id="@+id/main_sensor_test_btn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/online_game"
+        android:textAllCaps="false"
+        android:id="@+id/main_online_btn"/>
 </LinearLayout>

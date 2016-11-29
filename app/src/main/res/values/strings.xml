@@ -6,6 +6,8 @@
 
     <string name="not_implement">Not Implemented</string>
 
+    <string name="online_game">Online Game</string>
+
     <!-- Testing -->
     <string name="bluetooth_test">Test Bluetooth</string>
     <string name="input_device_name_connect">Device name to connect</string>

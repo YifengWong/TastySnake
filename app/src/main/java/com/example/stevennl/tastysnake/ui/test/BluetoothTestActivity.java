@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class BluetoothTestActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "BluetoothTestActivity";
     private static final int REQ_BLUETOOTH_ENABLED = 1;
     private static final int REQ_BLUETOOTH_DISCOVERABLE = 2;
 
