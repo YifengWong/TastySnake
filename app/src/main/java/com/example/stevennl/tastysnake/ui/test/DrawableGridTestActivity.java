@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.widget.drawablegrid.DrawableGrid;
 import com.example.stevennl.widget.drawablegrid.DrawableGridInfo;
 
@@ -15,12 +16,14 @@ import java.util.Random;
 
 public class DrawableGridTestActivity extends AppCompatActivity {
     private static final String TAG = "GridTestActivity";
+    private Snake snake;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawable_grid_test);
         initDrawableGrid();
+        initSnake();
     }
 
     private void initDrawableGrid() {
@@ -31,5 +34,10 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             infos[i][i].type = DrawableGridInfo.Type.values()[i];
         }
         grid.invalidate();
+    }
+
+    private void initSnake() {
+        snake = new Snake();
+        // TODO
     }
 }

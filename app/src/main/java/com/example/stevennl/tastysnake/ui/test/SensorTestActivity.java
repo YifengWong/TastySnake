@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 
 public class SensorTestActivity extends AppCompatActivity {
@@ -14,26 +15,10 @@ public class SensorTestActivity extends AppCompatActivity {
     private Runnable sensorRunnable = new Runnable() {
         @Override
         public void run() {
-            // 控制界面
-            int dir = sController.getDirection();
-            switch (dir) {
-                case SensorController.DIR_LEFT:
-                    textShow.setText("Left");
-                    break;
-                case SensorController.DIR_RIGHT:
-                    textShow.setText("Right");
-                    break;
-                case SensorController.DIR_UP:
-                    textShow.setText("Up");
-                    break;
-                case SensorController.DIR_DOWN:
-                    textShow.setText("Down");
-                    break;
-            }
-            sensorHandler.postDelayed(sensorRunnable, 40);
+            textShow.setText(sController.getDirection().toString());
+            sensorHandler.postDelayed(sensorRunnable, 100);
         }
     };
-
 
     private SensorController sController;
     private TextView textShow;
@@ -54,7 +39,6 @@ public class SensorTestActivity extends AppCompatActivity {
     private void initLayout() {
         textShow = (TextView) findViewById(R.id.text_show);
     }
-
 
     @Override
     protected void onPause() {

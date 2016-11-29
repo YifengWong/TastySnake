@@ -7,6 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.model.Direction;
+
 /**
  * A class help to control accelerometer.
  * Direction Sample:
@@ -19,21 +21,14 @@ import android.util.Log;
  * Author: CrazeWong
  */
 public class SensorController {
-    public static final int DIR_NULL = 0;
-    public static final int DIR_LEFT = 1;
-    public static final int DIR_RIGHT = 2;
-    public static final int DIR_UP = 3;
-    public static final int DIR_DOWN = 4;
-
     private SensorEventListener accelerometerListener;
 
     private int sensorType = Sensor.TYPE_ACCELEROMETER;
 
-    private int direction = DIR_NULL;
+    private Direction direction = Direction.NONE;
     private float xValue = 0;
     private float yValue = 0;
     private float zValue = 0;
-
 
     private SensorManager sManager;
     private Context context;
@@ -56,16 +51,16 @@ public class SensorController {
                 if (Math.abs(yValue) < Math.abs(xValue)) {
                     // left and right
                     if (xValue > yValue) {
-                        direction = DIR_LEFT;
+                        direction = Direction.LEFT;
                     } else {
-                        direction = DIR_RIGHT;
+                        direction = Direction.RIGHT;
                     }
                 } else {
                     // up and down
                     if (yValue < xValue) {
-                        direction = DIR_UP;
+                        direction = Direction.UP;
                     } else {
-                        direction = DIR_DOWN;
+                        direction = Direction.DOWN;
                     }
                 }
             }
@@ -96,7 +91,7 @@ public class SensorController {
         return this.zValue;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
