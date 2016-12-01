@@ -2,7 +2,6 @@ package com.example.stevennl.tastysnake.ui.test;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +15,11 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.ui.MainActivity;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.CommonUtil;
-import com.example.stevennl.tastysnake.util.bluetooth.listener.ConnectListener;
-import com.example.stevennl.tastysnake.util.bluetooth.listener.DiscoverListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private BluetoothManager manager = BluetoothManager.getInstance();
     private ArrayList<BluetoothDevice> discoveredDevices = new ArrayList<>();
     private SafeHandler handler = new SafeHandler(this);
-    private ConnectListener connListener = new ConnectListener() {
+    private OnStateChangedListener connListener = new OnStateChangedListener() {
         @Override
         public void onClientSocketEstablished() {
             handler.obtainMessage(SafeHandler.MSG_APPEND_C_ESTABLISH).sendToTarget();
@@ -55,16 +54,6 @@ public class BluetoothTestActivity extends AppCompatActivity {
         @Override
         public void onDataChannelEstablished() {
             handler.obtainMessage(SafeHandler.MSG_APPEND_DATA_CHANNEL_OK).sendToTarget();
-        }
-
-        @Override
-        public void onReceive(int bytesCount, byte[] data) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(SafeHandler.EXTRA_DATA_CNT, bytesCount);
-            bundle.putByteArray(SafeHandler.EXTRA_DATA_CONTENT, data);
-            Message msg = handler.obtainMessage(SafeHandler.MSG_APPEND_DATA);
-            msg.setData(bundle);
-            msg.sendToTarget();
         }
 
         @Override
@@ -229,7 +218,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private void testRemain2() {
         // Device discovery check
         manager.registerDiscoveryReceiver(this,
-                new DiscoverListener() {
+                new OnDiscoverListener() {
                     @Override
                     public void onDiscover(BluetoothDevice device) {
                         appendInfo("Name: " + device.getName() + " / MAC: " + device.getAddress());
@@ -270,6 +259,17 @@ public class BluetoothTestActivity extends AppCompatActivity {
         appendInfo("Searching finished.");
 
         // Data transfer check
+        manager.setDataListener(new OnDataReceiveListener() {
+            @Override
+            public void onReceive(int bytesCount, byte[] data) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(SafeHandler.EXTRA_DATA_CNT, bytesCount);
+                bundle.putByteArray(SafeHandler.EXTRA_DATA_CONTENT, data);
+                Message msg = handler.obtainMessage(SafeHandler.MSG_APPEND_DATA);
+                msg.setData(bundle);
+                msg.sendToTarget();
+            }
+        });
         appendInfo("\nSending data of " + Constants.BLUETOOTH_TEST_DATA_SIZE + " bytes to remote device...");
         new Thread(new Runnable() {
             @Override

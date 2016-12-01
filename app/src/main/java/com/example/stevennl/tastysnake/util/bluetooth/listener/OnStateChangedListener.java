@@ -1,10 +1,10 @@
 package com.example.stevennl.tastysnake.util.bluetooth.listener;
 
 /**
- * Listener for data transfer.
+ * Listener for state changes during a connection.
  * Author: LCY
  */
-public interface ConnectListener {
+public interface OnStateChangedListener {
     int ERR_SOCKET_CREATE = 1;
     int ERR_SOCKET_CLOSE = 2;
     int ERR_SERVER_SOCKET_ACCEPT = 3;
@@ -27,14 +27,6 @@ public interface ConnectListener {
      * Called when the data transfer channel is established.
      */
     void onDataChannelEstablished();
-
-    /**
-     * Called when receiving data from remote device
-     *
-     * @param bytesCount The number of bytes received
-     * @param data The data received
-     */
-    void onReceive(int bytesCount, byte[] data);
 
     /**
      * Called when error occurs.

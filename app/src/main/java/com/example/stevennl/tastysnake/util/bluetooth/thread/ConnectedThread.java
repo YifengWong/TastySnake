@@ -3,7 +3,8 @@ package com.example.stevennl.tastysnake.util.bluetooth.thread;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import com.example.stevennl.tastysnake.util.bluetooth.listener.ConnectListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,17 +19,25 @@ public class ConnectedThread extends Thread {
     private final BluetoothSocket socket;
     private final InputStream inStream;
     private final OutputStream outStream;
-    private final ConnectListener connListener;
+    private final OnStateChangedListener stateListener;
+    private OnDataReceiveListener dataListener;
+
+    /**
+     * Set dataListener field.
+     */
+    public void setDataListener(OnDataReceiveListener dataListener) {
+        this.dataListener = dataListener;
+    }
 
     /**
      * Initialize the thread.
      *
      * @param socket The socket of the connection
-     * @param connListener A connection listener
      */
-    public ConnectedThread(BluetoothSocket socket, ConnectListener connListener) {
+    public ConnectedThread(BluetoothSocket socket, OnStateChangedListener stateListener) {
         this.socket = socket;
-        this.connListener = connListener;
+        this.stateListener = stateListener;
+        this.dataListener = null;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
         try {
@@ -36,7 +45,7 @@ public class ConnectedThread extends Thread {
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            connListener.onError(ConnectListener.ERR_STREAM_CREATE, e);
+            stateListener.onError(OnStateChangedListener.ERR_STREAM_CREATE, e);
         }
         inStream = tmpIn;
         outStream = tmpOut;
@@ -51,15 +60,17 @@ public class ConnectedThread extends Thread {
             return;
         }
         byte[] buffer = new byte[1024];
-        connListener.onDataChannelEstablished();
+        stateListener.onDataChannelEstablished();
         Log.d(TAG, "Open input stream...");
         while (true) {
             try {
                 int bytesCnt = inStream.read(buffer);
-                connListener.onReceive(bytesCnt, buffer);
+                if (dataListener != null) {
+                    dataListener.onReceive(bytesCnt, buffer);
+                }
             } catch (IOException e) {
                 Log.e(TAG, "Error:", e);
-                connListener.onError(ConnectListener.ERR_STREAM_READ, e);
+                stateListener.onError(OnStateChangedListener.ERR_STREAM_READ, e);
                 break;
             }
         }
@@ -77,7 +88,7 @@ public class ConnectedThread extends Thread {
             outStream.write(data);
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            connListener.onError(ConnectListener.ERR_STREAM_WRITE, e);
+            stateListener.onError(OnStateChangedListener.ERR_STREAM_WRITE, e);
         }
     }
 
@@ -89,7 +100,7 @@ public class ConnectedThread extends Thread {
             socket.close();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            connListener.onError(ConnectListener.ERR_SOCKET_CLOSE, e);
+            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, e);
         }
     }
 }
