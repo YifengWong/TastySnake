@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.ui.online.OnlineGameActivity;
+import com.example.stevennl.tastysnake.ui.game.GameActivity;
 import com.example.stevennl.tastysnake.ui.test.BluetoothTestActivity;
 import com.example.stevennl.tastysnake.ui.test.DrawableGridTestActivity;
 import com.example.stevennl.tastysnake.ui.test.SensorTestActivity;
@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button onlineBtn = (Button) findViewById(R.id.main_online_btn);
-        onlineBtn.setOnClickListener(new View.OnClickListener() {
+        Button gameBtn = (Button) findViewById(R.id.main_game_btn);
+        gameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, OnlineGameActivity.class));
+                startActivity(new Intent(MainActivity.this, GameActivity.class));
             }
         });
     }

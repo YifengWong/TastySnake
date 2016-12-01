@@ -40,7 +40,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
     private BluetoothManager manager = BluetoothManager.getInstance();
     private ArrayList<BluetoothDevice> discoveredDevices = new ArrayList<>();
     private SafeHandler handler = new SafeHandler(this);
-    private OnStateChangedListener connListener = new OnStateChangedListener() {
+    private OnStateChangedListener stateListener = new OnStateChangedListener() {
         @Override
         public void onClientSocketEstablished() {
             handler.obtainMessage(SafeHandler.MSG_APPEND_C_ESTABLISH).sendToTarget();
@@ -84,7 +84,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
         manager.unregisterDiscoveryReceiver(this);
         manager.cancelDiscovery();
         manager.stopServer();
-        manager.stopConnection();
+        manager.stopConnect();
     }
 
     private void initViews() {
@@ -113,7 +113,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                         devLayout.setVisibility(View.GONE);
                         restartBtn.setVisibility(View.GONE);
                         appendInfo("\nConnecting \"" + devName + "\" ...");
-                        manager.connectDeviceAsync(device, connListener);
+                        manager.connectDeviceAsync(device, stateListener);
                         return;
                     }
                 }
@@ -184,7 +184,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                     appendInfo("Your device can be discovered in 30 seconds.");
                     // Start bluetooth server
                     appendInfo("\nBluetooth server thread starts working...");
-                    manager.runServerAsync(connListener);
+                    manager.runServerAsync(stateListener);
                 } else if (resultCode == RESULT_CANCELED) {
                     appendInfo("Your device cannot be discovered.");
                 }

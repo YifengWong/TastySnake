@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.stevennl.tastysnake.R;
 
@@ -30,11 +32,14 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
      * Replace current fragment(if exist) with a new fragment.
      *
      * @param fragment The new fragment
+     * @param anim whether to use animation
      */
-    public void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment, boolean anim) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction trans = manager.beginTransaction();
-        trans.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
+        if (anim) {
+            trans.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
+        }
         Fragment origin = manager.findFragmentById(getFrameLayoutId());
         if (origin == null) {
             trans.add(getFrameLayoutId(), fragment);
@@ -47,7 +52,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_fragment);
-        replaceFragment(createFragment());
+        replaceFragment(createFragment(), false);
     }
 }

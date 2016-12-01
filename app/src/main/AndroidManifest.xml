@@ -31,7 +31,7 @@
             android:name=".ui.test.SensorTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.online.OnlineGameActivity"
+            android:name=".ui.game.GameActivity"
             android:screenOrientation="portrait" />
     </application>
 

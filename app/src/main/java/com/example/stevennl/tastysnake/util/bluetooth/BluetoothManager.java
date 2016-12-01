@@ -160,6 +160,7 @@ public class BluetoothManager {
      * @param stateListener_ A state listener
      */
     public void runServerAsync(OnStateChangedListener stateListener_) {
+        stopServer();
         acceptThread = new AcceptThread(bluetoothAdapter, new OnSocketEstablishedListener() {
             @Override
             public void onSocketEstablished(BluetoothSocket socket,
@@ -172,27 +173,19 @@ public class BluetoothManager {
     }
 
     /**
-     * Stop current running bluetooth server.
-     */
-    public void stopServer() {
-        if (acceptThread != null && acceptThread.isAlive()) {
-            acceptThread.cancel();
-        }
-    }
-
-    /**
      * Connect a bluetooth server.
      *
      * @param device The device to connect
      * @param stateListener A state listener
      */
     public void connectDeviceAsync(BluetoothDevice device, OnStateChangedListener stateListener) {
+        stopConnect();
         cancelDiscovery();  // Discovery process will slow down the connection
-        stopServer();  // When decide to connect another device, this device does not need to be server.
         connectThread = new ConnectThread(device, new OnSocketEstablishedListener() {
             @Override
             public void onSocketEstablished(BluetoothSocket socket,
                                             OnStateChangedListener stateListener) {
+                stopServer();  // When connected, this device does not need to be server.
                 stateListener.onClientSocketEstablished();
                 manageConnectedSocket(socket, stateListener);
             }
@@ -201,15 +194,27 @@ public class BluetoothManager {
     }
 
     /**
-     * Stop current connection.
+     * Stop current running bluetooth server.
      */
-    public void stopConnection() {
-        if (connectThread != null && connectThread.isAlive()) {
+    public void stopServer() {
+        if (acceptThread != null && acceptThread.isAlive()) {
+            acceptThread.cancel();
+        }
+        acceptThread = null;
+    }
+
+    /**
+     * Stop current running connection thread.
+     */
+    public void stopConnect() {
+        if (connectThread != null && connectedThread.isAlive()) {
             connectThread.cancel();
         }
+        connectThread = null;
         if (connectedThread != null && connectedThread.isAlive()) {
             connectedThread.cancel();
         }
+        connectedThread = null;
     }
 
     /**
