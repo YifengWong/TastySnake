@@ -11,13 +11,14 @@ import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Pair;
 import com.example.stevennl.tastysnake.model.Snake;
+import com.example.stevennl.tastysnake.util.sensor.SensorController;
 import com.example.stevennl.widget.drawablegrid.DrawableGrid;
 import com.example.stevennl.widget.drawablegrid.DrawableGridInfo;
 
 import java.util.Random;
 
 public class DrawableGridTestActivity extends AppCompatActivity {
-    private static final String TAG = "GridTestActivity";
+    private static final String TAG = "FUCK";
     private Snake snake;
     private DrawableGridInfo[][] infos;
     private DrawableGrid grid;
@@ -42,27 +43,52 @@ public class DrawableGridTestActivity extends AppCompatActivity {
     }
 
     void drawSnake(DrawableGridInfo[][] infos, Snake snake) {
+        Log.d(TAG, "drawSnake: " + snake.body.toString());
         for (int i = 0; i < infos.length; i ++)
             for (int j = 0; j < infos[0].length; j ++)
                 infos[i][j].color = Color.rgb(255, 255, 255);
         for (int idx = 0; idx < snake.body.size(); idx ++) {
             Pair i = snake.body.get(idx);
+            Log.d(TAG, "drawSnake: " + i.getX() + " " + i.getY());
             infos[i.getX()][i.getY()].color = Color.rgb(204, 0, 0);
             infos[i.getX()][i.getY()].type = snake.type.get(idx);
         }
         grid.invalidate();
     }
 
+    private Handler sensorHandler;
+    private SensorController sController;
+    private Runnable sensorRunnable = new Runnable() {
+        @Override
+        public void run() {
+            //textShow.setText(sController.getDirection());
+            Log.d(TAG, "run: " + "GET");;
+            if (snake != null) {
+                if (snake.canMove()) {
+                    Direction dir = sController.getDirection();
+                    snake.move(dir);
+                    Log.d(TAG, "run: " + dir);
+                    drawSnake(infos, snake);
+                }
+
+            }
+
+            sensorHandler.postDelayed(sensorRunnable, 100);
+        }
+    };
+
+
     private void initSnake() {
         snake = new Snake(0, grid.getRowCount(), grid.getColCount());
-        drawSnake(infos, snake);
-        snake.move(Direction.NONE);
+
+        snake.move(Direction.DOWN);
         drawSnake(infos, snake);
         snake.move(Direction.RIGHT);
         drawSnake(infos, snake);
-        snake.move(Direction.NONE);
-        drawSnake(infos, snake);
-        snake.move(Direction.LEFT);
-        drawSnake(infos, snake);
+
+        sController = new SensorController(this);
+        sController.registerSensor();
+        sensorHandler = new Handler();
+        sensorHandler.post(sensorRunnable);
     }
 }

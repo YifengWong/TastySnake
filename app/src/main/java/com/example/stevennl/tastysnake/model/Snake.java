@@ -79,8 +79,9 @@ public class Snake {
         Pair head = body.get(0);
         switch (orientation) {
             case UP:
-                if (order == Direction.NONE) {
+                if (order == Direction.UP) {
                     body.add(0, head.toUP());
+                    orientation = Direction.UP;
                 }
                 if (order == Direction.LEFT) {
                     body.add(0, head.toLEFT());
@@ -89,45 +90,66 @@ public class Snake {
                 if (order == Direction.RIGHT) {
                     body.add(0, head.toRIGHT());
                     orientation = Direction.RIGHT;
+                }
+                if (order == Direction.DOWN) {
+                    body.add(0, head.toUP());
+                    orientation = Direction.UP;
                 }
                 break;
             case DOWN:
-                if (order == Direction.NONE) {
+                if (order == Direction.UP) {
                     body.add(0, head.toDOWN());
+                    orientation = Direction.DOWN;
+                }
+                if (order == Direction.LEFT) {
+                    body.add(0, head.toLEFT());
+                    orientation = Direction.LEFT;
+                }
+                if (order == Direction.RIGHT) {
+                    body.add(0, head.toRIGHT());
+                    orientation = Direction.RIGHT;
+                }
+                if (order == Direction.DOWN) {
+                    body.add(0, head.toDOWN());
+                    orientation = Direction.DOWN;
+                }
+                break;
+            case LEFT:
+                if (order == Direction.UP) {
+                    body.add(0, head.toUP());
+                    orientation = Direction.UP;
+                }
+                if (order == Direction.LEFT) {
+                    body.add(0, head.toLEFT());
+                    orientation = Direction.LEFT;
+                }
+                if (order == Direction.RIGHT) {
+                    body.add(0, head.toLEFT());
+                    orientation = Direction.LEFT;
+                }
+                if (order == Direction.DOWN) {
+                    body.add(0, head.toDOWN());
+                    orientation = Direction.DOWN;
+
+                }
+                break;
+            case RIGHT:
+                if (order == Direction.UP) {
+                    body.add(0, head.toUP());
+                    orientation = Direction.UP;
                 }
                 if (order == Direction.LEFT) {
                     body.add(0, head.toRIGHT());
                     orientation = Direction.RIGHT;
                 }
                 if (order == Direction.RIGHT) {
-                    body.add(0, head.toLEFT());
-                    orientation = Direction.LEFT;
-                }
-                break;
-            case LEFT:
-                if (order == Direction.NONE) {
-                    body.add(0, head.toLEFT());
-                }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toDOWN());
-                    orientation = Direction.DOWN;
-                }
-                if (order == Direction.RIGHT) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                break;
-            case RIGHT:
-                if (order == Direction.NONE) {
                     body.add(0, head.toRIGHT());
+                    orientation = Direction.RIGHT;
                 }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                if (order == Direction.RIGHT) {
+                if (order == Direction.DOWN) {
                     body.add(0, head.toDOWN());
                     orientation = Direction.DOWN;
+
                 }
                 break;
         }
@@ -136,10 +158,10 @@ public class Snake {
     }
     public boolean canMove() {
         Pair head = body.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getX() < 0) return false;
-        for (Pair i : body)
-            for (Pair j : body)
-                if (i.getX() == j.getX() && i.getY() == j.getY())
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) return false;
+        for (int i = 0; i < body.size(); i ++)
+            for (int j = i + 1; j < body.size(); j ++)
+                if (body.get(i).getX() == body.get(j).getX() && body.get(i).getY() == body.get(j).getY())
                     return false;
         return true;
     }
