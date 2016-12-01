@@ -154,15 +154,15 @@ public class Snake {
                 break;
         }
         body.remove(body.size() - 1);
+        checkOut();
         genType();
     }
-    public boolean canMove() {
+    public void checkOut() {
         Pair head = body.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) return false;
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) throw new IndexOutOfBoundsException();
         for (int i = 0; i < body.size(); i ++)
             for (int j = i + 1; j < body.size(); j ++)
                 if (body.get(i).getX() == body.get(j).getX() && body.get(i).getY() == body.get(j).getY())
-                    return false;
-        return true;
+                    throw new IndexOutOfBoundsException();
     }
 }

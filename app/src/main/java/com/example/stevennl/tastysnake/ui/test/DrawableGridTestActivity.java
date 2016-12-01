@@ -64,12 +64,15 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             //textShow.setText(sController.getDirection());
             Log.d(TAG, "run: " + "GET");;
             if (snake != null) {
-                if (snake.canMove()) {
-                    Direction dir = sController.getDirection();
+                Direction dir = sController.getDirection();
+                try {
                     snake.move(dir);
-                    Log.d(TAG, "run: " + dir);
                     drawSnake(infos, snake);
+                } catch (Exception e) {
+                    Log.d(TAG, "run: out");
                 }
+                Log.d(TAG, "run: " + dir);
+
 
             }
 
@@ -90,5 +93,11 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         sController.registerSensor();
         sensorHandler = new Handler();
         sensorHandler.post(sensorRunnable);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorHandler.removeCallbacks(sensorRunnable);
+        sController.unregisterSensor();
     }
 }
