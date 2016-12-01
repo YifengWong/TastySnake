@@ -75,7 +75,7 @@ public class Snake {
         if (last.onUpOf(butLast) || last.onDownOf(butLast))
             type.add(DrawableGridInfo.Type.BODY_VER);
     }
-    public void move(Direction order) {
+    public boolean move(Direction order) {
         Pair head = body.get(0);
         switch (orientation) {
             case UP:
@@ -154,15 +154,17 @@ public class Snake {
                 break;
         }
         body.remove(body.size() - 1);
-        checkOut();
+
         genType();
+        return checkOut();
     }
-    public void checkOut() {
+    public boolean checkOut() {
         Pair head = body.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) throw new IndexOutOfBoundsException();
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) return false;
         for (int i = 0; i < body.size(); i ++)
             for (int j = i + 1; j < body.size(); j ++)
                 if (body.get(i).getX() == body.get(j).getX() && body.get(i).getY() == body.get(j).getY())
-                    throw new IndexOutOfBoundsException();
+                    return false;
+        return true;
     }
 }

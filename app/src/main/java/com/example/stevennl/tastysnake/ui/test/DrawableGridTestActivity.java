@@ -65,15 +65,13 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             Log.d(TAG, "run: " + "GET");;
             if (snake != null) {
                 Direction dir = sController.getDirection();
-                try {
-                    snake.move(dir);
+                boolean validGrid = snake.move(dir);
+                if (validGrid) {
                     drawSnake(infos, snake);
-                } catch (Exception e) {
-                    Log.d(TAG, "run: out");
+                } else {
+                    finish();
                 }
                 Log.d(TAG, "run: " + dir);
-
-
             }
 
             sensorHandler.postDelayed(sensorRunnable, 100);
