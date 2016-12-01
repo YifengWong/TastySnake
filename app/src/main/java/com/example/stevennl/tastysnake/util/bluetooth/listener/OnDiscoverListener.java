@@ -6,7 +6,7 @@ import android.bluetooth.BluetoothDevice;
  * Listener for device discovery.
  * Author: LCY
  */
-public interface DiscoverListener {
+public interface OnDiscoverListener {
 
     /**
      * Called when a device is discovered.
