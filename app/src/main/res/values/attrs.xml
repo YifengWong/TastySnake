@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Attributes for DrawableGrid widget -->
     <declare-styleable name="drawable_grid_attr">
         <attr name="rowCount" format="integer" />
         <attr name="colCount" format="integer" />

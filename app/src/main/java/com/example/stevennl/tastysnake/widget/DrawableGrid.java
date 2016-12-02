@@ -1,4 +1,4 @@
-package com.example.stevennl.widget.drawablegrid;
+package com.example.stevennl.tastysnake.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,6 +9,10 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Map;
+import com.example.stevennl.tastysnake.model.Point;
 
 /**
  * This view can divide the screen to several grids and control the content of each grid.
@@ -33,7 +37,7 @@ public class DrawableGrid extends View {
 
     private Paint paint;
 
-    private DrawableGridInfo[][] infos;
+    private Map map;
 
     /**
      * Getters and setters
@@ -54,12 +58,14 @@ public class DrawableGrid extends View {
         this.colCount = colCount;
     }
 
-    public DrawableGridInfo[][] getInfos() {
-        return infos;
+    public Map getMap() {
+        return map;
     }
 
-    public void setInfos(DrawableGridInfo[][] infos) {
-        this.infos = infos;
+    public void setMap(Map map) {
+        this.map = map;
+        rowCount = map.getRowCount();
+        colCount = map.getColCount();
     }
 
     /**
@@ -84,7 +90,6 @@ public class DrawableGrid extends View {
             initCustomAttrs(context, attrs);
         }
         initPaint();
-        initInfos();
     }
 
     /**
@@ -99,7 +104,9 @@ public class DrawableGrid extends View {
         if (showGridLine) {
             drawGridLine(canvas);
         }
-        drawGridInfo(canvas);
+        if (map != null) {
+            drawMapContent(canvas);
+        }
     }
 
     /**
@@ -124,18 +131,6 @@ public class DrawableGrid extends View {
     private void initPaint() {
         paint = new Paint();
         paint.setAntiAlias(true);
-    }
-
-    /**
-     * Initialize infos field.
-     */
-    private void initInfos() {
-        infos = new DrawableGridInfo[rowCount][colCount];
-        for (int i = 0; i < rowCount; ++i) {
-            for (int j = 0; j < colCount; ++j) {
-                infos[i][j] = new DrawableGridInfo();
-            }
-        }
     }
 
     /**
@@ -177,15 +172,15 @@ public class DrawableGrid extends View {
      *
      * @param canvas The canvas on which the background will be drawn
      */
-    private void drawGridInfo(Canvas canvas) {
+    private void drawMapContent(Canvas canvas) {
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
-                paint.setColor(infos[i][j].color);
+                paint.setColor(map.getPoint(i, j).getColor());
                 float left = horOffset + 1 + j * (horInterval + 1);
                 float top = verOffset + 1 + i * (verInterval + 1);
                 float right = left + horInterval - 1;
                 float bottom = top + verInterval - 1;
-                drawGrid(left, top, right, bottom, infos[i][j].type, canvas);
+                drawGrid(left, top, right, bottom, map.getPoint(i, j).getType(), canvas);
             }
         }
     }
@@ -201,7 +196,7 @@ public class DrawableGrid extends View {
      * @param canvas The canvas on which the background will be drawn
      */
     private void drawGrid(float left, float top, float right, float bottom,
-                          DrawableGridInfo.Type type, Canvas canvas) {
+                          Point.Type type, Canvas canvas) {
         final float
                 gridWidth = right - left,
                 gridHeight = bottom - top,

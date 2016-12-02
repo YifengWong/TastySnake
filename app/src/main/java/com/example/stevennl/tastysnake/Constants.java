@@ -6,4 +6,7 @@ public class Constants {
     public static final int BLUETOOTH_TEST_DATA_SIZE = (int)(1000);  // bytes
     public static final int DEVICE_DISCOVERABLE_TIME = 180;  // seconds
     public static final int DEVICE_DISCOVER_TIME = 5000;  // milliseconds
+
+    public static final int MAP_ROW = 50;
+    public static final int MAP_COL = 30;
 }
