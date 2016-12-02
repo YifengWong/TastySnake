@@ -8,23 +8,24 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Point;
 
 /**
- * This view can divide the screen to several grids and control the content of each grid.
+ * This view can divide the screen to several grids and draw the content of each grid.
  * Author: LCY
  */
-public class DrawableGrid extends View {
+public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "DrawableGrid";
+    private static final int DRAW_INTERVAL = 50;  // milliseconds
 
     private int rowCount = 1;
     private int colCount = 1;
-    private boolean showGridLine = true;
-    private int gridLineColor = Color.LTGRAY;
+    private int bgColor;
 
     private int width = 0;
     private int height = 0;
@@ -36,6 +37,7 @@ public class DrawableGrid extends View {
     private int verOffset = 0;
 
     private Paint paint;
+    private boolean drawing;
 
     private Map map;
 
@@ -46,26 +48,12 @@ public class DrawableGrid extends View {
         return rowCount;
     }
 
-    public void setRowCount(int rowCount) {
-        this.rowCount = rowCount;
-    }
-
     public int getColCount() {
         return colCount;
     }
 
-    public void setColCount(int colCount) {
-        this.colCount = colCount;
-    }
-
-    public Map getMap() {
-        return map;
-    }
-
     public void setMap(Map map) {
         this.map = map;
-        rowCount = map.getRowCount();
-        colCount = map.getColCount();
     }
 
     /**
@@ -86,43 +74,35 @@ public class DrawableGrid extends View {
     public DrawableGrid(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "Constructor called.");
+        initSurfaceView();
         if (attrs != null) {
-            initCustomAttrs(context, attrs);
+            initAttrs(context, attrs);
         }
         initPaint();
     }
 
     /**
-     * Draw view contents.
-     *
-     * @param canvas The canvas on which the background will be drawn
+     * Initialize the surface view conf.
      */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Log.d(TAG, "onDraw() called.");
-        computeSize();
-        if (showGridLine) {
-            drawGridLine(canvas);
-        }
-        if (map != null) {
-            drawMapContent(canvas);
-        }
+    private void initSurfaceView() {
+        setKeepScreenOn(true);
+        SurfaceHolder holder = getHolder();
+        holder.addCallback(this);
     }
 
     /**
-     * Initialize fields from custom attributes.
+     * Initialize fields from attributes.
      *
      * @param context The context
      * @param attrs The attributes set
      */
-    private void initCustomAttrs(Context context, AttributeSet attrs) {
+    private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.drawable_grid_attr);
         rowCount = arr.getInt(R.styleable.drawable_grid_attr_rowCount, 1);
         colCount = arr.getInt(R.styleable.drawable_grid_attr_colCount, 1);
-        gridLineColor = arr.getColor(R.styleable.drawable_grid_attr_gridLineColor, Color.LTGRAY);
-        showGridLine = arr.getBoolean(R.styleable.drawable_grid_attr_showGridLine, true);
+        bgColor = arr.getColor(R.styleable.drawable_grid_attr_bgColor, Color.WHITE);
         arr.recycle();
-        Log.d(TAG, "Attrs: " + rowCount + " " + colCount + " " + showGridLine);
+        Log.d(TAG, "Attrs: " + rowCount + " " + colCount + " " + bgColor);
     }
 
     /**
@@ -131,6 +111,85 @@ public class DrawableGrid extends View {
     private void initPaint() {
         paint = new Paint();
         paint.setAntiAlias(true);
+    }
+
+    /**
+     * This is called immediately after any structural changes (format or
+     * size) have been made to the surface.
+     *
+     * @param holder The SurfaceHolder whose surface has changed.
+     * @param format The new PixelFormat of the surface.
+     * @param width The new width of the surface.
+     * @param height The new height of the surface.
+     */
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.d(TAG, "surfaceChanged() called.");
+    }
+
+    /**
+     * This is called immediately before a surface is being destroyed.
+     *
+     * @param holder The SurfaceHolder whose surface is being destroyed.
+     */
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.d(TAG, "surfaceDestroyed() called.");
+        drawing = false;
+    }
+
+    /**
+     * This is called immediately after the surface is first created.
+     *
+     * @param holder The SurfaceHolder whose surface is being created.
+     */
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.d(TAG, "surfaceCreated() called.");
+        drawing = true;
+        DrawThread drawThread = new DrawThread(holder);
+        drawThread.start();
+    }
+
+    /**
+     * Thread to draw the map content.
+     */
+    private class DrawThread extends Thread {
+        private SurfaceHolder holder_;
+        private Canvas canvas;
+
+        private DrawThread(SurfaceHolder holder_) {
+            this.holder_ = holder_;
+        }
+
+        @Override
+        public void run() {
+            computeSize();
+            while (drawing) {
+                draw();
+                try {
+                    Thread.sleep(DRAW_INTERVAL);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error: ", e);
+                }
+            }
+        }
+
+        private void draw() {
+            try {
+                canvas = holder_.lockCanvas();
+                if (canvas != null) {
+                    canvas.drawColor(bgColor);
+                    drawMapContent(canvas);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error: ", e);
+            } finally {
+                if (canvas != null) {
+                    holder_.unlockCanvasAndPost(canvas);
+                }
+            }
+        }
     }
 
     /**
@@ -150,29 +209,12 @@ public class DrawableGrid extends View {
     }
 
     /**
-     * Draw grid lines.
-     *
-     * @param canvas The canvas on which the background will be drawn
-     */
-    private void drawGridLine(Canvas canvas) {
-        paint.setColor(gridLineColor);
-        paint.setStrokeWidth(0);  // One pixel
-        for (int i = 0; i < verLineCnt; ++i) {  // Draw vertical lines
-            float x = horOffset + i * (horInterval + 1);
-            canvas.drawLine(x, verOffset, x, height - verOffset, paint);
-        }
-        for (int i = 0; i < horLineCnt; ++i) {  // Draw horizontal lines
-            float y = verOffset + i * (verInterval + 1);
-            canvas.drawLine(horOffset, y, width - horOffset, y, paint);
-        }
-    }
-
-    /**
      * Draw the content of each grid.
      *
      * @param canvas The canvas on which the background will be drawn
      */
     private void drawMapContent(Canvas canvas) {
+        if (map == null) return;
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
                 paint.setColor(map.getPoint(i, j).getColor());

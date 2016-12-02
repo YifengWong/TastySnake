@@ -4,7 +4,6 @@
     <declare-styleable name="drawable_grid_attr">
         <attr name="rowCount" format="integer" />
         <attr name="colCount" format="integer" />
-        <attr name="showGridLine" format="boolean" />
-        <attr name="gridLineColor" format="color" />
+        <attr name="bgColor" format="color" />
     </declare-styleable>
 </resources>
