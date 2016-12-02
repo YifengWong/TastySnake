@@ -17,6 +17,7 @@ public class Constants {
     public static final int COLOR_SNAKE_PLAYER = Color.RED;
     public static final int COLOR_SNAKE_RIVAL = Color.CYAN;
     public static final int COLOR_EMPTY_POINT = Color.WHITE;
+    public static final int COLOR_MAP_BG = Color.WHITE;
 
     public static final int INTERVAL_DRAW = 30;  // milliseconds
     public static final int INTERVAL_MOVE = 150;  // milliseconds

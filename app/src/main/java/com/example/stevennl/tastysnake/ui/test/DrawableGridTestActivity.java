@@ -39,6 +39,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         snake = new Snake(0, map);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
+        grid.setBgColor(Constants.COLOR_MAP_BG);
 //        for (int i = 0; i < Point.Type.values().length; ++i) {
 //            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
 //            map.getPoint(i, i).setType(Point.Type.values()[i]);

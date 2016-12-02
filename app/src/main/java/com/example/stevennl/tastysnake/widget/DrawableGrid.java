@@ -36,24 +36,25 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
     private int horOffset = 0;
     private int verOffset = 0;
 
+    private Map map;
     private Paint paint;
     private boolean drawing;
 
-    private Map map;
+    /**
+     * Set the map to be drawn.
+     */
+    public void setMap(Map map) {
+        Log.d(TAG, "setMap() called.");
+        this.map = map;
+        this.rowCount = map.getRowCount();
+        this.colCount = map.getColCount();
+    }
 
     /**
-     * Getters and setters
+     * Set the background color.
      */
-    public int getRowCount() {
-        return rowCount;
-    }
-
-    public int getColCount() {
-        return colCount;
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
+    public void setBgColor(int bgColor) {
+        this.bgColor = bgColor;
     }
 
     /**
@@ -75,9 +76,6 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
         super(context, attrs);
         Log.d(TAG, "Constructor called.");
         initSurfaceView();
-        if (attrs != null) {
-            initAttrs(context, attrs);
-        }
         initPaint();
     }
 
@@ -86,23 +84,7 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
      */
     private void initSurfaceView() {
         setKeepScreenOn(true);
-        SurfaceHolder holder = getHolder();
-        holder.addCallback(this);
-    }
-
-    /**
-     * Initialize fields from attributes.
-     *
-     * @param context The context
-     * @param attrs The attributes set
-     */
-    private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.drawable_grid_attr);
-        rowCount = arr.getInt(R.styleable.drawable_grid_attr_rowCount, 1);
-        colCount = arr.getInt(R.styleable.drawable_grid_attr_colCount, 1);
-        bgColor = arr.getColor(R.styleable.drawable_grid_attr_bgColor, Color.WHITE);
-        arr.recycle();
-        Log.d(TAG, "Attrs: " + rowCount + " " + colCount + " " + bgColor);
+        getHolder().addCallback(this);
     }
 
     /**
