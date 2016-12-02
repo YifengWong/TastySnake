@@ -1,131 +1,145 @@
 package com.example.stevennl.tastysnake.model;
 
-import android.graphics.Color;
+import com.example.stevennl.tastysnake.Constants;
 
 import java.util.ArrayList;
 
 /**
- * XXX
- * Author: XXX
+ * Game snake.
  */
 public class Snake {
-    public ArrayList<Pos> body = new ArrayList<>();
-    public ArrayList<Point.Type> type = new ArrayList<>();
-    Direction orientation;
-    Map map;
-    int row, column;
-    int color;
-    static final Point EMPTY = new Point(Color.TRANSPARENT, Point.Type.BLANK);
+    private ArrayList<Pos> bodies = new ArrayList<>();
+    private ArrayList<Point.Type> types = new ArrayList<>();
+    private Direction direc;
+    private Map map;
+    private int row;
+    private int col;
+    private int color;
+
+    /**
+     * Initialize.
+     *
+     * @param type The types of the snake
+     * @param map The game map
+     */
     public Snake(int type, Map map) {
         switch (type) {
             case 0:
-                color = Color.rgb(204, 0, 0);
-                orientation = Direction.RIGHT;
+                color = Constants.SNAKE_PLAYER_COLOR;
+                direc = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
-                    body.add(new Pos(0, i));
+                    bodies.add(new Pos(0, i));
                 }
                 break;
             default:
+                break;
         }
         this.map = map;
         this.row = map.getRowCount();
-        this.column = map.getColCount();
+        this.col = map.getColCount();
         genType();
-        for (int i = 0; i < body.size(); i ++)
-            map.setPoint(body.get(i), new Point(color, this.type.get(i)));
+        for (int i = 0; i < bodies.size(); i ++) {
+            map.setPoint(bodies.get(i), new Point(color, this.types.get(i)));
+        }
     }
-    public void extend() {
 
-    }
-    public void genType() {
-        type.clear();
-        switch (orientation) {
-            case UP:
-                type.add(0, Point.Type.HEAD_U);
-                break;
-            case DOWN:
-                type.add(0, Point.Type.HEAD_D);
-                break;
-            case LEFT:
-                type.add(0, Point.Type.HEAD_L);
-                break;
-            case RIGHT:
-                type.add(0, Point.Type.HEAD_R);
-                break;
-        }
-        for (int i = 1; i < body.size() - 1; i ++) {
-            Pos pre = body.get(i - 1);
-            Pos succ = body.get(i + 1);
-            Pos now = body.get(i);
-            if (pre.dirTo(now) == Direction.LEFT && now.dirTo(succ) == Direction.LEFT)
-                type.add(Point.Type.BODY_HOR);
-            if (pre.dirTo(now) == Direction.RIGHT && now.dirTo(succ) == Direction.RIGHT)
-                type.add(Point.Type.BODY_HOR);
-            if (pre.dirTo(now) == Direction.UP && now.dirTo(succ) == Direction.UP)
-                type.add(Point.Type.BODY_VER);
-            if (pre.dirTo(now) == Direction.DOWN && now.dirTo(succ) == Direction.DOWN)
-                type.add(Point.Type.BODY_VER);
-            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.LEFT)
-                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.UP))
-                type.add(Point.Type.BODY_L_U);
-            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.LEFT)
-                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.DOWN))
-                type.add(Point.Type.BODY_L_D);
-            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.RIGHT)
-                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.UP))
-                type.add(Point.Type.BODY_R_U);
-            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.RIGHT)
-                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.DOWN))
-                type.add(Point.Type.BODY_R_D);
-        }
-        Pos last = body.get(body.size() - 1);
-        Pos butLast = body.get(body.size() - 2);
-        if (last.dirTo(butLast).ordinal() % 2 == 1)
-            type.add(Point.Type.BODY_HOR);
-        else
-            type.add(Point.Type.BODY_VER);
-    }
+    /**
+     * Move the snake at a given direction.
+     *
+     * @param order The moving direction.
+     * @return True if move succeeds, false otherwise
+     */
     public boolean move(Direction order) {
-        Pos head = body.get(0);
-        if (order == Direction.NONE || order.ordinal() == (orientation.ordinal() + 2) % 4) {
-            body.add(0, head.to(orientation));
+        Pos head = bodies.get(0);
+        if (order == Direction.NONE || order.ordinal() == (direc.ordinal() + 2) % 4) {
+            bodies.add(0, head.to(direc));
         } else {
-            body.add(0, head.to(order));
-            orientation = order;
+            bodies.add(0, head.to(order));
+            direc = order;
         }
-        Pos tail = body.get(body.size() - 1);
-        if (map.getPoint(body.get(0)).getType() == Point.Type.FOOD) {
-            if (map.isWeather()) {
-                if (body.size() <= 2) return false;
-                body.remove(body.size() - 1);
-                map.setPoint(tail, EMPTY);
-                tail = body.get(body.size() - 1);
-                body.remove(body.size() - 1);
-                map.setPoint(tail, EMPTY);
-            } else {
-                //Do Nothing
-            }
+        Pos tail = bodies.get(bodies.size() - 1);
+        Point.Type newHeadType = map.getPoint(bodies.get(0)).getType();
+        if (newHeadType == Point.Type.FOOD_LENGTHEN) {
+            // Do nothing
+        } else if (newHeadType == Point.Type.FOOD_SHORTEN) {
+            if (bodies.size() <= 2) return false;
+            bodies.remove(bodies.size() - 1);
+            map.getPoint(tail).makeEmpty();
+            tail = bodies.get(bodies.size() - 1);
+            bodies.remove(bodies.size() - 1);
+            map.getPoint(tail).makeEmpty();
         } else {
-            body.remove(body.size() - 1);
-            map.setPoint(tail, EMPTY);
+            bodies.remove(bodies.size() - 1);
+            map.getPoint(tail).makeEmpty();
         }
         genType();
-
-        map.setPoint(body.get(0), new Point(color, type.get(0)));
-        map.setPoint(body.get(1), new Point(color, type.get(1)));
-        checkHead();
+        map.setPoint(bodies.get(0), new Point(color, types.get(0)));
+        map.setPoint(bodies.get(1), new Point(color, types.get(1)));
         return checkOut();
     }
-    void checkHead() {
 
-    }
-    public boolean checkOut() {
-        Pos head = body.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= column || head.getY() < 0) return false;
-        for (int i = 0; i < body.size(); i ++)
-            for (int j = i + 1; j < body.size(); j ++)
-                if (body.get(i).getX() == body.get(j).getX() && body.get(i).getY() == body.get(j).getY())
+    /**
+     * Return false if the snake moves out of boundaries or hits itself.
+     */
+    private boolean checkOut() {
+        Pos head = bodies.get(0);
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= col || head.getY() < 0) return false;
+        for (int i = 0; i < bodies.size(); i ++)
+            for (int j = i + 1; j < bodies.size(); j ++)
+                if (bodies.get(i).getX() == bodies.get(j).getX() && bodies.get(i).getY() == bodies.get(j).getY())
                     return false;
         return true;
+    }
+
+    /**
+     * Generate body types list.
+     */
+    private void genType() {
+        types.clear();
+        switch (direc) {
+            case UP:
+                types.add(0, Point.Type.HEAD_U);
+                break;
+            case DOWN:
+                types.add(0, Point.Type.HEAD_D);
+                break;
+            case LEFT:
+                types.add(0, Point.Type.HEAD_L);
+                break;
+            case RIGHT:
+                types.add(0, Point.Type.HEAD_R);
+                break;
+        }
+        for (int i = 1; i < bodies.size() - 1; i ++) {
+            Pos pre = bodies.get(i - 1);
+            Pos succ = bodies.get(i + 1);
+            Pos now = bodies.get(i);
+            if (pre.dirTo(now) == Direction.LEFT && now.dirTo(succ) == Direction.LEFT)
+                types.add(Point.Type.BODY_HOR);
+            if (pre.dirTo(now) == Direction.RIGHT && now.dirTo(succ) == Direction.RIGHT)
+                types.add(Point.Type.BODY_HOR);
+            if (pre.dirTo(now) == Direction.UP && now.dirTo(succ) == Direction.UP)
+                types.add(Point.Type.BODY_VER);
+            if (pre.dirTo(now) == Direction.DOWN && now.dirTo(succ) == Direction.DOWN)
+                types.add(Point.Type.BODY_VER);
+            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.LEFT)
+                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.UP))
+                types.add(Point.Type.BODY_L_U);
+            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.LEFT)
+                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.DOWN))
+                types.add(Point.Type.BODY_L_D);
+            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.RIGHT)
+                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.UP))
+                types.add(Point.Type.BODY_R_U);
+            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.RIGHT)
+                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.DOWN))
+                types.add(Point.Type.BODY_R_D);
+        }
+        Pos last = bodies.get(bodies.size() - 1);
+        Pos butLast = bodies.get(bodies.size() - 2);
+        if (last.dirTo(butLast).ordinal() % 2 == 1)
+            types.add(Point.Type.BODY_HOR);
+        else
+            types.add(Point.Type.BODY_VER);
     }
 }

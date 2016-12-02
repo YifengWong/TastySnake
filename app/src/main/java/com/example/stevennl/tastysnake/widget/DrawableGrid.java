@@ -248,7 +248,8 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
             case BLANK:
                 canvas.drawRect(left, top, right, bottom, paint);
                 break;
-            case FOOD:
+            case FOOD_LENGTHEN:
+            case FOOD_SHORTEN:
                 canvas.drawCircle((left + right) / 2, (top + bottom) / 2, (right - left) / 2, paint);
                 break;
             case HEAD_L:

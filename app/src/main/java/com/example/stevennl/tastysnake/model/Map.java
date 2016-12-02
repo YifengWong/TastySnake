@@ -1,22 +1,14 @@
 package com.example.stevennl.tastysnake.model;
 
-import android.graphics.Color;
+import com.example.stevennl.tastysnake.Constants;
+
+import java.util.Random;
 
 /**
- Game map.
+ * Game map.
  */
 public class Map {
     private Point[][] content;
-    //private Pos food;
-    private boolean weather; // False for stretch True for shorten
-
-    public boolean isWeather() {
-        return weather;
-    }
-
-    public void setWeather(boolean weather) {
-        this.weather = weather;
-    }
 
     /**
      * Initialize.
@@ -32,25 +24,38 @@ public class Map {
             }
         }
     }
-    static final int foodColor = Color.rgb(0, 204, 0);
-    public boolean createFood(int x, int y, int type) {
-        switch (type) {
-            case 0:
-                if (content[x][y].getType() == Point.Type.BLANK)
-                    content[x][y] = new Point(foodColor, Point.Type.FOOD);
-                else
-                    return false;
-                break;
-        }
-        return true;
+
+    /**
+     * Create food on the map.
+     *
+     * @param lengthen True if the food will lengthen the snake who eats it, false shorten
+     */
+    public void createFood(boolean lengthen) {
+        int row = getRowCount(), col = getColCount();
+        int x, y;
+        Random rand = new Random();
+        do {
+            x = rand.nextInt(row);
+            y = rand.nextInt(col);
+        } while (content[x][y].getType() != Point.Type.BLANK);
+        content[x][y].setColor(lengthen ? Constants.FOOD_LENGTHEN_COLOR : Constants.FOOD_SHORTEN_COLOR);
+        content[x][y].setType(lengthen ? Point.Type.FOOD_LENGTHEN : Point.Type.FOOD_SHORTEN);
     }
+
+    /**
+     * Set a point on the map.
+     *
+     * @param p The position of the new point
+     * @param c The new point
+     */
     public void setPoint(Pos p, Point c) {
         content[p.getX()][p.getY()] = c;
     }
+
     /**
      * Return a point on the map.
      *
-     * @param p the position of the point
+     * @param p The position of the point
      */
     public Point getPoint(Pos p) {
         return content[p.getX()][p.getY()];
@@ -59,18 +64,11 @@ public class Map {
     /**
      * Return a point on the map.
      *
-     * @param x the row number of the point
-     * @param y the column number of the point
+     * @param x The row number of the point
+     * @param y The column number of the point
      */
     public Point getPoint(int x, int y) {
         return content[x][y];
-    }
-
-    /**
-     * Return the map content.
-     */
-    public Point[][] getContent() {
-        return content;
     }
 
     /**

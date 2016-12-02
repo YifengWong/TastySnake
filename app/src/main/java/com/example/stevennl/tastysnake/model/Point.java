@@ -2,15 +2,19 @@ package com.example.stevennl.tastysnake.model;
 
 import android.graphics.Color;
 
+import com.example.stevennl.tastysnake.Constants;
+
 /**
  * Point on the game map.
  */
 public class Point {
-    private int color = Color.TRANSPARENT;
-    private Type type = Type.BLANK;
+    private int color;
+    private Type type;
+
     public enum Type {
         BLANK,
-        FOOD,
+        FOOD_LENGTHEN,
+        FOOD_SHORTEN,
         HEAD_L,
         HEAD_U,
         HEAD_R,
@@ -24,10 +28,17 @@ public class Point {
     }
 
     public Point() {
+        this(Constants.EMPTY_POINT_COLOR, Type.BLANK);
     }
+
     public Point(int color, Type type) {
         this.color = color;
         this.type = type;
+    }
+
+    public void makeEmpty() {
+        color = Constants.EMPTY_POINT_COLOR;
+        type = Type.BLANK;
     }
 
     public int getColor() {

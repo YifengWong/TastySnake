@@ -24,12 +24,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
 
     private Snake snake;
     private Map map;
-    private DrawableGrid grid;
 
     private Timer timer;
     private SensorController sensorCtrl;
 
-    private Random random;
+    private boolean lengthen = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,14 +37,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         sensorCtrl = new SensorController(this);
         map = new Map(Constants.MAP_ROW, Constants.MAP_COL);
         snake = new Snake(0, map);
-        grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
+        DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
-        map.setWeather(true);
-        random = new Random();
-        /*for (int i = 0; i < Point.Type.values().length; ++i) {
-            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
-            map.getPoint(i, i).setType(Point.Type.values()[i]);
-        }*/
+//        for (int i = 0; i < Point.Type.values().length; ++i) {
+//            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
+//            map.getPoint(i, i).setType(Point.Type.values()[i]);
+//        }
     }
 
     @Override
@@ -72,16 +70,10 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                         finish();
                     }
                     Log.d(TAG, "run: " + dir);
+                    map.createFood(lengthen = !lengthen);
                 }
-                while(map.createFood(random.nextInt(map.getRowCount()), random.nextInt(map.getColCount()), 0) == false) ;
             }
         }, 0, 100);
-        timer.schedule(new TimerTask() {  // Draw thread
-            @Override
-            public void run() {
-                grid.postInvalidate();
-            }
-        }, 0, 10);
     }
 
     private void stopTimer() {
