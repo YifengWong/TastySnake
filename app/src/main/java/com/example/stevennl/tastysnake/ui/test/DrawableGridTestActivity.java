@@ -15,6 +15,7 @@ import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 import com.example.stevennl.tastysnake.widget.DrawableGrid;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,19 +29,22 @@ public class DrawableGridTestActivity extends AppCompatActivity {
     private Timer timer;
     private SensorController sensorCtrl;
 
+    private Random random;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawable_grid_test);
         sensorCtrl = new SensorController(this);
         map = new Map(Constants.MAP_ROW, Constants.MAP_COL);
-        snake = new Snake(0, map.getRowCount(), map.getColCount());
+        snake = new Snake(0, map);
         grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
-        for (int i = 0; i < Point.Type.values().length; ++i) {
+        map.setWeather(true);
+        random = new Random();
+        /*for (int i = 0; i < Point.Type.values().length; ++i) {
             map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
             map.getPoint(i, i).setType(Point.Type.values()[i]);
-        }
+        }*/
     }
 
     @Override
@@ -64,13 +68,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             public void run() {
                 if (snake != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    if (snake.move(dir)) {
-                        updateMap();
-                    } else {
+                    if (!snake.move(dir)) {
                         finish();
                     }
                     Log.d(TAG, "run: " + dir);
                 }
+                while(map.createFood(random.nextInt(map.getRowCount()), random.nextInt(map.getColCount()), 0) == false) ;
             }
         }, 0, 100);
         timer.schedule(new TimerTask() {  // Draw thread
@@ -85,23 +88,6 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         if (timer != null) {
             timer.cancel();
             timer = null;
-        }
-    }
-
-    private void updateMap() {
-        Point[][] infos = map.getContent();
-        Log.d(TAG, "updateMap: " + snake.body.toString());
-        for (int i = 0; i < infos.length; i ++) {
-            for (int j = 0; j < infos[0].length; j ++) {
-                infos[i][j].setColor(Color.rgb(255, 255, 255));
-                infos[i][j].setType(Point.Type.BLANK);
-            }
-        }
-        for (int idx = 0; idx < snake.body.size(); idx ++) {
-            Pos i = snake.body.get(idx);
-            Log.d(TAG, "updateMap: " + i.getX() + " " + i.getY());
-            infos[i.getX()][i.getY()].setColor(Color.rgb(204, 0, 0));
-            infos[i.getX()][i.getY()].setType(snake.type.get(idx));
         }
     }
 }

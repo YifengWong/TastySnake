@@ -1,11 +1,22 @@
 package com.example.stevennl.tastysnake.model;
 
+import android.graphics.Color;
+
 /**
  Game map.
  */
 public class Map {
     private Point[][] content;
-    private Pos food;
+    //private Pos food;
+    private boolean weather; // False for stretch True for shorten
+
+    public boolean isWeather() {
+        return weather;
+    }
+
+    public void setWeather(boolean weather) {
+        this.weather = weather;
+    }
 
     /**
      * Initialize.
@@ -21,7 +32,21 @@ public class Map {
             }
         }
     }
-
+    static final int foodColor = Color.rgb(0, 204, 0);
+    public boolean createFood(int x, int y, int type) {
+        switch (type) {
+            case 0:
+                if (content[x][y].getType() == Point.Type.BLANK)
+                    content[x][y] = new Point(foodColor, Point.Type.FOOD);
+                else
+                    return false;
+                break;
+        }
+        return true;
+    }
+    public void setPoint(Pos p, Point c) {
+        content[p.getX()][p.getY()] = c;
+    }
     /**
      * Return a point on the map.
      *
