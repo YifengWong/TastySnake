@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.stevennl.tastysnake.ui.test.DrawableGridTestActivity">
-    <com.example.stevennl.widget.drawablegrid.DrawableGrid
+    <com.example.stevennl.tastysnake.widget.DrawableGrid
         xmlns:drawablegrid="http://schemas.android.com/apk/res-auto"
         android:id="@+id/drawablegrid_test_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        drawablegrid:rowCount="50"
-        drawablegrid:colCount="30"
+        drawablegrid:rowCount="3"
+        drawablegrid:colCount="3"
         drawablegrid:showGridLine="true" />
 </RelativeLayout>

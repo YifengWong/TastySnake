@@ -1,101 +1,107 @@
 package com.example.stevennl.tastysnake.ui.test;
 
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
-import com.example.stevennl.tastysnake.model.Pair;
+import com.example.stevennl.tastysnake.model.Map;
+import com.example.stevennl.tastysnake.model.Pos;
+import com.example.stevennl.tastysnake.model.Point;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
-import com.example.stevennl.widget.drawablegrid.DrawableGrid;
-import com.example.stevennl.widget.drawablegrid.DrawableGridInfo;
+import com.example.stevennl.tastysnake.widget.DrawableGrid;
 
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DrawableGridTestActivity extends AppCompatActivity {
-    private static final String TAG = "FUCK";
+    private static final String TAG = "GridTestActivity";
+
     private Snake snake;
-    private DrawableGridInfo[][] infos;
+    private Map map;
     private DrawableGrid grid;
+
+    private Timer timer;
+    private SensorController sensorCtrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawable_grid_test);
-        initDrawableGrid();
-        initSnake();
-    }
-
-    private void initDrawableGrid() {
+        sensorCtrl = new SensorController(this);
+        map = new Map(Constants.MAP_ROW, Constants.MAP_COL);
+        snake = new Snake(0, map.getRowCount(), map.getColCount());
         grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
-        infos = grid.getInfos();
-        /*
-        for (int i = 0; i < DrawableGridInfo.Type.values().length; ++i) {
-            infos[i][i].color = Color.rgb(204, 0, 0);
-            infos[i][i].type = DrawableGridInfo.Type.values()[i];
+        grid.setMap(map);
+        for (int i = 0; i < Point.Type.values().length; ++i) {
+            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
+            map.getPoint(i, i).setType(Point.Type.values()[i]);
         }
-        */
-        grid.invalidate();
     }
 
-    void drawSnake(DrawableGridInfo[][] infos, Snake snake) {
-        Log.d(TAG, "drawSnake: " + snake.body.toString());
-        for (int i = 0; i < infos.length; i ++)
-            for (int j = 0; j < infos[0].length; j ++)
-                infos[i][j].color = Color.rgb(255, 255, 255);
-        for (int idx = 0; idx < snake.body.size(); idx ++) {
-            Pair i = snake.body.get(idx);
-            Log.d(TAG, "drawSnake: " + i.getX() + " " + i.getY());
-            infos[i.getX()][i.getY()].color = Color.rgb(204, 0, 0);
-            infos[i.getX()][i.getY()].type = snake.type.get(idx);
-        }
-        grid.invalidate();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorCtrl.registerSensor();
+        startTimer();
     }
 
-    private Handler sensorHandler;
-    private SensorController sController;
-    private Runnable sensorRunnable = new Runnable() {
-        @Override
-        public void run() {
-            //textShow.setText(sController.getDirection());
-            Log.d(TAG, "run: " + "GET");;
-            if (snake != null) {
-                Direction dir = sController.getDirection();
-                boolean validGrid = snake.move(dir);
-                if (validGrid) {
-                    drawSnake(infos, snake);
-                } else {
-                    finish();
-                }
-                Log.d(TAG, "run: " + dir);
-            }
-
-            sensorHandler.postDelayed(sensorRunnable, 100);
-        }
-    };
-
-
-    private void initSnake() {
-        snake = new Snake(0, grid.getRowCount(), grid.getColCount());
-
-        snake.move(Direction.DOWN);
-        drawSnake(infos, snake);
-        snake.move(Direction.RIGHT);
-        drawSnake(infos, snake);
-
-        sController = new SensorController(this);
-        sController.registerSensor();
-        sensorHandler = new Handler();
-        sensorHandler.post(sensorRunnable);
-    }
     @Override
     protected void onPause() {
         super.onPause();
-        sensorHandler.removeCallbacks(sensorRunnable);
-        sController.unregisterSensor();
+        sensorCtrl.unregisterSensor();
+        stopTimer();
+    }
+
+    private void startTimer() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {  // Gravity sensor and snake move thread
+            @Override
+            public void run() {
+                if (snake != null) {
+                    Direction dir = sensorCtrl.getDirection();
+                    if (snake.move(dir)) {
+                        updateMap();
+                    } else {
+                        finish();
+                    }
+                    Log.d(TAG, "run: " + dir);
+                }
+            }
+        }, 0, 100);
+        timer.schedule(new TimerTask() {  // Draw thread
+            @Override
+            public void run() {
+                grid.postInvalidate();
+            }
+        }, 0, 10);
+    }
+
+    private void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void updateMap() {
+        Point[][] infos = map.getContent();
+        Log.d(TAG, "updateMap: " + snake.body.toString());
+        for (int i = 0; i < infos.length; i ++) {
+            for (int j = 0; j < infos[0].length; j ++) {
+                infos[i][j].setColor(Color.rgb(255, 255, 255));
+                infos[i][j].setType(Point.Type.BLANK);
+            }
+        }
+        for (int idx = 0; idx < snake.body.size(); idx ++) {
+            Pos i = snake.body.get(idx);
+            Log.d(TAG, "updateMap: " + i.getX() + " " + i.getY());
+            infos[i.getX()][i.getY()].setColor(Color.rgb(204, 0, 0));
+            infos[i.getX()][i.getY()].setType(snake.type.get(idx));
+        }
     }
 }
