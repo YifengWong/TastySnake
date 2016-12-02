@@ -73,7 +73,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                     map.createFood(lengthen = !lengthen);
                 }
             }
-        }, 0, 100);
+        }, 0, Constants.INTERVAL_MOVE);
     }
 
     private void stopTimer() {

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Point;
@@ -21,7 +22,6 @@ import com.example.stevennl.tastysnake.model.Point;
  */
 public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "DrawableGrid";
-    private static final int DRAW_INTERVAL = 50;  // milliseconds
 
     private int rowCount = 1;
     private int colCount = 1;
@@ -166,9 +166,9 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
         public void run() {
             computeSize();
             while (drawing) {
-                draw();
                 try {
-                    Thread.sleep(DRAW_INTERVAL);
+                    draw();
+                    Thread.sleep(Constants.INTERVAL_DRAW);
                 } catch (Exception e) {
                     Log.e(TAG, "Error: ", e);
                 }

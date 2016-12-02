@@ -25,7 +25,7 @@ public class Snake {
     public Snake(int type, Map map) {
         switch (type) {
             case 0:
-                color = Constants.SNAKE_PLAYER_COLOR;
+                color = Constants.COLOR_SNAKE_PLAYER;
                 direc = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
                     bodies.add(new Pos(0, i));

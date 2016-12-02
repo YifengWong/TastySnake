@@ -1,7 +1,5 @@
 package com.example.stevennl.tastysnake.model;
 
-import android.graphics.Color;
-
 import com.example.stevennl.tastysnake.Constants;
 
 /**
@@ -28,7 +26,7 @@ public class Point {
     }
 
     public Point() {
-        this(Constants.EMPTY_POINT_COLOR, Type.BLANK);
+        this(Constants.COLOR_EMPTY_POINT, Type.BLANK);
     }
 
     public Point(int color, Type type) {
@@ -37,7 +35,7 @@ public class Point {
     }
 
     public void makeEmpty() {
-        color = Constants.EMPTY_POINT_COLOR;
+        color = Constants.COLOR_EMPTY_POINT;
         type = Type.BLANK;
     }
 

@@ -38,7 +38,7 @@ public class Map {
             x = rand.nextInt(row);
             y = rand.nextInt(col);
         } while (content[x][y].getType() != Point.Type.BLANK);
-        content[x][y].setColor(lengthen ? Constants.FOOD_LENGTHEN_COLOR : Constants.FOOD_SHORTEN_COLOR);
+        content[x][y].setColor(lengthen ? Constants.COLOR_FOOD_LENGTHEN : Constants.COLOR_FOOD_SHORTEN);
         content[x][y].setType(lengthen ? Point.Type.FOOD_LENGTHEN : Point.Type.FOOD_SHORTEN);
     }
 

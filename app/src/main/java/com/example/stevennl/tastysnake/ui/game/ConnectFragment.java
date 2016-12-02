@@ -192,7 +192,7 @@ public class ConnectFragment extends Fragment {
      * Request device discoverable.
      */
     private void reqDiscoverable() {
-        Intent i = manager.getDiscoverableIntent(Constants.DEVICE_DISCOVERABLE_TIME);
+        Intent i = manager.getDiscoverableIntent(Constants.BLUETOOTH_DISCOVERABLE_TIME);
         startActivityForResult(i, REQ_BLUETOOTH_DISCOVERABLE);
     }
 
@@ -210,8 +210,8 @@ public class ConnectFragment extends Fragment {
                 }
                 break;
             case REQ_BLUETOOTH_DISCOVERABLE:
-                if (resultCode == Constants.DEVICE_DISCOVERABLE_TIME) {
-                    Log.d(TAG, "Your device can be discovered in " + Constants.DEVICE_DISCOVERABLE_TIME + " seconds.");
+                if (resultCode == Constants.BLUETOOTH_DISCOVERABLE_TIME) {
+                    Log.d(TAG, "Your device can be discovered in " + Constants.BLUETOOTH_DISCOVERABLE_TIME + " seconds.");
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.d(TAG, "Device cannot be discovered.");
                 }
@@ -256,7 +256,7 @@ public class ConnectFragment extends Fragment {
                     }
                 }
             }
-        }, Constants.DEVICE_DISCOVER_TIME);
+        }, Constants.BLUETOOTH_DISCOVER_TIME);
     }
 
     /**
