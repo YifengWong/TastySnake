@@ -8,7 +8,6 @@ import android.graphics.Color;
 public class Point {
     private int color = Color.TRANSPARENT;
     private Type type = Type.BLANK;
-
     public enum Type {
         BLANK,
         FOOD,
@@ -25,6 +24,10 @@ public class Point {
     }
 
     public Point() {
+    }
+    public Point(int color, Type type) {
+        this.color = color;
+        this.type = type;
     }
 
     public int getColor() {

@@ -1,5 +1,7 @@
 package com.example.stevennl.tastysnake.model;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 
 /**
@@ -10,10 +12,14 @@ public class Snake {
     public ArrayList<Pos> body = new ArrayList<>();
     public ArrayList<Point.Type> type = new ArrayList<>();
     Direction orientation;
+    Map map;
     int row, column;
-    public Snake(int type, int row, int column) {
+    int color;
+    static final Point EMPTY = new Point(Color.TRANSPARENT, Point.Type.BLANK);
+    public Snake(int type, Map map) {
         switch (type) {
             case 0:
+                color = Color.rgb(204, 0, 0);
                 orientation = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
                     body.add(new Pos(0, i));
@@ -21,9 +27,12 @@ public class Snake {
                 break;
             default:
         }
-        this.row = row;
-        this.column = column;
+        this.map = map;
+        this.row = map.getRowCount();
+        this.column = map.getColCount();
         genType();
+        for (int i = 0; i < body.size(); i ++)
+            map.setPoint(body.get(i), new Point(color, this.type.get(i)));
     }
     public void extend() {
 
@@ -48,112 +57,67 @@ public class Snake {
             Pos pre = body.get(i - 1);
             Pos succ = body.get(i + 1);
             Pos now = body.get(i);
-            if (pre.onLeftOf(now) && now.onLeftOf(succ))
+            if (pre.dirTo(now) == Direction.LEFT && now.dirTo(succ) == Direction.LEFT)
                 type.add(Point.Type.BODY_HOR);
-            if (pre.onRightOf(now) && now.onRightOf(succ))
+            if (pre.dirTo(now) == Direction.RIGHT && now.dirTo(succ) == Direction.RIGHT)
                 type.add(Point.Type.BODY_HOR);
-            if (pre.onUpOf(now) && now.onUpOf((succ)))
+            if (pre.dirTo(now) == Direction.UP && now.dirTo(succ) == Direction.UP)
                 type.add(Point.Type.BODY_VER);
-            if (pre.onDownOf(now) && now.onDownOf(succ))
+            if (pre.dirTo(now) == Direction.DOWN && now.dirTo(succ) == Direction.DOWN)
                 type.add(Point.Type.BODY_VER);
-            if ((pre.onLeftOf(now) && succ.onUpOf(now)) || (pre.onUpOf(now) && succ.onLeftOf(now)))
+            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.LEFT)
+                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.UP))
                 type.add(Point.Type.BODY_L_U);
-            if ((pre.onLeftOf(now) && succ.onDownOf(now)) || (pre.onDownOf(now) && succ.onLeftOf(now)))
+            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.LEFT)
+                    || (pre.dirTo(now) == Direction.LEFT && succ.dirTo(now) == Direction.DOWN))
                 type.add(Point.Type.BODY_L_D);
-            if ((pre.onRightOf(now) && succ.onUpOf(now)) || (pre.onUpOf(now) && succ.onRightOf(now)))
+            if ((pre.dirTo(now) == Direction.UP && succ.dirTo(now) == Direction.RIGHT)
+                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.UP))
                 type.add(Point.Type.BODY_R_U);
-            if ((pre.onRightOf(now) && succ.onDownOf(now)) || (pre.onDownOf(now) && succ.onRightOf(now)))
+            if ((pre.dirTo(now) == Direction.DOWN && succ.dirTo(now) == Direction.RIGHT)
+                    || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.DOWN))
                 type.add(Point.Type.BODY_R_D);
         }
         Pos last = body.get(body.size() - 1);
         Pos butLast = body.get(body.size() - 2);
-        if (last.onLeftOf(butLast) || last.onRightOf(butLast))
+        if (last.dirTo(butLast).ordinal() % 2 == 1)
             type.add(Point.Type.BODY_HOR);
-        if (last.onUpOf(butLast) || last.onDownOf(butLast))
+        else
             type.add(Point.Type.BODY_VER);
     }
     public boolean move(Direction order) {
         Pos head = body.get(0);
-        switch (orientation) {
-            case UP:
-                if (order == Direction.UP) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toLEFT());
-                    orientation = Direction.LEFT;
-                }
-                if (order == Direction.RIGHT) {
-                    body.add(0, head.toRIGHT());
-                    orientation = Direction.RIGHT;
-                }
-                if (order == Direction.DOWN) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                break;
-            case DOWN:
-                if (order == Direction.UP) {
-                    body.add(0, head.toDOWN());
-                    orientation = Direction.DOWN;
-                }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toLEFT());
-                    orientation = Direction.LEFT;
-                }
-                if (order == Direction.RIGHT) {
-                    body.add(0, head.toRIGHT());
-                    orientation = Direction.RIGHT;
-                }
-                if (order == Direction.DOWN) {
-                    body.add(0, head.toDOWN());
-                    orientation = Direction.DOWN;
-                }
-                break;
-            case LEFT:
-                if (order == Direction.UP) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toLEFT());
-                    orientation = Direction.LEFT;
-                }
-                if (order == Direction.RIGHT) {
-                    body.add(0, head.toLEFT());
-                    orientation = Direction.LEFT;
-                }
-                if (order == Direction.DOWN) {
-                    body.add(0, head.toDOWN());
-                    orientation = Direction.DOWN;
-
-                }
-                break;
-            case RIGHT:
-                if (order == Direction.UP) {
-                    body.add(0, head.toUP());
-                    orientation = Direction.UP;
-                }
-                if (order == Direction.LEFT) {
-                    body.add(0, head.toRIGHT());
-                    orientation = Direction.RIGHT;
-                }
-                if (order == Direction.RIGHT) {
-                    body.add(0, head.toRIGHT());
-                    orientation = Direction.RIGHT;
-                }
-                if (order == Direction.DOWN) {
-                    body.add(0, head.toDOWN());
-                    orientation = Direction.DOWN;
-
-                }
-                break;
+        if (order == Direction.NONE || order.ordinal() == (orientation.ordinal() + 2) % 4) {
+            body.add(0, head.to(orientation));
+        } else {
+            body.add(0, head.to(order));
+            orientation = order;
         }
-        body.remove(body.size() - 1);
-
+        Pos tail = body.get(body.size() - 1);
+        if (map.getPoint(body.get(0)).getType() == Point.Type.FOOD) {
+            if (map.isWeather()) {
+                if (body.size() <= 2) return false;
+                body.remove(body.size() - 1);
+                map.setPoint(tail, EMPTY);
+                tail = body.get(body.size() - 1);
+                body.remove(body.size() - 1);
+                map.setPoint(tail, EMPTY);
+            } else {
+                //Do Nothing
+            }
+        } else {
+            body.remove(body.size() - 1);
+            map.setPoint(tail, EMPTY);
+        }
         genType();
+
+        map.setPoint(body.get(0), new Point(color, type.get(0)));
+        map.setPoint(body.get(1), new Point(color, type.get(1)));
+        checkHead();
         return checkOut();
+    }
+    void checkHead() {
+
     }
     public boolean checkOut() {
         Pos head = body.get(0);

@@ -6,7 +6,8 @@ package com.example.stevennl.tastysnake.model;
 public class Pos implements Cloneable {
     private int x;
     private int y;
-
+    private static int dx[] = {-1, 0, 1, 0, 0};
+    private static int dy[] = {0, 1, 0, -1, 0};
     public Pos(int x, int y) {
         this.x = x;
         this.y = y;
@@ -16,29 +17,18 @@ public class Pos implements Cloneable {
     public Pos clone() {
         return new Pos(x, y);
     }
-    public Pos toUP() {
-        return new Pos(x - 1, y);
+    public boolean equals(Pos a) {
+        return x == a.getX() && y == a.getY();
     }
-    public Pos toRIGHT() {
-        return new Pos(x, y + 1);
+    public Pos to(Direction k) {
+        return new Pos(x + dx[k.ordinal()], y + dy[k.ordinal()]);
     }
-    public Pos toDOWN() {
-        return new Pos(x + 1, y);
-    }
-    public Pos toLEFT() {
-        return new Pos(x, y - 1);
-    }
-    public boolean onLeftOf(Pos a) {
-        return x == a.getX() && y == a.getY() - 1;
-    }
-    public boolean onRightOf(Pos a) {
-        return x == a.getX() && y == a.getY() + 1;
-    }
-    public boolean onUpOf(Pos a) {
-        return x == a.getX() - 1 && y == a.getY();
-    }
-    public boolean onDownOf(Pos a) {
-        return x == a.getX() + 1 && y == a.getY();
+    public Direction dirTo(Pos a) {
+        for (int i = 0; i < 4; i ++) {
+            if (a.to(Direction.values()[i]).equals(this))
+                return Direction.values()[i];
+        }
+        return Direction.NONE;
     }
     public void setX(int x) {
         this.x = x;
