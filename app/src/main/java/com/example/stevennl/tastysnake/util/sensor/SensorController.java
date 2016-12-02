@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.model.Direction;
 
 /**
@@ -31,12 +32,25 @@ public class SensorController {
     private float zValue = 0;
 
     private SensorManager sManager;
-    private Context context;
+    private static Context context;
+    private static SensorController instance;
 
-    public SensorController(Context context) {
+    // Needed: set context at first
+    public static SensorController getInstance() {
+        if (instance == null) {
+            instance = new SensorController();
+        }
+        return instance;
+    }
+
+    public static void setContext(Context _context) {
+        if (context != null) return;
+        context = _context;
+    }
+
+    private SensorController() {
         super();
-        this.context = context;
-        sManager = (SensorManager)this.context.getSystemService(Context.SENSOR_SERVICE);
+        sManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
         accelerometerListener = getListener();
     }
 
@@ -47,22 +61,6 @@ public class SensorController {
                 xValue = event.values[0];
                 yValue = event.values[1];
                 zValue = event.values[2];
-
-                if (Math.abs(yValue) < Math.abs(xValue)) {
-                    // left and right
-                    if (xValue > yValue) {
-                        direction = Direction.LEFT;
-                    } else {
-                        direction = Direction.RIGHT;
-                    }
-                } else {
-                    // up and down
-                    if (yValue < xValue) {
-                        direction = Direction.UP;
-                    } else {
-                        direction = Direction.DOWN;
-                    }
-                }
             }
 
             @Override
@@ -92,6 +90,22 @@ public class SensorController {
     }
 
     public Direction getDirection() {
+        direction = Direction.NONE;
+        if (Math.abs(yValue) < Math.abs(xValue)) {
+            // left and right
+            if ((xValue - Constants.GRAVITY_SENSITIVITY) > yValue) {
+                direction = Direction.LEFT;
+            } else if ((xValue + Constants.GRAVITY_SENSITIVITY) < yValue) {
+                direction = Direction.RIGHT;
+            }
+        } else {
+            // up and down
+            if ((yValue + Constants.GRAVITY_SENSITIVITY) < xValue) {
+                direction = Direction.UP;
+            } else if ((yValue - Constants.GRAVITY_SENSITIVITY) > xValue) {
+                direction = Direction.DOWN;
+            }
+        }
         return direction;
     }
 
