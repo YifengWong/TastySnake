@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 
 public class SensorTestActivity extends AppCompatActivity {
     private Handler sensorHandler;
-
     private Runnable sensorRunnable = new Runnable() {
         @Override
         public void run() {
@@ -27,17 +25,12 @@ public class SensorTestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_test);
+        textShow = (TextView) findViewById(R.id.sensor_test_txt);
 
-        initLayout();
-
-        sController = SensorController.getInstance(getApplicationContext());
-        sController.registerSensor();
+        sController = SensorController.getInstance(this);
+        sController.register();
         sensorHandler = new Handler();
         sensorHandler.post(sensorRunnable);
-    }
-
-    private void initLayout() {
-        textShow = (TextView) findViewById(R.id.text_show);
     }
 
     @Override

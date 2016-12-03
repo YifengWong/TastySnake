@@ -5,13 +5,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.model.Direction;
 
 /**
- * A class help to control accelerometer.
+ * A class help to control accelerometer. Implemented as a singleton.
  * Direction Sample:
  *
  *      Left    Right   Up      Down
@@ -22,16 +21,20 @@ import com.example.stevennl.tastysnake.model.Direction;
  * Author: CrazeWong
  */
 public class SensorController {
-    private SensorEventListener accelerometerListener;
-
-    private int sensorType = Sensor.TYPE_ACCELEROMETER;
-    private float xValue = 0;
-    private float yValue = 0;
-    private float zValue = 0;
-
-    private SensorManager sManager;
+    private static final String TAG = "SensorController";
     private static SensorController instance;
 
+    private SensorManager manager;
+    private SensorEventListener eventListener;
+
+    private float xAccVal = 0;
+    private float yAccVal = 0;
+
+    /**
+     * Return the only instance.
+     *
+     * @param context The context
+     */
     public static SensorController getInstance(Context context) {
         if (instance == null) {
             instance = new SensorController(context);
@@ -39,70 +42,65 @@ public class SensorController {
         return instance;
     }
 
+    /**
+     * Initialize.
+     *
+     * @param context The context
+     */
     private SensorController(Context context) {
-        super();
-        this.sManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-        this.accelerometerListener = getListener();
-    }
-
-    private SensorEventListener getListener() {
-        return new SensorEventListener() {
+        this.manager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+        this.eventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
-                xValue = event.values[0];
-                yValue = event.values[1];
-                zValue = event.values[2];
+                switch (event.sensor.getType()) {
+                    case Sensor.TYPE_ACCELEROMETER:
+                        xAccVal = event.values[0];
+                        yAccVal = event.values[1];
+                        break;
+                    default:
+                        break;
+                }
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // Nothing
+                // Do nothing
             }
         };
     }
 
-    public void registerSensor() {
-        sManager.registerListener(accelerometerListener,
-                sManager.getDefaultSensor(sensorType),SensorManager.SENSOR_DELAY_UI);
-    }
-
-    public void unregisterSensor() {
-        sManager.unregisterListener(accelerometerListener);
-    }
-
-    public float getxValue() {
-        return this.xValue;
-    }
-    public float getyValue() {
-        return this.yValue;
-    }
-    public float getzValue() {
-        return this.zValue;
-    }
-
+    /**
+     * Return current direction of inclination.
+     */
     public Direction getDirection() {
-        if (Math.abs(yValue) < Math.abs(xValue)) {
-            return getLRDirection();
+        if (Math.abs(yAccVal) < Math.abs(xAccVal)) {
+            if ((xAccVal - Constants.GRAVITY_SENSITIVITY) > yAccVal) {
+                return Direction.LEFT;
+            } else if ((xAccVal + Constants.GRAVITY_SENSITIVITY) < yAccVal) {
+                return Direction.RIGHT;
+            }
         } else {
-            return getUDDirection();
-        }
-    }
-    // 由于其实某一时刻只需要两个方向(如向左移动时，只有上下方向是有效的)，这两个方法供上层使用可以提高灵敏度。
-    public Direction getLRDirection() {
-        if ((xValue - Constants.GRAVITY_SENSITIVITY) > yValue) {
-            return Direction.LEFT;
-        } else if ((xValue + Constants.GRAVITY_SENSITIVITY) < yValue) {
-            return Direction.RIGHT;
-        }
-        return Direction.NONE;
-    }
-    public Direction getUDDirection() {
-        if ((yValue + Constants.GRAVITY_SENSITIVITY) < xValue) {
-            return Direction.UP;
-        } else if ((yValue - Constants.GRAVITY_SENSITIVITY) > xValue) {
-            return Direction.DOWN;
+            if ((yAccVal + Constants.GRAVITY_SENSITIVITY) < xAccVal) {
+                return Direction.UP;
+            } else if ((yAccVal - Constants.GRAVITY_SENSITIVITY) > xAccVal) {
+                return Direction.DOWN;
+            }
         }
         return Direction.NONE;
     }
 
+    /**
+     * Register sensor event listener.
+     */
+    public void register() {
+        manager.registerListener(eventListener, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    /**
+     * Unregister sensor event listener.
+     */
+    public void unregisterSensor() {
+        manager.unregisterListener(eventListener);
+    }
 }

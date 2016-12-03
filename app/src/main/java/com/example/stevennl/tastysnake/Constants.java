@@ -22,5 +22,5 @@ public class Constants {
     public static final int INTERVAL_DRAW = 30;  // milliseconds
     public static final int INTERVAL_MOVE = 150;  // milliseconds
 
-    public static final float GRAVITY_SENSITIVITY = 0.8f;   //lower(zero at least) -> more sensitive
+    public static final float GRAVITY_SENSITIVITY = 0.3f;  // lower(zero at least) -> more sensitive
 }
