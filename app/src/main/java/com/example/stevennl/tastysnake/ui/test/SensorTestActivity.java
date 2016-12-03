@@ -30,7 +30,7 @@ public class SensorTestActivity extends AppCompatActivity {
 
         initLayout();
 
-        sController = new SensorController(this);
+        sController = SensorController.getInstance(getApplicationContext());
         sController.registerSensor();
         sensorHandler = new Handler();
         sensorHandler.post(sensorRunnable);

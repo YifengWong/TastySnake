@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.Constants;
 import com.example.stevennl.tastysnake.model.Direction;
 
 /**
@@ -24,20 +25,24 @@ public class SensorController {
     private SensorEventListener accelerometerListener;
 
     private int sensorType = Sensor.TYPE_ACCELEROMETER;
-
-    private Direction direction = Direction.NONE;
     private float xValue = 0;
     private float yValue = 0;
     private float zValue = 0;
 
     private SensorManager sManager;
-    private Context context;
+    private static SensorController instance;
 
-    public SensorController(Context context) {
+    public static SensorController getInstance(Context context) {
+        if (instance == null) {
+            instance = new SensorController(context);
+        }
+        return instance;
+    }
+
+    private SensorController(Context context) {
         super();
-        this.context = context;
-        sManager = (SensorManager)this.context.getSystemService(Context.SENSOR_SERVICE);
-        accelerometerListener = getListener();
+        this.sManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+        this.accelerometerListener = getListener();
     }
 
     private SensorEventListener getListener() {
@@ -47,22 +52,6 @@ public class SensorController {
                 xValue = event.values[0];
                 yValue = event.values[1];
                 zValue = event.values[2];
-
-                if (Math.abs(yValue) < Math.abs(xValue)) {
-                    // left and right
-                    if (xValue > yValue) {
-                        direction = Direction.LEFT;
-                    } else {
-                        direction = Direction.RIGHT;
-                    }
-                } else {
-                    // up and down
-                    if (yValue < xValue) {
-                        direction = Direction.UP;
-                    } else {
-                        direction = Direction.DOWN;
-                    }
-                }
             }
 
             @Override
@@ -92,7 +81,28 @@ public class SensorController {
     }
 
     public Direction getDirection() {
-        return direction;
+        if (Math.abs(yValue) < Math.abs(xValue)) {
+            return getLRDirection();
+        } else {
+            return getUDDirection();
+        }
+    }
+    // 由于其实某一时刻只需要两个方向(如向左移动时，只有上下方向是有效的)，这两个方法供上层使用可以提高灵敏度。
+    public Direction getLRDirection() {
+        if ((xValue - Constants.GRAVITY_SENSITIVITY) > yValue) {
+            return Direction.LEFT;
+        } else if ((xValue + Constants.GRAVITY_SENSITIVITY) < yValue) {
+            return Direction.RIGHT;
+        }
+        return Direction.NONE;
+    }
+    public Direction getUDDirection() {
+        if ((yValue + Constants.GRAVITY_SENSITIVITY) < xValue) {
+            return Direction.UP;
+        } else if ((yValue - Constants.GRAVITY_SENSITIVITY) > xValue) {
+            return Direction.DOWN;
+        }
+        return Direction.NONE;
     }
 
 }
