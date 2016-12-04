@@ -57,14 +57,16 @@ public class Snake {
             bodies.add(0, head.to(order));
             direc = order;
         }
+        if (checkOut()==false) return false;
+
         Pos tail = bodies.get(bodies.size() - 1);
         Point.Type newHeadType = map.getPoint(bodies.get(0)).getType();
         if (newHeadType == Point.Type.FOOD_LENGTHEN) {
             // Do nothing
         } else if (newHeadType == Point.Type.FOOD_SHORTEN) {
-            if (bodies.size() <= 2) return false;
             bodies.remove(bodies.size() - 1);
             map.getPoint(tail).makeEmpty();
+            if (bodies.size() == 2) return true;
             tail = bodies.get(bodies.size() - 1);
             bodies.remove(bodies.size() - 1);
             map.getPoint(tail).makeEmpty();
@@ -75,7 +77,7 @@ public class Snake {
         genType();
         map.setPoint(bodies.get(0), new Point(color, types.get(0)));
         map.setPoint(bodies.get(1), new Point(color, types.get(1)));
-        return checkOut();
+        return true;
     }
 
     /**
@@ -135,11 +137,13 @@ public class Snake {
                     || (pre.dirTo(now) == Direction.RIGHT && succ.dirTo(now) == Direction.DOWN))
                 types.add(Point.Type.BODY_R_D);
         }
-        Pos last = bodies.get(bodies.size() - 1);
-        Pos butLast = bodies.get(bodies.size() - 2);
-        if (last.dirTo(butLast).ordinal() % 2 == 1)
-            types.add(Point.Type.BODY_HOR);
-        else
-            types.add(Point.Type.BODY_VER);
+        if (bodies.size() >= 2) {
+            Pos last = bodies.get(bodies.size() - 1);
+            Pos butLast = bodies.get(bodies.size() - 2);
+            if (last.dirTo(butLast).ordinal() % 2 == 1)
+                types.add(Point.Type.BODY_HOR);
+            else
+                types.add(Point.Type.BODY_VER);
+        }
     }
 }
