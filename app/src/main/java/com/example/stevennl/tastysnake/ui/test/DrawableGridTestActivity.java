@@ -67,7 +67,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                         finish();
                     }
                     Log.d(TAG, "run: " + dir);
-                    map.createFood(lengthen = !lengthen);
+                    map.createFood(lengthen = false);
                 }
             }
         }, 0, Config.INTERVAL_MOVE);
