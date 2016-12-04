@@ -15,6 +15,7 @@ import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 
 /**
  * Home page.
+ * Author: LCY
  */
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";

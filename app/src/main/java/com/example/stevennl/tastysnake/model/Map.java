@@ -7,6 +7,7 @@ import java.util.Random;
 
 /**
  * Game map.
+ * Author: WTY
  */
 public class Map {
     private Point[][] content;

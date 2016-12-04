@@ -25,5 +25,5 @@ public class Config {
     public static final int COLOR_EMPTY_POINT = Color.WHITE;
     public static final int COLOR_MAP_BG = Color.WHITE;
 
-    public static final float GRAVITY_SENSITIVITY = 0.3f;  // lower(zero at least) -> more sensitive
+    public static final float GRAVITY_SENSITIVITY = 0.1f;  // lower(zero at least) -> more sensitive
 }

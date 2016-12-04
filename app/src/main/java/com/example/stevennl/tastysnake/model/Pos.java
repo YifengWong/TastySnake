@@ -2,6 +2,7 @@ package com.example.stevennl.tastysnake.model;
 
 /**
  * Coordinate(position) in 2D plane.
+ * Author: WTY
  */
 public class Pos implements Cloneable {
     private int x;

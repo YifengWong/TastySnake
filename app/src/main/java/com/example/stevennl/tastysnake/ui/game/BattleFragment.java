@@ -23,6 +23,9 @@ import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * Game battle page.
+ */
 public class BattleFragment extends Fragment {
     private static final String TAG = "BattleFragment";
 

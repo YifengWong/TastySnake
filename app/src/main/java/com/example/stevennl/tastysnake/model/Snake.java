@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Game snake.
+ * Author: WTY
  */
 public class Snake {
     private ArrayList<Pos> bodies = new ArrayList<>();
@@ -57,7 +58,7 @@ public class Snake {
             bodies.add(0, head.to(order));
             direc = order;
         }
-        if (checkOut()==false) return false;
+        if (!checkOut()) return false;
 
         Pos tail = bodies.get(bodies.size() - 1);
         Point.Type newHeadType = map.getPoint(bodies.get(0)).getType();

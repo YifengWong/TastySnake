@@ -8,6 +8,7 @@ import com.example.stevennl.tastysnake.base.SingleFragmentActivity;
 
 /**
  * Activity controlling the game.
+ * Author: LCY
  */
 public class GameActivity extends SingleFragmentActivity {
     private static final String TAG = "GameActivity";
