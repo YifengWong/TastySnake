@@ -24,6 +24,7 @@ import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 
 import java.lang.ref.WeakReference;
@@ -45,6 +46,7 @@ public class ConnectFragment extends Fragment {
     private SafeHandler handler;
     private BluetoothManager manager;
     private OnStateChangedListener stateListener;
+    private OnErrorListener errorListener;
 
     private ArrayList<BluetoothDevice> devices;
 
@@ -64,7 +66,7 @@ public class ConnectFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initStateListener();
+        initListeners();
     }
 
     @Override
@@ -91,10 +93,7 @@ public class ConnectFragment extends Fragment {
         manager.cancelDiscovery();
     }
 
-    /**
-     * Initialize the {@link OnStateChangedListener}
-     */
-    private void initStateListener() {
+    private void initListeners() {
         stateListener = new OnStateChangedListener() {
             @Override
             public void onClientSocketEstablished() {
@@ -114,7 +113,8 @@ public class ConnectFragment extends Fragment {
                     act.replaceFragment(new BattleFragment(), true);
                 }
             }
-
+        };
+        errorListener = new OnErrorListener() {
             @Override
             public void onError(int code, Exception e) {
                 Log.e(TAG, "Error code: " + code, e);
@@ -123,20 +123,10 @@ public class ConnectFragment extends Fragment {
         };
     }
 
-    /**
-     * Initialize title TextView.
-     *
-     * @param v The root view
-     */
     private void initTitleTxt(View v) {
         titleTxt = (TextView) v.findViewById(R.id.connect_titleTxt);
     }
 
-    /**
-     * Initialize device list.
-     *
-     * @param v The root view
-     */
     private void initListView(View v) {
         ListView listView = (ListView) v.findViewById(R.id.connect_device_listView);
         adapter = new ListViewAdapter(act, devices);
@@ -144,19 +134,16 @@ public class ConnectFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                cancelDiscover();
+                manager.stopServer();
                 BluetoothDevice device = devices.get(position);
                 titleTxt.setText(getString(R.string.connecting));
-                manager.connectDeviceAsync(device, stateListener);
+                manager.connectDeviceAsync(device, stateListener, errorListener);
                 refreshLayout.setRefreshing(true);
             }
         });
     }
 
-    /**
-     * Initialize {@link SwipeRefreshLayout}
-     *
-     * @param v The root view
-     */
     private void initRefreshLayout(View v) {
         refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.connect_swipe_layout);
         refreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -246,17 +233,26 @@ public class ConnectFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                manager.cancelDiscovery();
-                refreshLayout.setRefreshing(false);
-                Log.d(TAG, "Discover finished.");
-                if (devices.isEmpty()) {
-                    Log.d(TAG, "No device discovered.");
-                    if (isAdded()) {
-                        CommonUtil.showToast(act, getString(R.string.device_discover_empty));
-                    }
-                }
+                cancelDiscover();
             }
         }, Config.BLUETOOTH_DISCOVER_TIME);
+    }
+
+    /**
+     * Cancel bluetooth discovery process.
+     */
+    private void cancelDiscover() {
+        if (manager.isDiscovering()) {
+            manager.cancelDiscovery();
+            refreshLayout.setRefreshing(false);
+            Log.d(TAG, "Discover finished.");
+            if (devices.isEmpty()) {
+                Log.d(TAG, "No device discovered.");
+                if (isAdded()) {
+                    CommonUtil.showToast(act, getString(R.string.device_discover_empty));
+                }
+            }
+        }
     }
 
     /**
@@ -267,8 +263,10 @@ public class ConnectFragment extends Fragment {
             @Override
             public void onDiscover(BluetoothDevice device) {
                 Log.d(TAG, "Device discovered: " + device.getName() + " " + device.getAddress());
-                devices.add(device);
-                adapter.notifyDataSetChanged();
+                if (device.getName() != null) {
+                    devices.add(device);
+                    adapter.notifyDataSetChanged();
+                }
             }
         });
     }
@@ -294,21 +292,19 @@ public class ConnectFragment extends Fragment {
      * @param code The error code
      */
     private void errHandle(int code) {
-        handler.obtainMessage(SafeHandler.MSG_ERR).sendToTarget();
         switch (code) {
-            case OnStateChangedListener.ERR_SOCKET_CREATE:
+            case OnErrorListener.ERR_SERVER_SOCKET_ACCEPT:
                 break;
-            case OnStateChangedListener.ERR_SOCKET_CLOSE:
+            case OnErrorListener.ERR_CLIENT_SOCKET_CONNECT:
+                handler.obtainMessage(SafeHandler.MSG_ERR,
+                        getString(R.string.device_conn_fail)).sendToTarget();
                 break;
-            case OnStateChangedListener.ERR_SERVER_SOCKET_ACCEPT:
-                break;
-            case OnStateChangedListener.ERR_CLIENT_SOCKET_CONNECT:
-                break;
-            case OnStateChangedListener.ERR_STREAM_CREATE:
-                break;
-            case OnStateChangedListener.ERR_STREAM_READ:
-                break;
-            case OnStateChangedListener.ERR_STREAM_WRITE:
+            case OnErrorListener.ERR_SOCKET_CREATE:
+            case OnErrorListener.ERR_SOCKET_CLOSE:
+            case OnErrorListener.ERR_STREAM_CREATE:
+            case OnErrorListener.ERR_STREAM_READ:
+            case OnErrorListener.ERR_STREAM_WRITE:
+                handler.obtainMessage(SafeHandler.MSG_ERR).sendToTarget();
                 break;
             default:
                 break;
@@ -319,7 +315,7 @@ public class ConnectFragment extends Fragment {
      * Run a bluetooth server.
      */
     private void runServer() {
-        manager.runServerAsync(stateListener);
+        manager.runServerAsync(stateListener, errorListener);
         Log.d(TAG, "Bluetooth server thread starts working...");
     }
 
@@ -341,6 +337,10 @@ public class ConnectFragment extends Fragment {
             switch (msg.what) {
                 case MSG_ERR:
                     if (f.isAdded()) {
+                        Object info = msg.obj;
+                        if (info != null) {
+                            CommonUtil.showToast(f.getActivity(), (String)info);
+                        }
                         f.getRefreshLayout().setRefreshing(false);
                         f.getTitleTxt().setText(f.getString(R.string.select_device));
                     }

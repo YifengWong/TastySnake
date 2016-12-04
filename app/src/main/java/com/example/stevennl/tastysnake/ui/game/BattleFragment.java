@@ -3,9 +3,11 @@ package com.example.stevennl.tastysnake.ui.game;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 
 import java.lang.ref.WeakReference;
 
@@ -23,8 +26,9 @@ public class BattleFragment extends Fragment {
 
     private GameActivity act;
 
-    private Handler handler;
+    private SafeHandler handler;
     private BluetoothManager manager;
+    private SendThread sendThread;
 
     private TextView infoTxt;
 
@@ -32,29 +36,15 @@ public class BattleFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         act = (GameActivity)context;
-        handler = new SafeHandler(this);
-        manager = BluetoothManager.getInstance();
-        initDataListener();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        byte[] data = new byte[Config.BLUETOOTH_TEST_DATA_SIZE];
-                        for (int i = 0; i < Config.BLUETOOTH_TEST_DATA_SIZE; ++i) {
-                            data[i] = 'a';
-                        }
-                        manager.sendToRemote(data);
-                    }
-                }).start();
-            }
-        }, 1000);
+        handler = new SafeHandler(this);
+        initManager();
+        initThread();
+        initDataListener();
     }
 
     @Override
@@ -71,29 +61,31 @@ public class BattleFragment extends Fragment {
         manager.stopConnect();
     }
 
-    /**
-     * Set an {@link OnDataReceiveListener} to receive data from remote device.
-     * Notice that onReceive() is called in a sub-thread.
-     */
-    private void initDataListener() {
-        manager.setDataListener(new OnDataReceiveListener() {
+    private void initManager() {
+        manager = BluetoothManager.getInstance();
+        manager.setErrorListener(new OnErrorListener() {
             @Override
-            public void onReceive(int bytesCount, byte[] data) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(SafeHandler.EXTRA_DATA_CNT, bytesCount);
-                bundle.putByteArray(SafeHandler.EXTRA_DATA_CONTENT, data);
-                Message msg = handler.obtainMessage(SafeHandler.MSG_NEW_DATA);
-                msg.setData(bundle);
-                msg.sendToTarget();
+            public void onError(int code, Exception e) {
+                Log.e(TAG, "Error code: " + code, e);
+                errHandle(code);
             }
         });
     }
 
-    /**
-     * Initialize info TextView.
-     *
-     * @param v The root view
-     */
+    private void initThread() {
+        sendThread = new SendThread();
+        sendThread.start();
+    }
+
+    private void initDataListener() {
+        manager.setDataListener(new OnDataReceiveListener() {
+            @Override
+            public void onReceive(int bytesCount, byte[] data) {
+                handler.obtainMessage(SafeHandler.MSG_RECV_DATA, bytesCount, 0).sendToTarget();
+            }
+        });
+    }
+
     private void initInfoTxt(View v) {
         infoTxt = (TextView) v.findViewById(R.id.battle_infoTxt);
     }
@@ -107,12 +99,9 @@ public class BattleFragment extends Fragment {
 
     /**
      * A safe handler that circumvents memory leaks.
-     * Author: LCY
      */
     private static class SafeHandler extends Handler {
-        private static final int MSG_NEW_DATA = 1;
-        private static final String EXTRA_DATA_CNT = "bytesCount";
-        private static final String EXTRA_DATA_CONTENT = "data";
+        private static final int MSG_RECV_DATA = 1;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -123,16 +112,82 @@ public class BattleFragment extends Fragment {
         public void handleMessage(Message msg) {
             BattleFragment f = fragment.get();
             switch (msg.what) {
-                case MSG_NEW_DATA:
+                case MSG_RECV_DATA:
                     if (f.isAdded()) {
-                        Bundle bundle = msg.getData();
-                        int bytesCnt = bundle.getInt(EXTRA_DATA_CNT);
-                        byte[] data = bundle.getByteArray(EXTRA_DATA_CONTENT);
-                        f.getInfoTxt().append("Receive " + bytesCnt + "\n");
+                        f.getInfoTxt().append("Receive " + msg.arg1 + "\n");
                     }
                     break;
                 default:
                     break;
+            }
+        }
+    }
+
+    /**
+     * Handle errors.
+     * Notice that this method is called in a sub-thread.
+     *
+     * @param code The error code
+     */
+    private void errHandle(int code) {
+        switch (code) {
+            case OnErrorListener.ERR_SOCKET_CLOSE:
+            case OnErrorListener.ERR_STREAM_READ:
+            case OnErrorListener.ERR_STREAM_WRITE:
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Thread to send data to remote device.
+     */
+    private static class SendThread extends Thread {
+        private SafeSendHandler sendHandler;
+
+        @Override
+        public void run() {
+            Looper.prepare();
+            sendHandler = new SafeSendHandler();
+            Looper.loop();
+            Log.d(TAG, "SendThread run().");
+            while (true);
+        }
+
+        /**
+         * Send data to remote device.
+         */
+        private void send() {
+            byte[] data = new byte[Config.BLUETOOTH_TEST_DATA_SIZE];
+            for (int i = 0; i < Config.BLUETOOTH_TEST_DATA_SIZE; ++i) {
+                data[i] = 'a';
+            }
+            sendHandler.obtainMessage(SafeSendHandler.MSG_SEND_DATA, data).sendToTarget();
+        }
+
+        /**
+         * A safe sendHandler that circumvents memory leaks.
+         */
+        private static class SafeSendHandler extends Handler {
+            private static final int MSG_SEND_DATA = 1;
+            private BluetoothManager manager_;
+
+            private SafeSendHandler() {
+                manager_ = BluetoothManager.getInstance();
+            }
+
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case MSG_SEND_DATA:
+                        Log.d(TAG, "Receive MSG_SEND_DATA.");
+                        byte[] data = (byte[]) msg.obj;
+                        manager_.sendToRemote(data);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

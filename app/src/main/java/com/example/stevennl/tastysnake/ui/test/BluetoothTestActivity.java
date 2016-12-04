@@ -17,6 +17,7 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.CommonUtil;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
@@ -55,7 +56,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
         public void onDataChannelEstablished() {
             handler.obtainMessage(SafeHandler.MSG_APPEND_DATA_CHANNEL_OK).sendToTarget();
         }
-
+    };
+    private OnErrorListener errorListener = new OnErrorListener() {
         @Override
         public void onError(int code, Exception e) {
             Log.e(TAG, "Error code: " + code);
@@ -113,7 +115,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                         devLayout.setVisibility(View.GONE);
                         restartBtn.setVisibility(View.GONE);
                         appendInfo("\nConnecting \"" + devName + "\" ...");
-                        manager.connectDeviceAsync(device, stateListener);
+                        manager.connectDeviceAsync(device, stateListener, errorListener);
                         return;
                     }
                 }
@@ -184,7 +186,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                     appendInfo("Your device can be discovered in 30 seconds.");
                     // Start bluetooth server
                     appendInfo("\nBluetooth server thread starts working...");
-                    manager.runServerAsync(stateListener);
+                    manager.runServerAsync(stateListener, errorListener);
                 } else if (resultCode == RESULT_CANCELED) {
                     appendInfo("Your device cannot be discovered.");
                 }

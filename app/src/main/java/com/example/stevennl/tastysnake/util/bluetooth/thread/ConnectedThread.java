@@ -3,6 +3,7 @@ package com.example.stevennl.tastysnake.util.bluetooth.thread;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 
@@ -20,13 +21,21 @@ public class ConnectedThread extends Thread {
     private final InputStream inStream;
     private final OutputStream outStream;
     private final OnStateChangedListener stateListener;
+    private OnErrorListener errorListener;
     private OnDataReceiveListener dataListener;
 
     /**
-     * Set dataListener field.
+     * Set an {@link OnDataReceiveListener}.
      */
     public void setDataListener(OnDataReceiveListener dataListener) {
         this.dataListener = dataListener;
+    }
+
+    /**
+     * Set an {@link OnErrorListener}.
+     */
+    public void setErrorListener(OnErrorListener errorListener) {
+        this.errorListener = errorListener;
     }
 
     /**
@@ -34,9 +43,12 @@ public class ConnectedThread extends Thread {
      *
      * @param socket The socket of the connection
      */
-    public ConnectedThread(BluetoothSocket socket, OnStateChangedListener stateListener) {
+    public ConnectedThread(BluetoothSocket socket,
+                           OnStateChangedListener stateListener,
+                           OnErrorListener errorListener) {
         this.socket = socket;
         this.stateListener = stateListener;
+        this.errorListener = errorListener;
         this.dataListener = null;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -45,7 +57,7 @@ public class ConnectedThread extends Thread {
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_STREAM_CREATE, e);
+            errorListener.onError(OnErrorListener.ERR_STREAM_CREATE, e);
         }
         inStream = tmpIn;
         outStream = tmpOut;
@@ -70,7 +82,7 @@ public class ConnectedThread extends Thread {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error:", e);
-                stateListener.onError(OnStateChangedListener.ERR_STREAM_READ, e);
+                errorListener.onError(OnErrorListener.ERR_STREAM_READ, e);
                 break;
             }
         }
@@ -88,7 +100,7 @@ public class ConnectedThread extends Thread {
             outStream.write(data);
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_STREAM_WRITE, e);
+            errorListener.onError(OnErrorListener.ERR_STREAM_WRITE, e);
         }
     }
 
@@ -100,7 +112,7 @@ public class ConnectedThread extends Thread {
             socket.close();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, e);
+            errorListener.onError(OnErrorListener.ERR_SOCKET_CLOSE, e);
         }
     }
 }

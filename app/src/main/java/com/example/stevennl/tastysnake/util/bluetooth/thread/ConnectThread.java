@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import com.example.stevennl.tastysnake.Config;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnSocketEstablishedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 
@@ -20,6 +21,7 @@ public class ConnectThread extends Thread {
     private final BluetoothSocket socket;
     private final OnSocketEstablishedListener onSocketEstablishedListener;
     private final OnStateChangedListener stateListener;
+    private final OnErrorListener errorListener;
 
     /**
      * Initialize the thread.
@@ -28,16 +30,18 @@ public class ConnectThread extends Thread {
      */
     public ConnectThread(BluetoothDevice device,
                          OnSocketEstablishedListener onSocketEstablishedListener,
-                         OnStateChangedListener stateListener) {
+                         OnStateChangedListener stateListener,
+                         OnErrorListener errorListener) {
         this.onSocketEstablishedListener = onSocketEstablishedListener;
         this.stateListener = stateListener;
+        this.errorListener = errorListener;
         BluetoothSocket tmp = null;
         try {
             tmp = device.createRfcommSocketToServiceRecord(
                     UUID.fromString(Config.BLUETOOTH_UUID_STR));
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CREATE, e);
+            errorListener.onError(OnErrorListener.ERR_SOCKET_CREATE, e);
         }
         socket = tmp;
     }
@@ -57,16 +61,16 @@ public class ConnectThread extends Thread {
             socket.connect();
         } catch (IOException connectException) {
             Log.e(TAG, "Error:", connectException);
-            stateListener.onError(OnStateChangedListener.ERR_CLIENT_SOCKET_CONNECT, connectException);
+            errorListener.onError(OnErrorListener.ERR_CLIENT_SOCKET_CONNECT, connectException);
             try {
                 socket.close();
             } catch (IOException closeException) {
                 Log.e(TAG, "Error:", closeException);
-                stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, closeException);
+                errorListener.onError(OnErrorListener.ERR_SOCKET_CLOSE, closeException);
             }
             return;
         }
-        onSocketEstablishedListener.onSocketEstablished(socket, stateListener);
+        onSocketEstablishedListener.onSocketEstablished(socket, stateListener, errorListener);
         Log.d(TAG, "Thread ended.");
     }
 
@@ -78,7 +82,7 @@ public class ConnectThread extends Thread {
             socket.close();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, e);
+            errorListener.onError(OnErrorListener.ERR_SOCKET_CLOSE, e);
         }
     }
 }
