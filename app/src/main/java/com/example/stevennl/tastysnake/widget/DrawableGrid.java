@@ -1,9 +1,7 @@
 package com.example.stevennl.tastysnake.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,8 +9,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.example.stevennl.tastysnake.Constants;
-import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Point;
 
@@ -150,7 +147,7 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
             while (drawing) {
                 try {
                     draw();
-                    Thread.sleep(Constants.INTERVAL_DRAW);
+                    Thread.sleep(Config.INTERVAL_DRAW);
                 } catch (Exception e) {
                     Log.e(TAG, "Error: ", e);
                 }

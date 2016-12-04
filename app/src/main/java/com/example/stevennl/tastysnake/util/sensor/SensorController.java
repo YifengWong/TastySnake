@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.model.Direction;
 
 /**
@@ -74,15 +74,15 @@ public class SensorController {
      */
     public Direction getDirection() {
         if (Math.abs(yAccVal) < Math.abs(xAccVal)) {
-            if ((xAccVal - Constants.GRAVITY_SENSITIVITY) > yAccVal) {
+            if ((xAccVal - Config.GRAVITY_SENSITIVITY) > yAccVal) {
                 return Direction.LEFT;
-            } else if ((xAccVal + Constants.GRAVITY_SENSITIVITY) < yAccVal) {
+            } else if ((xAccVal + Config.GRAVITY_SENSITIVITY) < yAccVal) {
                 return Direction.RIGHT;
             }
         } else {
-            if ((yAccVal + Constants.GRAVITY_SENSITIVITY) < xAccVal) {
+            if ((yAccVal + Config.GRAVITY_SENSITIVITY) < xAccVal) {
                 return Direction.UP;
-            } else if ((yAccVal - Constants.GRAVITY_SENSITIVITY) > xAccVal) {
+            } else if ((yAccVal - Config.GRAVITY_SENSITIVITY) > xAccVal) {
                 return Direction.DOWN;
             }
         }

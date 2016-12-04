@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnSocketEstablishedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 
@@ -35,8 +35,8 @@ public class AcceptThread extends Thread {
         BluetoothServerSocket tmp = null;
         try {
             tmp = adapter.listenUsingRfcommWithServiceRecord(
-                    Constants.BLUETOOTH_SERVICE_NAME,
-                    UUID.fromString(Constants.BLUETOOTH_UUID_STR));
+                    Config.BLUETOOTH_SERVICE_NAME,
+                    UUID.fromString(Config.BLUETOOTH_UUID_STR));
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
             stateListener.onError(OnStateChangedListener.ERR_SOCKET_CREATE, e);

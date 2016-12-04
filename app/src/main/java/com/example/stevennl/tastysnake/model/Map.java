@@ -1,6 +1,7 @@
 package com.example.stevennl.tastysnake.model;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
+import com.example.stevennl.tastysnake.util.CommonUtil;
 
 import java.util.Random;
 
@@ -31,14 +32,12 @@ public class Map {
      * @param lengthen True if the food will lengthen the snake who eats it, false shorten
      */
     public void createFood(boolean lengthen) {
-        int row = getRowCount(), col = getColCount();
-        int x, y;
-        Random rand = new Random();
+        int x, y, row = getRowCount(), col = getColCount();
         do {
-            x = rand.nextInt(row);
-            y = rand.nextInt(col);
+            x = CommonUtil.randInt(row);
+            y = CommonUtil.randInt(col);
         } while (content[x][y].getType() != Point.Type.BLANK);
-        content[x][y].setColor(lengthen ? Constants.COLOR_FOOD_LENGTHEN : Constants.COLOR_FOOD_SHORTEN);
+        content[x][y].setColor(lengthen ? Config.COLOR_FOOD_LENGTHEN : Config.COLOR_FOOD_SHORTEN);
         content[x][y].setType(lengthen ? Point.Type.FOOD_LENGTHEN : Point.Type.FOOD_SHORTEN);
     }
 

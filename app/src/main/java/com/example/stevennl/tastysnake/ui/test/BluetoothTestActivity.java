@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.CommonUtil;
@@ -270,7 +270,7 @@ public class BluetoothTestActivity extends AppCompatActivity {
                 msg.sendToTarget();
             }
         });
-        appendInfo("\nSending data of " + Constants.BLUETOOTH_TEST_DATA_SIZE + " bytes to remote device...");
+        appendInfo("\nSending data of " + Config.BLUETOOTH_TEST_DATA_SIZE + " bytes to remote device...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -288,8 +288,8 @@ public class BluetoothTestActivity extends AppCompatActivity {
     }
 
     private byte[] generateData() {
-        byte[] data = new byte[Constants.BLUETOOTH_TEST_DATA_SIZE];
-        for (int i = 0; i < Constants.BLUETOOTH_TEST_DATA_SIZE; ++i) {
+        byte[] data = new byte[Config.BLUETOOTH_TEST_DATA_SIZE];
+        for (int i = 0; i < Config.BLUETOOTH_TEST_DATA_SIZE; ++i) {
             data[i] = 'a';
         }
         return data;

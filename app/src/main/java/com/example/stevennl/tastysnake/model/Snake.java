@@ -1,6 +1,6 @@
 package com.example.stevennl.tastysnake.model;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 
 import java.util.ArrayList;
 
@@ -19,13 +19,13 @@ public class Snake {
     /**
      * Initialize.
      *
-     * @param type The types of the snake
+     * @param type The type of the snake
      * @param map The game map
      */
     public Snake(int type, Map map) {
         switch (type) {
             case 0:
-                color = Constants.COLOR_SNAKE_PLAYER;
+                color = Config.COLOR_SNAKE_SERVER;
                 direc = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
                     bodies.add(new Pos(0, i));

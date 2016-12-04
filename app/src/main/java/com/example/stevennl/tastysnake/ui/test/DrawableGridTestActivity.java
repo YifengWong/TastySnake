@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
@@ -31,11 +31,11 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawable_grid_test);
         sensorCtrl = SensorController.getInstance(this);
-        map = new Map(Constants.MAP_ROW, Constants.MAP_COL);
+        map = new Map(Config.MAP_ROW, Config.MAP_COL);
         snake = new Snake(0, map);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
-        grid.setBgColor(Constants.COLOR_MAP_BG);
+        grid.setBgColor(Config.COLOR_MAP_BG);
 //        for (int i = 0; i < Point.Type.values().length; ++i) {
 //            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
 //            map.getPoint(i, i).setType(Point.Type.values()[i]);
@@ -70,7 +70,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                     map.createFood(lengthen = !lengthen);
                 }
             }
-        }, 0, Constants.INTERVAL_MOVE);
+        }, 0, Config.INTERVAL_MOVE);
     }
 
     private void stopTimer() {

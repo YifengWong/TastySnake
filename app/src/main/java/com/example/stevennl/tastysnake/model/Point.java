@@ -1,6 +1,6 @@
 package com.example.stevennl.tastysnake.model;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 
 /**
  * Point on the game map.
@@ -26,7 +26,7 @@ public class Point {
     }
 
     public Point() {
-        this(Constants.COLOR_EMPTY_POINT, Type.BLANK);
+        this(Config.COLOR_EMPTY_POINT, Type.BLANK);
     }
 
     public Point(int color, Type type) {
@@ -35,7 +35,7 @@ public class Point {
     }
 
     public void makeEmpty() {
-        color = Constants.COLOR_EMPTY_POINT;
+        color = Config.COLOR_EMPTY_POINT;
         type = Type.BLANK;
     }
 

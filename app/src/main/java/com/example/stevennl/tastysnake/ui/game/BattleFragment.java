@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.stevennl.tastysnake.Constants;
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
@@ -46,8 +46,8 @@ public class BattleFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        byte[] data = new byte[Constants.BLUETOOTH_TEST_DATA_SIZE];
-                        for (int i = 0; i < Constants.BLUETOOTH_TEST_DATA_SIZE; ++i) {
+                        byte[] data = new byte[Config.BLUETOOTH_TEST_DATA_SIZE];
+                        for (int i = 0; i < Config.BLUETOOTH_TEST_DATA_SIZE; ++i) {
                             data[i] = 'a';
                         }
                         manager.sendToRemote(data);
