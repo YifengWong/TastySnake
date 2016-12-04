@@ -11,10 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
@@ -52,6 +54,7 @@ public class BattleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_battle, container, false);
         initInfoTxt(v);
+        initTestBtn(v);
         return v;
     }
 
@@ -81,6 +84,7 @@ public class BattleFragment extends Fragment {
         manager.setDataListener(new OnDataReceiveListener() {
             @Override
             public void onReceive(int bytesCount, byte[] data) {
+                Log.d(TAG, "Receive " + bytesCount + " bytes.");
                 handler.obtainMessage(SafeHandler.MSG_RECV_DATA, bytesCount, 0).sendToTarget();
             }
         });
@@ -88,6 +92,16 @@ public class BattleFragment extends Fragment {
 
     private void initInfoTxt(View v) {
         infoTxt = (TextView) v.findViewById(R.id.battle_infoTxt);
+    }
+
+    private void initTestBtn(View v) {
+        Button testBtn = (Button) v.findViewById(R.id.battle_testBtn);
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendThread.send();
+            }
+        });
     }
 
     /**
@@ -98,10 +112,31 @@ public class BattleFragment extends Fragment {
     }
 
     /**
+     * Handle errors.
+     * Notice that this method is called in a sub-thread.
+     *
+     * @param code The error code
+     */
+    private void errHandle(int code) {
+        if (!isAdded()) return;
+        switch (code) {
+            case OnErrorListener.ERR_SOCKET_CLOSE:
+            case OnErrorListener.ERR_STREAM_READ:
+            case OnErrorListener.ERR_STREAM_WRITE:
+                handler.obtainMessage(SafeHandler.MSG_ERR, getString(R.string.disconnect))
+                        .sendToTarget();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * A safe handler that circumvents memory leaks.
      */
     private static class SafeHandler extends Handler {
         private static final int MSG_RECV_DATA = 1;
+        private static final int MSG_ERR = 2;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -117,26 +152,14 @@ public class BattleFragment extends Fragment {
                         f.getInfoTxt().append("Receive " + msg.arg1 + "\n");
                     }
                     break;
+                case MSG_ERR:
+                    if (f.isAdded()) {
+                        CommonUtil.showToast(f.getActivity(), (String)msg.obj);
+                    }
+                    break;
                 default:
                     break;
             }
-        }
-    }
-
-    /**
-     * Handle errors.
-     * Notice that this method is called in a sub-thread.
-     *
-     * @param code The error code
-     */
-    private void errHandle(int code) {
-        switch (code) {
-            case OnErrorListener.ERR_SOCKET_CLOSE:
-            case OnErrorListener.ERR_STREAM_READ:
-            case OnErrorListener.ERR_STREAM_WRITE:
-                break;
-            default:
-                break;
         }
     }
 
@@ -151,8 +174,6 @@ public class BattleFragment extends Fragment {
             Looper.prepare();
             sendHandler = new SafeSendHandler();
             Looper.loop();
-            Log.d(TAG, "SendThread run().");
-            while (true);
         }
 
         /**
@@ -167,7 +188,7 @@ public class BattleFragment extends Fragment {
         }
 
         /**
-         * A safe sendHandler that circumvents memory leaks.
+         * A safe handler that circumvents memory leaks.
          */
         private static class SafeSendHandler extends Handler {
             private static final int MSG_SEND_DATA = 1;

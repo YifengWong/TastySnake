@@ -292,6 +292,7 @@ public class ConnectFragment extends Fragment {
      * @param code The error code
      */
     private void errHandle(int code) {
+        if (!isAdded()) return;
         switch (code) {
             case OnErrorListener.ERR_SERVER_SOCKET_ACCEPT:
                 break;
