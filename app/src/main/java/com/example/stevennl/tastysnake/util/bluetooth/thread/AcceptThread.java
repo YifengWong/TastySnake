@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import com.example.stevennl.tastysnake.Config;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnSocketEstablishedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 
@@ -21,6 +22,7 @@ public class AcceptThread extends Thread {
     private final BluetoothServerSocket serverSocket;
     private final OnSocketEstablishedListener onSocketEstablishedListener;
     private final OnStateChangedListener stateListener;
+    private final OnErrorListener errorListener;
 
     /**
      * Initialize the thread.
@@ -29,9 +31,11 @@ public class AcceptThread extends Thread {
      */
     public AcceptThread(BluetoothAdapter adapter,
                         OnSocketEstablishedListener onSocketEstablishedListener,
-                        OnStateChangedListener stateListener) {
+                        OnStateChangedListener stateListener,
+                        OnErrorListener errorListener) {
         this.onSocketEstablishedListener = onSocketEstablishedListener;
         this.stateListener = stateListener;
+        this.errorListener = errorListener;
         BluetoothServerSocket tmp = null;
         try {
             tmp = adapter.listenUsingRfcommWithServiceRecord(
@@ -39,7 +43,7 @@ public class AcceptThread extends Thread {
                     UUID.fromString(Config.BLUETOOTH_UUID_STR));
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CREATE, e);
+            errorListener.onError(OnErrorListener.ERR_SOCKET_CREATE, e);
         }
         serverSocket = tmp;
     }
@@ -59,18 +63,18 @@ public class AcceptThread extends Thread {
                 socket = serverSocket.accept();
             } catch (IOException e) {
                 Log.e(TAG, "Error:", e);
-                stateListener.onError(OnStateChangedListener.ERR_SERVER_SOCKET_ACCEPT, e);
+                errorListener.onError(OnErrorListener.ERR_SERVER_SOCKET_ACCEPT, e);
                 break;
             }
             try {
                 if (socket != null) {
-                    onSocketEstablishedListener.onSocketEstablished(socket, stateListener);
+                    onSocketEstablishedListener.onSocketEstablished(socket, stateListener, errorListener);
                     serverSocket.close();
                     break;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error:", e);
-                stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, e);
+                errorListener.onError(OnErrorListener.ERR_SOCKET_CLOSE, e);
                 break;
             }
         }
@@ -85,7 +89,7 @@ public class AcceptThread extends Thread {
             serverSocket.close();
         } catch (IOException e) {
             Log.e(TAG, "Error:", e);
-            stateListener.onError(OnStateChangedListener.ERR_SOCKET_CLOSE, e);
+            errorListener.onError(OnErrorListener.ERR_SOCKET_CLOSE, e);
         }
     }
 }

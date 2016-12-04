@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
+import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnSocketEstablishedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
@@ -30,7 +31,7 @@ public class BluetoothManager {
 
     private BluetoothAdapter bluetoothAdapter;
 
-    private BroadcastReceiver discoveryReceiver;
+    private BroadcastReceiver discoverRecvr;
 
     private AcceptThread acceptThread;
     private ConnectThread connectThread;
@@ -100,7 +101,7 @@ public class BluetoothManager {
     }
 
     /**
-     * Return true if bluetooth is discovering.
+     * Return true if bluetooth is discovering, false otherwise.
      */
     public boolean isDiscovering() {
         return bluetoothAdapter.isDiscovering();
@@ -113,8 +114,8 @@ public class BluetoothManager {
      * @param listener Called when a device has been found
     */
     public void registerDiscoveryReceiver(Context context, final OnDiscoverListener listener) {
-        if (discoveryReceiver == null) {
-            discoveryReceiver = new BroadcastReceiver() {
+        if (discoverRecvr == null) {
+            discoverRecvr = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
@@ -127,7 +128,7 @@ public class BluetoothManager {
             };
         }
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        context.registerReceiver(discoveryReceiver, filter);
+        context.registerReceiver(discoverRecvr, filter);
     }
 
     /**
@@ -136,9 +137,9 @@ public class BluetoothManager {
      * @param context The context
      */
     public void unregisterDiscoveryReceiver(Context context) {
-        if (discoveryReceiver != null) {
-            context.unregisterReceiver(discoveryReceiver);
-            discoveryReceiver = null;
+        if (discoverRecvr != null) {
+            context.unregisterReceiver(discoverRecvr);
+            discoverRecvr = null;
         }
     }
 
@@ -156,48 +157,84 @@ public class BluetoothManager {
 
     /**
      * Run a bluetooth server thread to listen to the connection request.
-     *
-     * @param stateListener_ A state listener
      */
-    public void runServerAsync(OnStateChangedListener stateListener_) {
-        stopServer();
-        acceptThread = new AcceptThread(bluetoothAdapter, new OnSocketEstablishedListener() {
-            @Override
-            public void onSocketEstablished(BluetoothSocket socket,
-                                            OnStateChangedListener stateListener) {
-                stateListener.onServerSocketEstablished();
-                manageConnectedSocket(socket, stateListener);
-            }
-        }, stateListener_);
-        acceptThread.start();
+    public void runServerAsync(OnStateChangedListener stateListener_,
+                               OnErrorListener errorListener_) {
+        if (!isServerRunning()) {
+            acceptThread = new AcceptThread(bluetoothAdapter, new OnSocketEstablishedListener() {
+                @Override
+                public void onSocketEstablished(BluetoothSocket socket,
+                                                OnStateChangedListener stateListener,
+                                                OnErrorListener errorListener) {
+                    stateListener.onServerSocketEstablished();
+                    manageConnectedSocket(socket, stateListener, errorListener);
+                }
+            }, stateListener_, errorListener_);
+            acceptThread.start();
+        }
     }
 
     /**
      * Connect a bluetooth server.
      *
      * @param device The device to connect
-     * @param stateListener A state listener
      */
-    public void connectDeviceAsync(BluetoothDevice device, OnStateChangedListener stateListener) {
-        stopConnect();
+    public void connectDeviceAsync(BluetoothDevice device,
+                                   OnStateChangedListener stateListener_,
+                                   OnErrorListener errorListener_) {
         cancelDiscovery();  // Discovery process will slow down the connection
-        connectThread = new ConnectThread(device, new OnSocketEstablishedListener() {
-            @Override
-            public void onSocketEstablished(BluetoothSocket socket,
-                                            OnStateChangedListener stateListener) {
-                stopServer();  // When connected, this device does not need to be server.
-                stateListener.onClientSocketEstablished();
-                manageConnectedSocket(socket, stateListener);
-            }
-        }, stateListener);
-        connectThread.start();
+        if (!isClientConnecting()) {
+            connectThread = new ConnectThread(device, new OnSocketEstablishedListener() {
+                @Override
+                public void onSocketEstablished(BluetoothSocket socket,
+                                                OnStateChangedListener stateListener,
+                                                OnErrorListener errorListener) {
+                    stateListener.onClientSocketEstablished();
+                    manageConnectedSocket(socket, stateListener, errorListener);
+                }
+            }, stateListener_, errorListener_);
+            connectThread.start();
+        }
+    }
+
+    /**
+     * Manage a connected socket asynchronously.
+     *
+     * @param socket A connected socket
+     */
+    private void manageConnectedSocket(BluetoothSocket socket,
+                                       OnStateChangedListener connListener,
+                                       OnErrorListener errorListener) {
+        connectedThread = new ConnectedThread(socket, connListener, errorListener);
+        connectedThread.start();
+    }
+
+    /**
+     * Return true if bluetooth server is running, false otherwise.
+     */
+    public boolean isServerRunning() {
+        return acceptThread != null && acceptThread.isAlive();
+    }
+
+    /**
+     * Return true if bluetooth client is connecting.
+     */
+    public boolean isClientConnecting() {
+        return connectThread != null && connectThread.isAlive();
+    }
+
+    /**
+     * Return true if bluetooth connection is established.
+     */
+    public boolean isConnected() {
+        return connectedThread != null && connectedThread.isAlive();
     }
 
     /**
      * Stop current running bluetooth server.
      */
     public void stopServer() {
-        if (acceptThread != null && acceptThread.isAlive()) {
+        if (isServerRunning()) {
             acceptThread.cancel();
         }
         acceptThread = null;
@@ -207,11 +244,11 @@ public class BluetoothManager {
      * Stop current running connection thread.
      */
     public void stopConnect() {
-        if (connectThread != null && connectedThread.isAlive()) {
+        if (isClientConnecting()) {
             connectThread.cancel();
         }
         connectThread = null;
-        if (connectedThread != null && connectedThread.isAlive()) {
+        if (isConnected()) {
             connectedThread.cancel();
         }
         connectedThread = null;
@@ -223,7 +260,7 @@ public class BluetoothManager {
      * @param data The data to be send
      */
     public void sendToRemote(byte[] data) {
-        if (connectedThread != null && connectedThread.isAlive()) {
+        if (isConnected()) {
             connectedThread.write(data);
         }
     }
@@ -232,19 +269,17 @@ public class BluetoothManager {
      * Set an {@link OnDataReceiveListener} to receive data.
      */
     public void setDataListener(OnDataReceiveListener listener) {
-        if (connectedThread != null && connectedThread.isAlive()) {
+        if (isConnected()) {
             connectedThread.setDataListener(listener);
         }
     }
 
     /**
-     * Manage a connected socket asynchronously.
-     *
-     * @param socket A connected socket
-     * @param connListener A connection listener
+     * Set an {@link OnErrorListener} after connected.
      */
-    private void manageConnectedSocket(BluetoothSocket socket, OnStateChangedListener connListener) {
-        connectedThread = new ConnectedThread(socket, connListener);
-        connectedThread.start();
+    public void setErrorListener(OnErrorListener listener) {
+        if (isConnected()) {
+            connectedThread.setErrorListener(listener);
+        }
     }
 }
