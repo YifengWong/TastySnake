@@ -32,6 +32,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/pkt_test"
+        android:textAllCaps="false"
+        android:id="@+id/main_pkt_test_btn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/game"
         android:textAllCaps="false"
         android:id="@+id/main_game_btn"/>

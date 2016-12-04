@@ -1,10 +1,12 @@
 package com.example.stevennl.tastysnake.model;
 
+import java.io.Serializable;
+
 /**
  * Coordinate(position) in 2D plane.
  * Author: WTY
  */
-public class Pos implements Cloneable {
+public class Pos implements Cloneable, Serializable {
     private int x;
     private int y;
     private static final int dx[] = {-1, 0, 1, 0, 0};
@@ -47,5 +49,10 @@ public class Pos implements Cloneable {
     }
     public int getY() {
         return y;
+    }
+
+    @Override
+    public String toString() {
+        return x + "," + y;
     }
 }

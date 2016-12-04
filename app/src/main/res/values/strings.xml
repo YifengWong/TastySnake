@@ -25,4 +25,5 @@
     <string name="input_device_name_connect">Device name to connect</string>
     <string name="drawable_grid_test">Test DrawableGrid</string>
     <string name="sensor_test">Test Sensor</string>
+    <string name="pkt_test">Test Packet</string>
 </resources>
