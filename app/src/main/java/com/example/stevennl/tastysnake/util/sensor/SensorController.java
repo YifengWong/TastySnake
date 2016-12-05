@@ -100,7 +100,7 @@ public class SensorController {
     /**
      * Unregister sensor event listener.
      */
-    public void unregisterSensor() {
+    public void unregister() {
         manager.unregisterListener(eventListener);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.stevennl.tastysnake.ui.test;
+package com.example.stevennl.tastysnake.controller.test;
 
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +37,6 @@ public class SensorTestActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorHandler.removeCallbacks(sensorRunnable);
-        sController.unregisterSensor();
+        sController.unregister();
     }
 }

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".controller.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,19 +22,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.test.BluetoothTestActivity"
+            android:name=".controller.test.BluetoothTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.test.DrawableGridTestActivity"
+            android:name=".controller.test.DrawableGridTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.test.SensorTestActivity"
+            android:name=".controller.test.SensorTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.game.GameActivity"
+            android:name=".controller.game.GameActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.test.PacketTestActivity"
+            android:name=".controller.test.PacketTestActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -18,19 +18,31 @@ public class Snake {
     private int color;
 
     /**
+     * Type of the snake.
+     */
+    public enum Type {
+        SERVER,
+        CLIENT
+    }
+
+    /**
      * Initialize.
      *
      * @param type The type of the snake
      * @param map The game map
      */
-    public Snake(int type, Map map) {
+    public Snake(Type type, Map map) {
         switch (type) {
-            case 0:
+            case SERVER:
                 color = Config.COLOR_SNAKE_SERVER;
                 direc = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
                     bodies.add(new Pos(0, i));
                 }
+                break;
+            case CLIENT:
+                color = Config.COLOR_SNAKE_CLIENT;
+                // TODO
                 break;
             default:
                 break;

@@ -1,8 +1,7 @@
-package com.example.stevennl.tastysnake.ui.test;
+package com.example.stevennl.tastysnake.controller.test;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telecom.PhoneAccount;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;

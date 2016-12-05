@@ -3,7 +3,7 @@
     android:id="@+id/activity_drawable_grid_test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.stevennl.tastysnake.ui.game.BattleFragment">
+    tools:context="com.example.stevennl.tastysnake.controller.game.BattleFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

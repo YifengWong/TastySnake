@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.example.stevennl.tastysnake.ui.MainActivity">
+    tools:context="com.example.stevennl.tastysnake.controller.MainActivity">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

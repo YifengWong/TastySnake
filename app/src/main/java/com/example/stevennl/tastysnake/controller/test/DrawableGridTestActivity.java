@@ -1,6 +1,5 @@
-package com.example.stevennl.tastysnake.ui.test;
+package com.example.stevennl.tastysnake.controller.test;
 
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,8 +8,8 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
-import com.example.stevennl.tastysnake.model.Point;
 import com.example.stevennl.tastysnake.model.Snake;
+import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 import com.example.stevennl.tastysnake.widget.DrawableGrid;
 
@@ -20,7 +19,8 @@ import java.util.TimerTask;
 public class DrawableGridTestActivity extends AppCompatActivity {
     private static final String TAG = "GridTestActivity";
 
-    private Snake snake;
+    private Snake snakeServer;
+    private Snake snakeClient;
     private Map map;
 
     private Timer timer;
@@ -34,7 +34,8 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drawable_grid_test);
         sensorCtrl = SensorController.getInstance(this);
         map = new Map(Config.MAP_ROW, Config.MAP_COL);
-        snake = new Snake(0, map);
+        snakeServer = new Snake(Snake.Type.SERVER, map);
+//        snakeClient = new Snake(Snake.Type.CLIENT, map);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
         grid.setBgColor(Config.COLOR_MAP_BG);
@@ -54,19 +55,20 @@ public class DrawableGridTestActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        sensorCtrl.unregisterSensor();
+        sensorCtrl.unregister();
         stopTimer();
     }
 
     private void startTimer() {
         timer = new Timer();
-        timer.schedule(new TimerTask() {  // Gravity sensor and snake move thread
+        timer.schedule(new TimerTask() {  // Gravity sensor and snakeServer move thread
             @Override
             public void run() {
-                if (snake != null) {
+                if (snakeServer != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    if (!snake.move(dir)) {
-                        finish();
+                    if (!snakeServer.move(dir)) {
+                        showToast("Server snake collide!");
+                        stopTimer();
                     }
                     Log.d(TAG, "run: " + dir);
                     map.createFood(lengthen = !lengthen);
@@ -80,5 +82,14 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             timer.cancel();
             timer = null;
         }
+    }
+
+    private void showToast(final String msg) {
+        DrawableGridTestActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CommonUtil.showToast(DrawableGridTestActivity.this, msg);
+            }
+        });
     }
 }

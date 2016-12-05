@@ -1,4 +1,4 @@
-package com.example.stevennl.tastysnake.ui.game;
+package com.example.stevennl.tastysnake.controller.game;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.example.stevennl.tastysnake.ui.game;
+package com.example.stevennl.tastysnake.controller.game;
 
 import android.content.Context;
 import android.os.Bundle;

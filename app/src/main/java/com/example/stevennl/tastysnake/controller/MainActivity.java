@@ -1,4 +1,4 @@
-package com.example.stevennl.tastysnake.ui;
+package com.example.stevennl.tastysnake.controller;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.ui.game.GameActivity;
-import com.example.stevennl.tastysnake.ui.test.BluetoothTestActivity;
-import com.example.stevennl.tastysnake.ui.test.DrawableGridTestActivity;
-import com.example.stevennl.tastysnake.ui.test.PacketTestActivity;
-import com.example.stevennl.tastysnake.ui.test.SensorTestActivity;
+import com.example.stevennl.tastysnake.controller.game.GameActivity;
+import com.example.stevennl.tastysnake.controller.test.BluetoothTestActivity;
+import com.example.stevennl.tastysnake.controller.test.DrawableGridTestActivity;
+import com.example.stevennl.tastysnake.controller.test.PacketTestActivity;
+import com.example.stevennl.tastysnake.controller.test.SensorTestActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";

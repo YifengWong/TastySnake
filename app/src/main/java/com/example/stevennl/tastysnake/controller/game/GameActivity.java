@@ -1,7 +1,5 @@
-package com.example.stevennl.tastysnake.ui.game;
+package com.example.stevennl.tastysnake.controller.game;
 
-import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import com.example.stevennl.tastysnake.base.SingleFragmentActivity;
