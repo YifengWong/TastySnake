@@ -26,6 +26,13 @@ public class Snake {
     }
 
     /**
+     * Return the map of the snake.
+     */
+    public Map getMap() {
+        return map;
+    }
+
+    /**
      * Initialize.
      *
      * @param type The type of the snake

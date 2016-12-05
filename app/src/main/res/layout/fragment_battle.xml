@@ -4,19 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.stevennl.tastysnake.controller.game.BattleFragment">
-    <TextView
+    <com.example.stevennl.tastysnake.widget.DrawableGrid
+        android:id="@+id/battle_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparent"
-        android:textSize="@dimen/text_3"
-        android:id="@+id/battle_infoTxt"/>
+        android:layout_height="match_parent" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
         android:id="@+id/battle_testBtn" />
 </RelativeLayout>
 

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
@@ -43,6 +44,7 @@ public class ConnectFragment extends Fragment {
     private static final int REQ_BLUETOOTH_DISCOVERABLE = 2;
 
     private GameActivity act;
+    private Snake.Type type;
 
     private SafeHandler handler;
     private BluetoothManager manager;
@@ -99,11 +101,13 @@ public class ConnectFragment extends Fragment {
             @Override
             public void onClientSocketEstablished() {
                 Log.d(TAG, "Client socket established.");
+                type = Snake.Type.CLIENT;
             }
 
             @Override
             public void onServerSocketEstablished() {
                 Log.d(TAG, "Server socket established.");
+                type = Snake.Type.SERVER;
             }
 
             @Override
@@ -111,7 +115,7 @@ public class ConnectFragment extends Fragment {
                 Log.d(TAG, "Data channel established.");
                 manager.stopServer();
                 if (isAdded()) {
-                    act.replaceFragment(new BattleFragment(), true);
+                    act.replaceFragment(BattleFragment.newInstance(type), true);
                 }
             }
         };
@@ -266,24 +270,10 @@ public class ConnectFragment extends Fragment {
                 Log.d(TAG, "Device discovered: " + device.getName() + " " + device.getAddress());
                 if (device.getName() != null) {
                     devices.add(device);
-                    adapter.notifyDataSetChanged();
+                    handler.obtainMessage(SafeHandler.MSG_REFRESH_ADAPTER).sendToTarget();
                 }
             }
         });
-    }
-
-    /**
-     * Return the title TextView.
-     */
-    public TextView getTitleTxt() {
-        return titleTxt;
-    }
-
-    /**
-     * Return the SwipeRefreshLayout.
-     */
-    public SwipeRefreshLayout getRefreshLayout() {
-        return refreshLayout;
     }
 
     /**
@@ -327,6 +317,7 @@ public class ConnectFragment extends Fragment {
      */
     private static class SafeHandler extends Handler {
         private static final int MSG_ERR = 1;
+        private static final int MSG_REFRESH_ADAPTER = 2;
         private WeakReference<ConnectFragment> fragment;
 
         private SafeHandler(ConnectFragment fragment) {
@@ -343,8 +334,13 @@ public class ConnectFragment extends Fragment {
                         if (info != null) {
                             CommonUtil.showToast(f.getActivity(), (String)info);
                         }
-                        f.getRefreshLayout().setRefreshing(false);
-                        f.getTitleTxt().setText(f.getString(R.string.select_device));
+                        f.refreshLayout.setRefreshing(false);
+                        f.titleTxt.setText(f.getString(R.string.select_device));
+                    }
+                    break;
+                case MSG_REFRESH_ADAPTER:
+                    if (f.isAdded()) {
+                        f.adapter.notifyDataSetChanged();
                     }
                     break;
                 default:

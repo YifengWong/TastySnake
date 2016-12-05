@@ -13,6 +13,13 @@ public class Map {
     private Point[][] content;
 
     /**
+     * Return a specifmap of the game.
+     */
+    public static Map gameMap() {
+        return new Map(Config.MAP_ROW, Config.MAP_COL);
+    }
+
+    /**
      * Initialize.
      *
      * @param row the row amount of the map
@@ -28,16 +35,29 @@ public class Map {
     }
 
     /**
-     * Create food on the map.
+     * Create food randomly.
      *
      * @param lengthen True if the food will lengthen the snake who eats it, false shorten
+     * @return The position of the created food
      */
-    public void createFood(boolean lengthen) {
+    public Pos createFood(boolean lengthen) {
         int x, y, row = getRowCount(), col = getColCount();
         do {
             x = CommonUtil.randInt(row);
             y = CommonUtil.randInt(col);
         } while (content[x][y].getType() != Point.Type.BLANK);
+        createFood(x, y, lengthen);
+        return new Pos(x, y);
+    }
+
+    /**
+     * Create food at a given position.
+     *
+     * @param x The row number of the food
+     * @param y The column number of the food
+     * @param lengthen True if the food will lengthen the snake who eats it, false shorten
+     */
+    public void createFood(int x, int y, boolean lengthen) {
         content[x][y].setColor(lengthen ? Config.COLOR_FOOD_LENGTHEN : Config.COLOR_FOOD_SHORTEN);
         content[x][y].setType(lengthen ? Point.Type.FOOD_LENGTHEN : Point.Type.FOOD_SHORTEN);
     }

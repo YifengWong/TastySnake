@@ -46,6 +46,7 @@ public class ConnectedThread extends Thread {
     public ConnectedThread(BluetoothSocket socket,
                            OnStateChangedListener stateListener,
                            OnErrorListener errorListener) {
+        super("ConnectedThread");
         this.socket = socket;
         this.stateListener = stateListener;
         this.errorListener = errorListener;

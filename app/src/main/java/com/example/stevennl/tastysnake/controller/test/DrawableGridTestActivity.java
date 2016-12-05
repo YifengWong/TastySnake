@@ -33,7 +33,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawable_grid_test);
         sensorCtrl = SensorController.getInstance(this);
-        map = new Map(Config.MAP_ROW, Config.MAP_COL);
+        map = Map.gameMap();
         snakeServer = new Snake(Snake.Type.SERVER, map);
 //        snakeClient = new Snake(Snake.Type.CLIENT, map);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
