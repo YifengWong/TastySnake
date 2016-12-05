@@ -18,9 +18,9 @@ public class Config {
     public static final int INTERVAL_DRAW = 30;  // milliseconds
     public static final int INTERVAL_MOVE = 150;  // milliseconds
 
-    public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
-    public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
-    public static final int COLOR_SNAKE_SERVER = Color.RED;
+    public static final int COLOR_FOOD_LENGTHEN = Color.RED;
+    public static final int COLOR_FOOD_SHORTEN = Color.GREEN;
+    public static final int COLOR_SNAKE_SERVER = Color.BLUE;
     public static final int COLOR_SNAKE_CLIENT = Color.CYAN;
     public static final int COLOR_EMPTY_POINT = Color.WHITE;
     public static final int COLOR_MAP_BG = Color.WHITE;
