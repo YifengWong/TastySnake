@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.controller.game.thread.DataTransferThread;
+import com.example.stevennl.tastysnake.controller.game.thread.FoodThread;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.model.Pos;
@@ -37,7 +38,9 @@ public class BattleFragment extends Fragment {
 
     private SafeHandler handler;
     private BluetoothManager manager;
+
     private DataTransferThread dataThread;
+    private FoodThread foodThread;
 
     private DrawableGrid grid;
 
@@ -85,6 +88,7 @@ public class BattleFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         manager.stopConnect();
+        stopThread();
     }
 
     private void initHandler() {
@@ -142,9 +146,8 @@ public class BattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (type == Snake.Type.SERVER) {
-                    boolean lengthen = (CommonUtil.randInt(2) == 0);
-                    Pos food = map.createFood(lengthen);
-                    dataThread.send(Packet.food(food.getX(), food.getY(), lengthen));
+                    foodThread = new FoodThread(map, dataThread);
+                    foodThread.start();
                 }
             }
         });
@@ -171,6 +174,17 @@ public class BattleFragment extends Fragment {
     }
 
     /**
+     * Stop current running threads.
+     */
+    private void stopThread() {
+        dataThread.quitSafely();
+        if (foodThread != null) {
+            foodThread.interrupt();
+            foodThread = null;
+        }
+    }
+
+    /**
      * A safe handler that circumvents memory leaks.
      */
     private static class SafeHandler extends Handler {
@@ -188,6 +202,7 @@ public class BattleFragment extends Fragment {
                 case MSG_ERR:
                     if (f.isAdded()) {
                         CommonUtil.showToast(f.getActivity(), (String)msg.obj);
+                        f.stopThread();
                     }
                     break;
                 default:
