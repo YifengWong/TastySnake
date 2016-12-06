@@ -8,10 +8,10 @@ import java.io.Serializable;
  */
 public class Packet implements Serializable {
     private static final String TAG = "Packet";
+    public static final int SIZE = 5;  // Fixed packet size in bytes
     private static final char TYPE_FOOD_LENGTHEN = 'a';
     private static final char TYPE_FOOD_SHORTEN = 'b';
     private static final char TYPE_DIRECTION = 'c';
-    private static final char TYPE_SWAP = 'd';
 
     private Type type;
     private Pos food;
@@ -24,7 +24,6 @@ public class Packet implements Serializable {
         FOOD_LENGTHEN,
         FOOD_SHORTEN,
         DIRECTION,
-        SWAP
     }
 
     /**
@@ -58,9 +57,6 @@ public class Packet implements Serializable {
                 type = Type.DIRECTION;
                 direc = Direction.values()[str.charAt(1) - '0'];
                 break;
-            case TYPE_SWAP:
-                type = Type.SWAP;
-                break;
             default:
                 break;
         }
@@ -90,11 +86,13 @@ public class Packet implements Serializable {
                 builder.append(TYPE_DIRECTION);
                 builder.append(direc.ordinal());
                 break;
-            case SWAP:
-                builder.append(TYPE_SWAP);
-                break;
             default:
                 break;
+        }
+        // Pad
+        int length = builder.length();
+        for (int i = 0; i < SIZE - length; ++i) {
+            builder.append(' ');
         }
         return builder.toString().getBytes();
     }
@@ -122,15 +120,6 @@ public class Packet implements Serializable {
         Packet pkt = new Packet();
         pkt.type = Type.DIRECTION;
         pkt.direc = direc;
-        return pkt;
-    }
-
-    /**
-     * Create a SWAP packet.
-     */
-    public static Packet swap() {
-        Packet pkt = new Packet();
-        pkt.type = Type.SWAP;
         return pkt;
     }
 

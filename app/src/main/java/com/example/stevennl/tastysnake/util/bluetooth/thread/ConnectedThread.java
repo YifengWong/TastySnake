@@ -3,6 +3,7 @@ package com.example.stevennl.tastysnake.util.bluetooth.thread;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
@@ -72,7 +73,7 @@ public class ConnectedThread extends Thread {
         if (inStream == null || outStream == null) {
             return;
         }
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[Packet.SIZE];
         stateListener.onDataChannelEstablished();
         Log.d(TAG, "Open input stream...");
         while (true) {

@@ -53,10 +53,10 @@ public class DataTransferThread extends HandlerThread {
     /**
      * Handle received data.
      *
-     * @param raw The received data in bytes.
+     * @param pkt The received packet
      */
-    public void recv(byte[] raw) {
-        handler.obtainMessage(SafeHandler.MSG_RECV, raw).sendToTarget();
+    public void recv(Packet pkt) {
+        handler.obtainMessage(SafeHandler.MSG_RECV, pkt).sendToTarget();
     }
 
     /**
@@ -67,6 +67,10 @@ public class DataTransferThread extends HandlerThread {
         private static final int MSG_RECV = 2;
         private BluetoothManager manager;
         private Snake snake;
+
+        // Debug fields
+        private int recvCnt = 0;
+        private int sendCnt = 0;
 
         /**
          * Initialize.
@@ -85,15 +89,13 @@ public class DataTransferThread extends HandlerThread {
             Packet pkt = null;
             switch (msg.what) {
                 case MSG_SEND:
-                    Log.d(TAG, "Handle MSG_SEND.");
                     pkt = (Packet)msg.obj;
+                    Log.d(TAG, "Send packet: " + pkt.toString() + " Cnt: " + (++sendCnt));
                     manager.sendToRemote(pkt.toBytes());
                     break;
                 case MSG_RECV:
-                    Log.d(TAG, "Handle MSG_RECV.");
-                    byte[] raw = (byte[])msg.obj;
-                    pkt = new Packet(raw);
-                    Log.d(TAG, "Receive packet: " + pkt.toString());
+                    pkt = (Packet)msg.obj;
+                    Log.d(TAG, "Receive packet: " + pkt.toString() + " Cnt: " + (++recvCnt));
                     handleRecvPkt(pkt);
                     break;
                 default:

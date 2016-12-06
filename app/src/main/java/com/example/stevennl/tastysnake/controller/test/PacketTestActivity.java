@@ -23,7 +23,7 @@ public class PacketTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 infoTxt.setText("");
-                Packet[] pkts = new Packet[8];
+                Packet[] pkts = new Packet[7];
                 pkts[0] = Packet.food(0, 8, true);
                 pkts[1] = Packet.food(35, 10, false);
                 pkts[2] = Packet.direction(Direction.UP);
@@ -31,7 +31,6 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[4] = Packet.direction(Direction.LEFT);
                 pkts[5] = Packet.direction(Direction.RIGHT);
                 pkts[6] = Packet.direction(Direction.NONE);
-                pkts[7] = Packet.swap();
                 for (Packet pkt : pkts) {
                     byte[] raw = pkt.toBytes();
                     Packet newPkt = new Packet(raw);

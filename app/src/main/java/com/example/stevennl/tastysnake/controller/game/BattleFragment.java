@@ -3,6 +3,7 @@ package com.example.stevennl.tastysnake.controller.game;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -51,6 +52,9 @@ public class BattleFragment extends Fragment {
     private Map map;
     private Snake snakeServer;
     private Snake snakeClient;
+
+    // Debug fields
+    private int recvCnt = 0;
 
     /**
      * Create a {@link BattleFragment} with a given snake type.
@@ -136,8 +140,8 @@ public class BattleFragment extends Fragment {
         manager.setDataListener(new OnDataReceiveListener() {
             @Override
             public void onReceive(int bytesCount, byte[] data) {
-                Log.d(TAG, "Receive: " + bytesCount + " bytes.");
-                dataThread.recv(data);
+                Log.d(TAG, "Receive: " + bytesCount + " bytes. Cnt: " + (++recvCnt));
+                dataThread.recv(new Packet(data));
             }
         });
     }
@@ -206,6 +210,10 @@ public class BattleFragment extends Fragment {
         if (foodThread != null) {
             foodThread.interrupt();
             foodThread = null;
+        }
+        if (moveThread != null) {
+            moveThread.interrupt();
+            moveThread = null;
         }
     }
 

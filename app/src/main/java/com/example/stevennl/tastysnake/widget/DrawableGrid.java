@@ -221,8 +221,8 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
         final float
                 gridWidth = right - left,
                 gridHeight = bottom - top,
-                offsetHor = (right - left) / 4,
-                offsetVer = (bottom - top) / 4;
+                offsetHor = (right - left) / 5,
+                offsetVer = (bottom - top) / 5;
         switch (type) {
             case BLANK:
                 canvas.drawRect(left, top, right, bottom, paint);
