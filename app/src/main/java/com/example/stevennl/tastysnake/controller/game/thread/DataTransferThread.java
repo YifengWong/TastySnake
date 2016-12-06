@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.model.Pos;
@@ -27,7 +28,7 @@ public class DataTransferThread extends HandlerThread {
      * @param snake The opponent's snake
      */
     public DataTransferThread(Snake snake) {
-        super("DataTransferThread");
+        super(TAG);
         this.snake = snake;
     }
 
@@ -113,6 +114,11 @@ public class DataTransferThread extends HandlerThread {
                 case FOOD_SHORTEN: {
                     Pos food = pkt.getFood();
                     snake.getMap().createFood(food.getX(), food.getY(), false);
+                    break;
+                }
+                case DIRECTION: {
+                    Direction direc= pkt.getDirec();
+                    snake.move(direc);
                     break;
                 }
                 default:

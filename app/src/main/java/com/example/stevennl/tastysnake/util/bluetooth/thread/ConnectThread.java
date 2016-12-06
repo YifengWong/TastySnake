@@ -32,7 +32,7 @@ public class ConnectThread extends Thread {
                          OnSocketEstablishedListener onSocketEstablishedListener,
                          OnStateChangedListener stateListener,
                          OnErrorListener errorListener) {
-        super("ConnectThread");
+        super(TAG);
         this.onSocketEstablishedListener = onSocketEstablishedListener;
         this.stateListener = stateListener;
         this.errorListener = errorListener;

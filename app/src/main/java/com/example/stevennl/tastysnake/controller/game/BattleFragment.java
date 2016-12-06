@@ -16,6 +16,7 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.controller.game.thread.DataTransferThread;
 import com.example.stevennl.tastysnake.controller.game.thread.FoodThread;
+import com.example.stevennl.tastysnake.controller.game.thread.MoveThread;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.model.Pos;
@@ -24,6 +25,7 @@ import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
+import com.example.stevennl.tastysnake.util.sensor.SensorController;
 import com.example.stevennl.tastysnake.widget.DrawableGrid;
 
 import java.lang.ref.WeakReference;
@@ -41,6 +43,7 @@ public class BattleFragment extends Fragment {
 
     private DataTransferThread dataThread;
     private FoodThread foodThread;
+    private MoveThread moveThread;
 
     private DrawableGrid grid;
 
@@ -82,6 +85,18 @@ public class BattleFragment extends Fragment {
         initGrid(v);
         initTestBtn(v);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SensorController.getInstance(act).register();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SensorController.getInstance(act).unregister();
     }
 
     @Override
@@ -135,7 +150,7 @@ public class BattleFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                grid.setVisibility(View.VISIBLE);
+                startGame();
             }
         }, 2000);
     }
@@ -145,12 +160,22 @@ public class BattleFragment extends Fragment {
         testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (type == Snake.Type.SERVER) {
-                    foodThread = new FoodThread(map, dataThread);
-                    foodThread.start();
-                }
+                CommonUtil.showToast(act, "Click!");
             }
         });
+    }
+
+    /**
+     * Start game.
+     */
+    private void startGame() {
+        grid.setVisibility(View.VISIBLE);
+        if (type == Snake.Type.SERVER) {
+            foodThread = new FoodThread(map, dataThread);
+            foodThread.start();
+            moveThread = new MoveThread(act, snakeServer, dataThread);
+            moveThread.start();
+        }
     }
 
     /**

@@ -24,7 +24,7 @@ public class FoodThread extends Thread {
      * @param dataThread The thread to send data
      */
     public FoodThread(Map map, DataTransferThread dataThread) {
-        super("FoodThread");
+        super(TAG);
         this.map = map;
         this.dataThread = dataThread;
     }
