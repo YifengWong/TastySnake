@@ -44,12 +44,15 @@ public class Snake {
                 color = Config.COLOR_SNAKE_SERVER;
                 direc = Direction.RIGHT;
                 for (int i = 10; i >= 0; i --) {
-                    bodies.add(new Pos(0, i));
+                    bodies.add(new Pos(10, i));
                 }
                 break;
             case CLIENT:
                 color = Config.COLOR_SNAKE_CLIENT;
-                // TODO
+                direc = Direction.RIGHT;
+                for (int i = 10; i >= 0; i --) {
+                    bodies.add(new Pos(40, 10+i));
+                }
                 break;
             default:
                 break;
@@ -69,7 +72,7 @@ public class Snake {
      * @param order The moving direction.
      * @return True if move succeeds, false otherwise
      */
-    public boolean move(Direction order) {
+    public Ending move(Direction order) {
         Pos head = bodies.get(0);
         if (order == Direction.NONE || order.ordinal() == (direc.ordinal() + 2) % 4) {
             bodies.add(0, head.to(direc));
@@ -77,8 +80,7 @@ public class Snake {
             bodies.add(0, head.to(order));
             direc = order;
         }
-        if (!checkOut()) return false;
-
+        Ending ending = checkEnding();
         Pos tail = bodies.get(bodies.size() - 1);
         Point.Type newHeadType = map.getPoint(bodies.get(0)).getType();
         if (newHeadType == Point.Type.FOOD_LENGTHEN) {
@@ -86,10 +88,11 @@ public class Snake {
         } else if (newHeadType == Point.Type.FOOD_SHORTEN) {
             bodies.remove(bodies.size() - 1);
             map.getPoint(tail).makeEmpty();
-            if (bodies.size() == 2) return true;
-            tail = bodies.get(bodies.size() - 1);
-            bodies.remove(bodies.size() - 1);
-            map.getPoint(tail).makeEmpty();
+            if (bodies.size() > 2) {
+                tail = bodies.get(bodies.size() - 1);
+                bodies.remove(bodies.size() - 1);
+                map.getPoint(tail).makeEmpty();
+            }
         } else {
             bodies.remove(bodies.size() - 1);
             map.getPoint(tail).makeEmpty();
@@ -97,20 +100,23 @@ public class Snake {
         genType();
         map.setPoint(bodies.get(0), new Point(color, types.get(0)));
         map.setPoint(bodies.get(1), new Point(color, types.get(1)));
-        return true;
+        return ending;
     }
 
     /**
      * Return false if the snake moves out of boundaries or hits itself.
      */
-    private boolean checkOut() {
+    private Ending checkEnding() {
         Pos head = bodies.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= col || head.getY() < 0) return false;
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= col || head.getY() < 0) return Ending.ESCAPE;
         for (int i = 0; i < bodies.size(); i ++)
             for (int j = i + 1; j < bodies.size(); j ++)
                 if (bodies.get(i).getX() == bodies.get(j).getX() && bodies.get(i).getY() == bodies.get(j).getY())
-                    return false;
-        return true;
+                    return Ending.SUICIDE;
+        int headColor = map.getPoint(head).getColor();
+        if ((headColor == Config.COLOR_SNAKE_CLIENT || headColor == Config.COLOR_SNAKE_SERVER) && headColor != color)
+            return Ending.CRASH;
+        return Ending.GOOD;
     }
 
     /**
