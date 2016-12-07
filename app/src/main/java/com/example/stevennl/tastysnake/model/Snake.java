@@ -26,6 +26,16 @@ public class Snake {
     }
 
     /**
+     * Result after snake moves.
+     */
+    public enum MoveResult {
+        OUT,
+        SUICIDE,
+        CRASH,
+        SUC,
+    }
+
+    /**
      * Return the map of the snake.
      */
     public Map getMap() {
@@ -68,11 +78,8 @@ public class Snake {
 
     /**
      * Move the snake at a given direction.
-     *
-     * @param order The moving direction.
-     * @return True if move succeeds, false otherwise
      */
-    public Ending move(Direction order) {
+    public MoveResult move(Direction order) {
         Pos head = bodies.get(0);
         if (order == Direction.NONE || order.ordinal() == (direc.ordinal() + 2) % 4) {
             bodies.add(0, head.to(direc));
@@ -80,7 +87,7 @@ public class Snake {
             bodies.add(0, head.to(order));
             direc = order;
         }
-        Ending ending = checkEnding();
+        MoveResult moveResult = calMoveResult();
         Pos tail = bodies.get(bodies.size() - 1);
         Point.Type newHeadType = map.getPoint(bodies.get(0)).getType();
         if (newHeadType == Point.Type.FOOD_LENGTHEN) {
@@ -100,23 +107,23 @@ public class Snake {
         genType();
         map.setPoint(bodies.get(0), new Point(color, types.get(0)));
         map.setPoint(bodies.get(1), new Point(color, types.get(1)));
-        return ending;
+        return moveResult;
     }
 
     /**
-     * Return false if the snake moves out of boundaries or hits itself.
+     * Calculate snake's move result.
      */
-    private Ending checkEnding() {
+    private MoveResult calMoveResult() {
         Pos head = bodies.get(0);
-        if (head.getX() >= row || head.getX() < 0 || head.getY() >= col || head.getY() < 0) return Ending.ESCAPE;
+        if (head.getX() >= row || head.getX() < 0 || head.getY() >= col || head.getY() < 0) return MoveResult.OUT;
         for (int i = 0; i < bodies.size(); i ++)
             for (int j = i + 1; j < bodies.size(); j ++)
                 if (bodies.get(i).getX() == bodies.get(j).getX() && bodies.get(i).getY() == bodies.get(j).getY())
-                    return Ending.SUICIDE;
+                    return MoveResult.SUICIDE;
         int headColor = map.getPoint(head).getColor();
         if ((headColor == Config.COLOR_SNAKE_CLIENT || headColor == Config.COLOR_SNAKE_SERVER) && headColor != color)
-            return Ending.CRASH;
-        return Ending.GOOD;
+            return MoveResult.CRASH;
+        return MoveResult.SUC;
     }
 
     /**

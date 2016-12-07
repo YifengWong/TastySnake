@@ -5,11 +5,8 @@ import android.util.Log;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.model.Direction;
-import com.example.stevennl.tastysnake.model.Ending;
 import com.example.stevennl.tastysnake.model.Packet;
-import com.example.stevennl.tastysnake.model.Pos;
 import com.example.stevennl.tastysnake.model.Snake;
-import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 
 /**
@@ -42,7 +39,7 @@ public class MoveThread extends Thread {
             try {
                 Direction direc = sensorCtrl.getDirection();
                 dataThread.send(Packet.direction(direc));
-                if (snake.move(direc) != Ending.GOOD) {
+                if (snake.move(direc) != Snake.MoveResult.SUC) {
                     interrupt();
                 }
                 Thread.sleep(Config.INTERVAL_MOVE);

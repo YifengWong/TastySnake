@@ -7,7 +7,6 @@ import android.util.Log;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
-import com.example.stevennl.tastysnake.model.Ending;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
@@ -62,17 +61,32 @@ public class DrawableGridTestActivity extends AppCompatActivity {
 
     private void startTimer() {
         timer = new Timer();
-        timer.schedule(new TimerTask() {  // Gravity sensor and snakeServer move thread
+        timer.schedule(new TimerTask() {  // Gravity sensor and snake move thread
             @Override
             public void run() {
-                if (snakeServer != null) {
+                if (snakeServer != null && snakeClient != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    if (snakeServer.move(dir) != Ending.GOOD) {
-                        showToast("Server snake collide!");
-                        stopTimer();
+                    Snake.MoveResult res = snakeClient.move(dir);
+                    switch (res) {
+                        case SUC:
+                            break;
+                        case SUICIDE:
+                            showToast("Snake SUICIDE!");
+                            stopTimer();
+                            break;
+                        case CRASH:
+                            showToast("Snake CRASH!");
+                            stopTimer();
+                            break;
+                        case OUT:
+                            showToast("Snake OUT!");
+                            stopTimer();
+                            break;
+                        default:
+                            break;
                     }
                     Log.d(TAG, "run: " + dir);
-                    map.createFood(lengthen = false);
+                    map.createFood(lengthen = !lengthen);
                 }
             }
         }, 0, Config.INTERVAL_MOVE);

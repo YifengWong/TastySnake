@@ -11,6 +11,8 @@ import java.util.Random;
  */
 public class Map {
     private Point[][] content;
+    private int row;
+    private int col;
 
     /**
      * Return a specifmap of the game.
@@ -26,6 +28,8 @@ public class Map {
      * @param col the column amount of the map
      */
     public Map(int row, int col) {
+        this.row = row;
+        this.col = col;
         content = new Point[row][col];
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j) {
@@ -69,9 +73,9 @@ public class Map {
      * @param c The new point
      */
     public void setPoint(Pos p, Point c) {
-        //ignore out of bound set
-        if (p.getX() < 0 || p.getY() < 0 || p.getX() >= getRowCount() || p.getY() >= getColCount()) return ;
-        content[p.getX()][p.getY()] = c;
+        if (isValid(p.getX(), p.getY())) {
+            content[p.getX()][p.getY()] = c;
+        }
     }
 
     /**
@@ -80,8 +84,9 @@ public class Map {
      * @param p The position of the point
      */
     public Point getPoint(Pos p) {
-        //ignore out of bound get
-        if (p.getX() < 0 || p.getY() < 0 || p.getX() >= getRowCount() || p.getY() >= getColCount()) return new Point(0, Point.Type.BLANK);
+        if (!isValid(p.getX(), p.getY()))  {
+            return new Point();
+        }
         return content[p.getX()][p.getY()];
     }
 
@@ -92,8 +97,9 @@ public class Map {
      * @param y The column number of the point
      */
     public Point getPoint(int x, int y) {
-        //ignore out of bound get
-        if (x < 0 || y < 0 || x >= getRowCount() || y >= getColCount()) return new Point(0, Point.Type.BLANK);
+        if (!isValid(x, y))  {
+            return new Point();
+        }
         return content[x][y];
     }
 
@@ -101,13 +107,20 @@ public class Map {
      * Return the amount of rows.
      */
     public int getRowCount() {
-        return content == null ? 0 : content.length;
+        return row;
     }
 
     /**
      * Return the amount of columns.
      */
     public int getColCount() {
-        return content == null ? 0 : content[0].length;
+        return col;
+    }
+
+    /**
+     * Return true if a position with coordinate x and y is valid, false otherwise.
+     */
+    private boolean isValid(int x, int y) {
+        return x >= 0 && x < row && y >= 0 && y < col;
     }
 }
