@@ -117,7 +117,7 @@ public class BattleFragment extends Fragment {
     private void initSnakes() {
         map = Map.gameMap();
         snakeServer = new Snake(Snake.Type.SERVER, map);
-//        snakeClient = new Snake(Snake.Type.CLIENT, map);
+        snakeClient = new Snake(Snake.Type.CLIENT, map);
     }
 
     private void initManager() {
@@ -132,7 +132,7 @@ public class BattleFragment extends Fragment {
     }
 
     private void initThread() {
-        dataThread = new DataTransferThread(type == Snake.Type.SERVER ? snakeServer : snakeServer);
+        dataThread = new DataTransferThread(type == Snake.Type.SERVER ? snakeClient : snakeServer);
         dataThread.start();
     }
 
@@ -177,9 +177,10 @@ public class BattleFragment extends Fragment {
         if (type == Snake.Type.SERVER) {
             foodThread = new FoodThread(map, dataThread);
             foodThread.start();
-            moveThread = new MoveThread(act, snakeServer, dataThread);
-            moveThread.start();
         }
+        moveThread = new MoveThread(act,
+                type == Snake.Type.SERVER ? snakeServer : snakeClient, dataThread);
+        moveThread.start();
     }
 
     /**
