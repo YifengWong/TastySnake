@@ -69,6 +69,8 @@ public class Map {
      * @param c The new point
      */
     public void setPoint(Pos p, Point c) {
+        //ignore out of bound set
+        if (p.getX() < 0 || p.getY() < 0 || p.getX() >= getRowCount() || p.getY() >= getColCount()) return ;
         content[p.getX()][p.getY()] = c;
     }
 
@@ -78,6 +80,8 @@ public class Map {
      * @param p The position of the point
      */
     public Point getPoint(Pos p) {
+        //ignore out of bound get
+        if (p.getX() < 0 || p.getY() < 0 || p.getX() >= getRowCount() || p.getY() >= getColCount()) return new Point(0, Point.Type.BLANK);
         return content[p.getX()][p.getY()];
     }
 
@@ -88,6 +92,8 @@ public class Map {
      * @param y The column number of the point
      */
     public Point getPoint(int x, int y) {
+        //ignore out of bound get
+        if (x < 0 || y < 0 || x >= getRowCount() || y >= getColCount()) return new Point(0, Point.Type.BLANK);
         return content[x][y];
     }
 

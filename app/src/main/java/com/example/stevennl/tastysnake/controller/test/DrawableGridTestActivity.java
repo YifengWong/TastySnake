@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
+import com.example.stevennl.tastysnake.model.Ending;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
@@ -35,7 +36,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         sensorCtrl = SensorController.getInstance(this);
         map = Map.gameMap();
         snakeServer = new Snake(Snake.Type.SERVER, map);
-//        snakeClient = new Snake(Snake.Type.CLIENT, map);
+        snakeClient = new Snake(Snake.Type.CLIENT, map);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
         grid.setBgColor(Config.COLOR_MAP_BG);
@@ -66,12 +67,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             public void run() {
                 if (snakeServer != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    if (!snakeServer.move(dir)) {
+                    if (snakeServer.move(dir) != Ending.GOOD) {
                         showToast("Server snake collide!");
                         stopTimer();
                     }
                     Log.d(TAG, "run: " + dir);
-                    map.createFood(lengthen = !lengthen);
+                    map.createFood(lengthen = false);
                 }
             }
         }, 0, Config.INTERVAL_MOVE);
