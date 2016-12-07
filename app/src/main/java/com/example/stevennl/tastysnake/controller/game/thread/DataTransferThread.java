@@ -13,23 +13,32 @@ import com.example.stevennl.tastysnake.model.Pos;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Thread to send data and receive data during the game.
  * Author: LCY
  */
 public class DataTransferThread extends HandlerThread {
     private static final String TAG = "DataTransferThread";
-    private Snake snake;
     private SafeHandler handler;
+    private OnPacketReceiveListener pktRecvListener;
+
+    /**
+     * Call when a packet has been received.
+     */
+    public interface OnPacketReceiveListener {
+        void onPacketReceive(Packet pkt);
+    }
 
     /**
      * Initialize.
      *
-     * @param snake The opponent's snake
+     * @param pktRecvListener an {@link OnPacketReceiveListener}
      */
-    public DataTransferThread(Snake snake) {
+    public DataTransferThread(OnPacketReceiveListener pktRecvListener) {
         super(TAG);
-        this.snake = snake;
+        this.pktRecvListener = pktRecvListener;
     }
 
     /**
@@ -38,7 +47,7 @@ public class DataTransferThread extends HandlerThread {
     @Override
     protected void onLooperPrepared() {
         super.onLooperPrepared();
-        handler = new SafeHandler(snake, getLooper());
+        handler = new SafeHandler(pktRecvListener, getLooper());
     }
 
     /**
@@ -65,8 +74,8 @@ public class DataTransferThread extends HandlerThread {
     private static class SafeHandler extends Handler {
         private static final int MSG_SEND = 1;
         private static final int MSG_RECV = 2;
-        private BluetoothManager manager;
-        private Snake snake;
+        private WeakReference<BluetoothManager> manager;
+        private WeakReference<OnPacketReceiveListener> pktRecvListener_;
 
         // Debug fields
         private int recvCnt = 0;
@@ -74,14 +83,11 @@ public class DataTransferThread extends HandlerThread {
 
         /**
          * Initialize.
-         *
-         * @param looper The looper
-         * @param snake The opponent's snake
          */
-        private SafeHandler(Snake snake, Looper looper) {
+        private SafeHandler(OnPacketReceiveListener pktRecvListener_, Looper looper) {
             super(looper);
-            this.snake = snake;
-            manager = BluetoothManager.getInstance();
+            this.pktRecvListener_ = new WeakReference<>(pktRecvListener_);
+            manager = new WeakReference<>(BluetoothManager.getInstance());
         }
 
         @Override
@@ -91,38 +97,13 @@ public class DataTransferThread extends HandlerThread {
                 case MSG_SEND:
                     pkt = (Packet)msg.obj;
                     Log.d(TAG, "Send packet: " + pkt.toString() + " Cnt: " + (++sendCnt));
-                    manager.sendToRemote(pkt.toBytes());
+                    manager.get().sendToRemote(pkt.toBytes());
                     break;
                 case MSG_RECV:
                     pkt = (Packet)msg.obj;
                     Log.d(TAG, "Receive packet: " + pkt.toString() + " Cnt: " + (++recvCnt));
-                    handleRecvPkt(pkt);
+                    pktRecvListener_.get().onPacketReceive(pkt);
                     break;
-                default:
-                    break;
-            }
-        }
-
-        /**
-         * Handle a received packet.
-         */
-        private void handleRecvPkt(Packet pkt) {
-            switch (pkt.getType()) {
-                case FOOD_LENGTHEN: {
-                    Pos food = pkt.getFood();
-                    snake.getMap().createFood(food.getX(), food.getY(), true);
-                    break;
-                }
-                case FOOD_SHORTEN: {
-                    Pos food = pkt.getFood();
-                    snake.getMap().createFood(food.getX(), food.getY(), false);
-                    break;
-                }
-                case DIRECTION: {
-                    Direction direc= pkt.getDirec();
-                    snake.move(direc);
-                    break;
-                }
                 default:
                     break;
             }

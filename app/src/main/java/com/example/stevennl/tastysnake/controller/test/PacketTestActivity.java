@@ -23,7 +23,7 @@ public class PacketTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 infoTxt.setText("");
-                Packet[] pkts = new Packet[7];
+                Packet[] pkts = new Packet[1000];
                 pkts[0] = Packet.food(0, 8, true);
                 pkts[1] = Packet.food(35, 10, false);
                 pkts[2] = Packet.direction(Direction.UP);
@@ -31,10 +31,13 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[4] = Packet.direction(Direction.LEFT);
                 pkts[5] = Packet.direction(Direction.RIGHT);
                 pkts[6] = Packet.direction(Direction.NONE);
+                pkts[7] = Packet.restart();
                 for (Packet pkt : pkts) {
-                    byte[] raw = pkt.toBytes();
-                    Packet newPkt = new Packet(raw);
-                    infoTxt.append(newPkt.toString() + " Bytes: " + raw.length + "\n\n");
+                    if (pkt != null) {
+                        byte[] raw = pkt.toBytes();
+                        Packet newPkt = new Packet(raw);
+                        infoTxt.append(newPkt.toString() + " Bytes: " + raw.length + "\n\n");
+                    }
                 }
             }
         });

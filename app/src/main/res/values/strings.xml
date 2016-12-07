@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TastySnake</string>
 
-    <string name="restart">Restart</string>
+    <string name="restart">重新开始</string>
     <string name="connect">Connect</string>
     <string name="game">Game</string>
     <string name="start">Start</string>

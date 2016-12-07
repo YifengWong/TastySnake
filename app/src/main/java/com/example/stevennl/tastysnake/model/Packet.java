@@ -12,6 +12,7 @@ public class Packet implements Serializable {
     private static final char TYPE_FOOD_LENGTHEN = 'a';
     private static final char TYPE_FOOD_SHORTEN = 'b';
     private static final char TYPE_DIRECTION = 'c';
+    private static final char TYPE_RESTART = 'd';
 
     private Type type;
     private Pos food;
@@ -24,6 +25,7 @@ public class Packet implements Serializable {
         FOOD_LENGTHEN,
         FOOD_SHORTEN,
         DIRECTION,
+        RESTART
     }
 
     /**
@@ -57,6 +59,9 @@ public class Packet implements Serializable {
                 type = Type.DIRECTION;
                 direc = Direction.values()[str.charAt(1) - '0'];
                 break;
+            case TYPE_RESTART:
+                type = Type.RESTART;
+                break;
             default:
                 break;
         }
@@ -86,6 +91,8 @@ public class Packet implements Serializable {
                 builder.append(TYPE_DIRECTION);
                 builder.append(direc.ordinal());
                 break;
+            case RESTART:
+                builder.append(TYPE_RESTART);
             default:
                 break;
         }
@@ -120,6 +127,15 @@ public class Packet implements Serializable {
         Packet pkt = new Packet();
         pkt.type = Type.DIRECTION;
         pkt.direc = direc;
+        return pkt;
+    }
+
+    /**
+     * Create a RESTART packet.
+     */
+    public static Packet restart() {
+        Packet pkt = new Packet();
+        pkt.type = Type.RESTART;
         return pkt;
     }
 

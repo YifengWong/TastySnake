@@ -31,15 +31,8 @@ public class Snake {
     public enum MoveResult {
         OUT,
         SUICIDE,
-        CRASH,
+        HIT_ENEMY,
         SUC,
-    }
-
-    /**
-     * Return the map of the snake.
-     */
-    public Map getMap() {
-        return map;
     }
 
     /**
@@ -122,7 +115,7 @@ public class Snake {
                     return MoveResult.SUICIDE;
         int headColor = map.getPoint(head).getColor();
         if ((headColor == Config.COLOR_SNAKE_CLIENT || headColor == Config.COLOR_SNAKE_SERVER) && headColor != color)
-            return MoveResult.CRASH;
+            return MoveResult.HIT_ENEMY;
         return MoveResult.SUC;
     }
 

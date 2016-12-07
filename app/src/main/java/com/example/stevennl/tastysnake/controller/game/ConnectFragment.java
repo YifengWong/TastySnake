@@ -94,6 +94,7 @@ public class ConnectFragment extends Fragment {
         super.onPause();
         manager.unregisterDiscoveryReceiver(act);
         manager.cancelDiscovery();
+        refreshLayout.setRefreshing(false);
     }
 
     private void initListeners() {

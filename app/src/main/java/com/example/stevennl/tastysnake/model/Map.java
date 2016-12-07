@@ -15,7 +15,7 @@ public class Map {
     private int col;
 
     /**
-     * Return a specifmap of the game.
+     * Return a game map with specific row and column amount.
      */
     public static Map gameMap() {
         return new Map(Config.MAP_ROW, Config.MAP_COL);

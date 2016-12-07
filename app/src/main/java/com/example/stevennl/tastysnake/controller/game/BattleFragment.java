@@ -3,7 +3,6 @@ package com.example.stevennl.tastysnake.controller.game;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,8 +15,7 @@ import android.widget.Button;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.controller.game.thread.DataTransferThread;
-import com.example.stevennl.tastysnake.controller.game.thread.FoodThread;
-import com.example.stevennl.tastysnake.controller.game.thread.MoveThread;
+import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.model.Pos;
@@ -30,6 +28,8 @@ import com.example.stevennl.tastysnake.util.sensor.SensorController;
 import com.example.stevennl.tastysnake.widget.DrawableGrid;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Game battle page.
@@ -39,19 +39,19 @@ public class BattleFragment extends Fragment {
 
     private GameActivity act;
 
+    private Timer timer;
     private SafeHandler handler;
     private BluetoothManager manager;
+    private SensorController sensorCtrl;
 
     private DataTransferThread dataThread;
-    private FoodThread foodThread;
-    private MoveThread moveThread;
 
     private DrawableGrid grid;
 
     private Snake.Type type;
     private Map map;
-    private Snake snakeServer;
-    private Snake snakeClient;
+    private Snake mySnake;
+    private Snake enemySnake;
 
     // Debug fields
     private int recvCnt = 0;
@@ -76,9 +76,10 @@ public class BattleFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initHandler();
-        initSnakes();
+        initSnake();
         initManager();
-        initThread();
+        initSensor();
+        initDataTransferThread();
         initDataListener();
     }
 
@@ -87,37 +88,44 @@ public class BattleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_battle, container, false);
         initGrid(v);
-        initTestBtn(v);
+        initRestartBtn(v);
+        prepare();
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        SensorController.getInstance(act).register();
+        sensorCtrl.register();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        SensorController.getInstance(act).unregister();
+        sensorCtrl.unregister();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         manager.stopConnect();
-        stopThread();
+        dataThread.quitSafely();
+        stopGame();
     }
 
     private void initHandler() {
         handler = new SafeHandler(this);
     }
 
-    private void initSnakes() {
+    private void initSnake() {
         map = Map.gameMap();
-        snakeServer = new Snake(Snake.Type.SERVER, map);
-        snakeClient = new Snake(Snake.Type.CLIENT, map);
+        if (type == Snake.Type.SERVER) {
+            mySnake = new Snake(Snake.Type.SERVER, map);
+            enemySnake = new Snake(Snake.Type.CLIENT, map);
+        } else if (type == Snake.Type.CLIENT) {
+            mySnake = new Snake(Snake.Type.CLIENT, map);
+            enemySnake = new Snake(Snake.Type.SERVER, map);
+        }
     }
 
     private void initManager() {
@@ -126,13 +134,49 @@ public class BattleFragment extends Fragment {
             @Override
             public void onError(int code, Exception e) {
                 Log.e(TAG, "Error code: " + code, e);
-                errHandle(code);
+                handleErr(code);
             }
         });
     }
 
-    private void initThread() {
-        dataThread = new DataTransferThread(type == Snake.Type.SERVER ? snakeClient : snakeServer);
+    private void initSensor() {
+        sensorCtrl = SensorController.getInstance(act);
+    }
+
+    private void initDataTransferThread() {
+        dataThread = new DataTransferThread(new DataTransferThread.OnPacketReceiveListener() {
+            @Override
+            public void onPacketReceive(Packet pkt) {
+                switch (pkt.getType()) {
+                    case FOOD_LENGTHEN: {
+                        Pos food = pkt.getFood();
+                        map.createFood(food.getX(), food.getY(), true);
+                        break;
+                    }
+                    case FOOD_SHORTEN: {
+                        Pos food = pkt.getFood();
+                        map.createFood(food.getX(), food.getY(), false);
+                        break;
+                    }
+                    case DIRECTION: {
+                        Direction direc= pkt.getDirec();
+                        Snake.MoveResult res = enemySnake.move(direc);
+                        handleMoveResult(enemySnake, res);
+                        break;
+                    }
+                    case RESTART:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                restart();
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         dataThread.start();
     }
 
@@ -150,37 +194,127 @@ public class BattleFragment extends Fragment {
         grid = (DrawableGrid) v.findViewById(R.id.battle_grid);
         grid.setMap(map);
         grid.setBgColor(Config.COLOR_MAP_BG);
-        grid.setVisibility(View.INVISIBLE);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startGame();
-            }
-        }, 2000);
     }
 
-    private void initTestBtn(View v) {
-        Button testBtn = (Button) v.findViewById(R.id.battle_testBtn);
-        testBtn.setOnClickListener(new View.OnClickListener() {
+    private void initRestartBtn(View v) {
+        Button restartBtn = (Button) v.findViewById(R.id.battle_restartBtn);
+        restartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommonUtil.showToast(act, "Click!");
+                dataThread.send(Packet.restart());
+                restart();
             }
         });
     }
 
     /**
-     * Start game.
+     * Restart the game.
+     */
+    private void restart() {
+        stopTimer();
+        initSnake();
+        grid.setVisibility(View.INVISIBLE);
+        grid.setMap(map);
+        prepare();
+    }
+
+    /**
+     * Preparation before starting the game.
+     */
+    private void prepare() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startGame();
+            }
+        }, 1000);  // Start the game after 1 second
+    }
+
+    /**
+     * Start the game.
      */
     private void startGame() {
         grid.setVisibility(View.VISIBLE);
         if (type == Snake.Type.SERVER) {
-            foodThread = new FoodThread(map, dataThread);
-            foodThread.start();
+            startCreateFood();
         }
-        moveThread = new MoveThread(act,
-                type == Snake.Type.SERVER ? snakeServer : snakeClient, dataThread);
-        moveThread.start();
+        startMove();
+    }
+
+    /**
+     * Start a thread to create food.
+     */
+    private void startCreateFood() {
+        if (timer == null) {
+            timer = new Timer();
+        }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                boolean lengthen = (CommonUtil.randInt(2) == 0);
+                Pos food = map.createFood(lengthen);
+                dataThread.send(Packet.food(food.getX(), food.getY(), lengthen));
+            }
+        }, 0, Config.INTERVAL_FOOD);
+    }
+
+    /**
+     * Stat a thread to move 'mySnake'.
+     */
+    private void startMove() {
+        if (timer == null) {
+            timer = new Timer();
+        }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Direction direc = sensorCtrl.getDirection();
+                dataThread.send(Packet.direction(direc));
+                Snake.MoveResult res = mySnake.move(direc);
+                handleMoveResult(mySnake, res);
+            }
+        }, 0, Config.INTERVAL_MOVE);
+    }
+
+    /**
+     * Stop the game.
+     */
+    private void stopGame() {
+        stopTimer();
+    }
+
+    /**
+     * Stop the timer in order to stop creating food and moving 'mySnake'.
+     */
+    private void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    /**
+     * Handle snake's move result.
+     *
+     * @param snake The snake who generated the move result
+     * @param result The move result.
+     */
+    private void handleMoveResult(Snake snake, Snake.MoveResult result) {
+        if (!isAdded()) {
+            return;
+        }
+        String s = (snake == mySnake ? "My snake " : "Enemy snake ");
+        switch (result) {
+            case SUC:
+                break;
+            case SUICIDE:
+            case HIT_ENEMY:
+            case OUT:
+                handler.obtainMessage(SafeHandler.MSG_TOAST, s + result.name()).sendToTarget();
+                stopGame();
+            default:
+                break;
+        }
     }
 
     /**
@@ -189,8 +323,10 @@ public class BattleFragment extends Fragment {
      *
      * @param code The error code
      */
-    private void errHandle(int code) {
-        if (!isAdded()) return;
+    private void handleErr(int code) {
+        if (!isAdded()) {
+            return;
+        }
         switch (code) {
             case OnErrorListener.ERR_SOCKET_CLOSE:
             case OnErrorListener.ERR_STREAM_READ:
@@ -204,25 +340,11 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Stop current running threads.
-     */
-    private void stopThread() {
-        dataThread.quitSafely();
-        if (foodThread != null) {
-            foodThread.interrupt();
-            foodThread = null;
-        }
-        if (moveThread != null) {
-            moveThread.interrupt();
-            moveThread = null;
-        }
-    }
-
-    /**
      * A safe handler that circumvents memory leaks.
      */
     private static class SafeHandler extends Handler {
         private static final int MSG_ERR = 1;
+        private static final int MSG_TOAST = 2;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -235,8 +357,13 @@ public class BattleFragment extends Fragment {
             switch (msg.what) {
                 case MSG_ERR:
                     if (f.isAdded()) {
-                        CommonUtil.showToast(f.getActivity(), (String)msg.obj);
-                        f.stopThread();
+                        CommonUtil.showToast(f.act, (String)msg.obj);
+                        f.stopGame();
+                    }
+                    break;
+                case MSG_TOAST:
+                    if (f.isAdded()) {
+                        CommonUtil.showToast(f.act, (String)msg.obj);
                     }
                     break;
                 default:

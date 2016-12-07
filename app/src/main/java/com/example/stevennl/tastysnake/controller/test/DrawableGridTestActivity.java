@@ -66,20 +66,14 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             public void run() {
                 if (snakeServer != null && snakeClient != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    Snake.MoveResult res = snakeClient.move(dir);
+                    Snake.MoveResult res = snakeServer.move(dir);
                     switch (res) {
                         case SUC:
                             break;
                         case SUICIDE:
-                            showToast("Snake SUICIDE!");
-                            stopTimer();
-                            break;
-                        case CRASH:
-                            showToast("Snake CRASH!");
-                            stopTimer();
-                            break;
+                        case HIT_ENEMY:
                         case OUT:
-                            showToast("Snake OUT!");
+                            showToast("Snake " + res.name());
                             stopTimer();
                             break;
                         default:
