@@ -32,11 +32,13 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[5] = Packet.direction(Direction.RIGHT);
                 pkts[6] = Packet.direction(Direction.NONE);
                 pkts[7] = Packet.restart();
+                pkts[8] = Packet.time(55);
+                pkts[9] = Packet.time(5);
                 for (Packet pkt : pkts) {
                     if (pkt != null) {
                         byte[] raw = pkt.toBytes();
                         Packet newPkt = new Packet(raw);
-                        infoTxt.append(newPkt.toString() + " Bytes: " + raw.length + "\n\n");
+                        infoTxt.append(newPkt.toString() + "\nBytes: " + raw.length + "\n\n");
                     }
                 }
             }

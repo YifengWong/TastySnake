@@ -9,6 +9,7 @@
     <string name="select_device">选择设备进行对战</string>
     <string name="connecting">连接中</string>
     <string name="device_conn_suc">设备配对成功！</string>
+    <string name="switch_attack">攻守互换！</string>
 
     <string name="not_implement">Not Implemented</string>
 

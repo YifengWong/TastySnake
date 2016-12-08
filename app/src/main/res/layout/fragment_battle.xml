@@ -16,5 +16,12 @@
         android:layout_alignParentEnd="true"
         android:text="@string/restart"
         android:id="@+id/battle_restartBtn" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/battle_timeTxt"
+        android:textSize="@dimen/text_2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/default_margin"/>
 </RelativeLayout>
 

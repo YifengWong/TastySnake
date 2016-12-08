@@ -13,9 +13,11 @@ public class Packet implements Serializable {
     private static final char TYPE_FOOD_SHORTEN = 'b';
     private static final char TYPE_DIRECTION = 'c';
     private static final char TYPE_RESTART = 'd';
+    private static final char TYPE_TIME = 'e';
 
     private Type type;
-    private Pos food;
+    private int x;
+    private int y;
     private Direction direc = Direction.NONE;
 
     /**
@@ -25,7 +27,8 @@ public class Packet implements Serializable {
         FOOD_LENGTHEN,
         FOOD_SHORTEN,
         DIRECTION,
-        RESTART
+        RESTART,
+        TIME
     }
 
     /**
@@ -43,16 +46,14 @@ public class Packet implements Serializable {
         switch (str.charAt(0)) {
             case TYPE_FOOD_LENGTHEN: {
                 type = Type.FOOD_LENGTHEN;
-                int x = Integer.parseInt(str.substring(1, 3));
-                int y = Integer.parseInt(str.substring(3, 5));
-                food = new Pos(x, y);
+                x = Integer.parseInt(str.substring(1, 3));
+                y = Integer.parseInt(str.substring(3, 5));
                 break;
             }
             case TYPE_FOOD_SHORTEN: {
                 type = Type.FOOD_SHORTEN;
-                int x = Integer.parseInt(str.substring(1, 3));
-                int y = Integer.parseInt(str.substring(3, 5));
-                food = new Pos(x, y);
+                x = Integer.parseInt(str.substring(1, 3));
+                y = Integer.parseInt(str.substring(3, 5));
                 break;
             }
             case TYPE_DIRECTION:
@@ -61,6 +62,10 @@ public class Packet implements Serializable {
                 break;
             case TYPE_RESTART:
                 type = Type.RESTART;
+                break;
+            case TYPE_TIME:
+                type = Type.TIME;
+                x = Integer.parseInt(str.substring(1, 3));
                 break;
             default:
                 break;
@@ -75,14 +80,12 @@ public class Packet implements Serializable {
         switch (type) {
             case FOOD_LENGTHEN: {
                 builder.append(TYPE_FOOD_LENGTHEN);
-                int x = food.getX(), y = food.getY();
                 builder.append(x / 10 == 0 ? "0" + x : x);
                 builder.append(y / 10 == 0 ? "0" + y : y);
                 break;
             }
             case FOOD_SHORTEN: {
                 builder.append(TYPE_FOOD_SHORTEN);
-                int x = food.getX(), y = food.getY();
                 builder.append(x / 10 == 0 ? "0" + x : x);
                 builder.append(y / 10 == 0 ? "0" + y : y);
                 break;
@@ -93,6 +96,11 @@ public class Packet implements Serializable {
                 break;
             case RESTART:
                 builder.append(TYPE_RESTART);
+                break;
+            case TIME:
+                builder.append(TYPE_TIME);
+                builder.append(x / 10 == 0 ? "0" + x : x);
+                break;
             default:
                 break;
         }
@@ -114,7 +122,8 @@ public class Packet implements Serializable {
     public static Packet food(int x, int y, boolean lengthen) {
         Packet pkt = new Packet();
         pkt.type = lengthen ? Type.FOOD_LENGTHEN : Type.FOOD_SHORTEN;
-        pkt.food = new Pos(x, y);
+        pkt.x = x;
+        pkt.y = y;
         return pkt;
     }
 
@@ -140,6 +149,16 @@ public class Packet implements Serializable {
     }
 
     /**
+     * Create a TIME packet.
+     */
+    public static Packet time(int t) {
+        Packet pkt = new Packet();
+        pkt.type = Type.TIME;
+        pkt.x = t;
+        return pkt;
+    }
+
+    /**
      * Return the type of the packet.
      */
     public Type getType() {
@@ -147,10 +166,17 @@ public class Packet implements Serializable {
     }
 
     /**
-     * Return the food position of the packet.
+     * Return the x-coordinate of food position.
      */
-    public Pos getFood() {
-        return food;
+    public int getFoodX() {
+        return x;
+    }
+
+    /**
+     * Return the y-coordinate of food position.
+     */
+    public int getFoodY() {
+        return y;
     }
 
     /**
@@ -161,11 +187,19 @@ public class Packet implements Serializable {
     }
 
     /**
+     * Return the time of the packet.
+     */
+    public int getTime() {
+        return x;
+    }
+
+    /**
      * Return the string description of the packet.
      */
     @Override
     public String toString() {
-        return "Type: " + type.ordinal() + " Food: "
-                + (food == null ? "null" : food.toString()) + " Direc: " + direc.name();
+        return "Type: " + getType().name() + "\nFoodX: " + getFoodX()
+                + "\nFoodY: " + getFoodY() + "\nTime: " + getTime()
+                + "\nDirec: " + direc.name();
     }
 }

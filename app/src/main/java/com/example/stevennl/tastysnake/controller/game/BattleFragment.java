@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
@@ -47,11 +48,15 @@ public class BattleFragment extends Fragment {
     private DataTransferThread dataThread;
 
     private DrawableGrid grid;
+    private TextView timeTxt;
 
     private Snake.Type type;
     private Map map;
     private Snake mySnake;
     private Snake enemySnake;
+
+    private int timeRemain;
+    private boolean attack;
 
     // Debug fields
     private int recvCnt = 0;
@@ -88,6 +93,7 @@ public class BattleFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_battle, container, false);
         initGrid(v);
+        initTimeTxt(v);
         initRestartBtn(v);
         prepare();
         return v;
@@ -149,13 +155,11 @@ public class BattleFragment extends Fragment {
             public void onPacketReceive(Packet pkt) {
                 switch (pkt.getType()) {
                     case FOOD_LENGTHEN: {
-                        Pos food = pkt.getFood();
-                        map.createFood(food.getX(), food.getY(), true);
+                        map.createFood(pkt.getFoodX(), pkt.getFoodY(), true);
                         break;
                     }
                     case FOOD_SHORTEN: {
-                        Pos food = pkt.getFood();
-                        map.createFood(food.getX(), food.getY(), false);
+                        map.createFood(pkt.getFoodX(), pkt.getFoodY(), false);
                         break;
                     }
                     case DIRECTION: {
@@ -165,12 +169,10 @@ public class BattleFragment extends Fragment {
                         break;
                     }
                     case RESTART:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                restart();
-                            }
-                        });
+                        handler.obtainMessage(SafeHandler.MSG_RESTART).sendToTarget();
+                        break;
+                    case TIME:
+                        handler.obtainMessage(SafeHandler.MSG_TIME, pkt.getTime(), 0).sendToTarget();
                         break;
                     default:
                         break;
@@ -196,6 +198,11 @@ public class BattleFragment extends Fragment {
         grid.setBgColor(Config.COLOR_MAP_BG);
     }
 
+    private void initTimeTxt(View v) {
+        timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
+        timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
+    }
+    
     private void initRestartBtn(View v) {
         Button restartBtn = (Button) v.findViewById(R.id.battle_restartBtn);
         restartBtn.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +222,7 @@ public class BattleFragment extends Fragment {
         initSnake();
         grid.setVisibility(View.INVISIBLE);
         grid.setMap(map);
+        timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
         prepare();
     }
 
@@ -222,6 +230,8 @@ public class BattleFragment extends Fragment {
      * Preparation before starting the game.
      */
     private void prepare() {
+        timeRemain = Config.TIME_ATTACK;
+        attack = (type == Snake.Type.SERVER);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -235,8 +245,12 @@ public class BattleFragment extends Fragment {
      */
     private void startGame() {
         grid.setVisibility(View.VISIBLE);
+        if (timer == null) {
+            timer = new Timer();
+        }
         if (type == Snake.Type.SERVER) {
             startCreateFood();
+            startTiming();
         }
         startMove();
     }
@@ -245,9 +259,6 @@ public class BattleFragment extends Fragment {
      * Start a thread to create food.
      */
     private void startCreateFood() {
-        if (timer == null) {
-            timer = new Timer();
-        }
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -259,12 +270,22 @@ public class BattleFragment extends Fragment {
     }
 
     /**
+     * Start calculating attack/defend time.
+     */
+    private void startTiming() {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                dataThread.send(Packet.time(timeRemain - 1));
+                handler.obtainMessage(SafeHandler.MSG_TIME, timeRemain - 1, 0).sendToTarget();
+            }
+        }, 0, 1000);
+    }
+
+    /**
      * Stat a thread to move 'mySnake'.
      */
     private void startMove() {
-        if (timer == null) {
-            timer = new Timer();
-        }
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -345,6 +366,8 @@ public class BattleFragment extends Fragment {
     private static class SafeHandler extends Handler {
         private static final int MSG_ERR = 1;
         private static final int MSG_TOAST = 2;
+        private static final int MSG_RESTART = 3;
+        private static final int MSG_TIME = 4;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -366,6 +389,22 @@ public class BattleFragment extends Fragment {
                         CommonUtil.showToast(f.act, (String)msg.obj);
                     }
                     break;
+                case MSG_RESTART:
+                    if (f.isAdded()) {
+                        f.restart();
+                    }
+                    break;
+                case MSG_TIME:
+                    if (f.isAdded()) {
+                        f.timeRemain = msg.arg1;
+                        f.timeTxt.setText(String.valueOf(f.timeRemain));
+                        if (f.timeRemain == 0) {
+                            f.attack = !f.attack;
+                            f.timeRemain = Config.TIME_ATTACK;
+                            CommonUtil.showToast(f.act, f.getString(R.string.switch_attack)
+                                    + " 你是" + (f.attack ? "攻击方" : "防守方"));
+                        }
+                    }
                 default:
                     break;
             }

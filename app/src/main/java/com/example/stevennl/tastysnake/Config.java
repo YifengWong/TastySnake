@@ -19,6 +19,8 @@ public class Config {
     public static final int INTERVAL_MOVE = 175;  // milliseconds
     public static final int INTERVAL_FOOD = 3000;  // milliseconds
 
+    public static final int TIME_ATTACK = 5;  // seconds
+
     public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
     public static final int COLOR_SNAKE_SERVER = Color.RED;
