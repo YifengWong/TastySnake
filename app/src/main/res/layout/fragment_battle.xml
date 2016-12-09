@@ -21,6 +21,6 @@
         android:id="@+id/battle_timeTxt"
         android:textSize="@dimen/text_2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/default_margin"/>
+        android:layout_marginTop="@dimen/margin_median"/>
 </RelativeLayout>
 

@@ -9,5 +9,8 @@
     <dimen name="text_3">16sp</dimen>
     <dimen name="text_4">12sp</dimen>
 
-    <dimen name="default_margin">16dp</dimen>
+    <dimen name="margin_median">16dp</dimen>
+    <dimen name="margin_low">6dp</dimen>
+
+    <dimen name="start_btn_size">150dp</dimen>
 </resources>

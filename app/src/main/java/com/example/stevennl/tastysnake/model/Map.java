@@ -84,10 +84,7 @@ public class Map {
      * @param p The position of the point
      */
     public Point getPoint(Pos p) {
-        if (!isValid(p.getX(), p.getY()))  {
-            return new Point();
-        }
-        return content[p.getX()][p.getY()];
+        return getPoint(p.getX(), p.getY());
     }
 
     /**

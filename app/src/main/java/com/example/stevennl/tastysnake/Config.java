@@ -19,7 +19,7 @@ public class Config {
     public static final int INTERVAL_MOVE = 180;  // milliseconds
     public static final int INTERVAL_FOOD = 1000;  // milliseconds
 
-    public static final int DELAY_CONN_FRAGMENT = 2000;  // milliseconds
+    public static final int DELAY_CONN_FRAGMENT = 1000;  // milliseconds
 
     public static final int TIME_ATTACK = 30;  // seconds
 

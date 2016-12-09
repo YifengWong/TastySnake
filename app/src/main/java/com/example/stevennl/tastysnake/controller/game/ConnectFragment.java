@@ -238,6 +238,7 @@ public class ConnectFragment extends Fragment {
         runServer();
         refreshLayout.setRefreshing(true);
         devices.clear();
+        adapter.notifyDataSetChanged();
         manager.cancelDiscovery();
         if (manager.startDiscovery()) {
             Log.d(TAG, "Discovering...");
@@ -252,7 +253,7 @@ public class ConnectFragment extends Fragment {
      * Cancel discovery after a period of time.
      */
     private void scheduleCancelDiscover() {
-        new Handler().postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 cancelDiscover();
@@ -264,15 +265,13 @@ public class ConnectFragment extends Fragment {
      * Cancel bluetooth discovery process.
      */
     private void cancelDiscover() {
-        if (manager.isDiscovering()) {
-            manager.cancelDiscovery();
-            refreshLayout.setRefreshing(false);
-            Log.d(TAG, "Discover finished.");
-            if (devices.isEmpty()) {
-                Log.d(TAG, "No device discovered.");
-                if (isAdded()) {
-                    CommonUtil.showToast(act, getString(R.string.device_discover_empty));
-                }
+        refreshLayout.setRefreshing(false);
+        Log.d(TAG, "Discover finished.");
+        manager.cancelDiscovery();
+        if (devices.isEmpty()) {
+            Log.d(TAG, "No device discovered.");
+            if (isAdded()) {
+                CommonUtil.showToast(act, getString(R.string.device_discover_empty));
             }
         }
     }
