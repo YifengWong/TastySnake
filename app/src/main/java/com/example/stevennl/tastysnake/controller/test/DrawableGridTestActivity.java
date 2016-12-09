@@ -19,8 +19,8 @@ import java.util.TimerTask;
 public class DrawableGridTestActivity extends AppCompatActivity {
     private static final String TAG = "GridTestActivity";
 
-    private Snake snakeServer;
-    private Snake snakeClient;
+    private Snake mySnake;
+    private Snake enemySnake;
     private Map map;
 
     private Timer timer;
@@ -34,8 +34,8 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drawable_grid_test);
         sensorCtrl = SensorController.getInstance(this);
         map = Map.gameMap();
-        snakeServer = new Snake(Snake.Type.SERVER, map);
-        snakeClient = new Snake(Snake.Type.CLIENT, map);
+        mySnake = new Snake(Snake.Type.SERVER, map, Config.COLOR_SNAKE_MY);
+        enemySnake = new Snake(Snake.Type.CLIENT, map, Config.COLOR_SNAKE_ENEMY);
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
         grid.setBgColor(Config.COLOR_MAP_BG);
@@ -64,9 +64,9 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {  // Gravity sensor and snake move thread
             @Override
             public void run() {
-                if (snakeServer != null && snakeClient != null) {
+                if (mySnake != null && enemySnake != null) {
                     Direction dir = sensorCtrl.getDirection();
-                    Snake.MoveResult res = snakeServer.move(dir);
+                    Snake.MoveResult res = mySnake.move(dir);
                     switch (res) {
                         case SUC:
                             break;

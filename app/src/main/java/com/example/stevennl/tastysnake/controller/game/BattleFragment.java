@@ -15,7 +15,8 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.controller.game.thread.DataTransferThread;
+import com.example.stevennl.tastysnake.controller.game.thread.RecvThread;
+import com.example.stevennl.tastysnake.controller.game.thread.SendThread;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
@@ -45,10 +46,12 @@ public class BattleFragment extends Fragment {
     private BluetoothManager manager;
     private SensorController sensorCtrl;
 
-    private DataTransferThread dataThread;
+    private SendThread sendThread;
+    private RecvThread recvThread;
 
     private DrawableGrid grid;
     private TextView timeTxt;
+    private TextView prepareTimeTxt;
     private Button restartBtn;
 
     private Snake.Type type;
@@ -116,7 +119,8 @@ public class BattleFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         manager.stopConnect();
-        dataThread.quitSafely();
+        sendThread.quitSafely();
+        recvThread.quitSafely();
         stopGame();
     }
 
@@ -126,13 +130,9 @@ public class BattleFragment extends Fragment {
 
     private void initSnake() {
         map = Map.gameMap();
-        if (type == Snake.Type.SERVER) {
-            mySnake = new Snake(Snake.Type.SERVER, map);
-            enemySnake = new Snake(Snake.Type.CLIENT, map);
-        } else if (type == Snake.Type.CLIENT) {
-            mySnake = new Snake(Snake.Type.CLIENT, map);
-            enemySnake = new Snake(Snake.Type.SERVER, map);
-        }
+        Snake.Type enemyType = (type == Snake.Type.SERVER ? Snake.Type.CLIENT : Snake.Type.SERVER);
+        mySnake = new Snake(type, map, Config.COLOR_SNAKE_MY);
+        enemySnake = new Snake(enemyType, map, Config.COLOR_SNAKE_ENEMY);
     }
 
     private void initManager() {
@@ -151,7 +151,8 @@ public class BattleFragment extends Fragment {
     }
 
     private void initDataTransferThread() {
-        dataThread = new DataTransferThread(new DataTransferThread.OnPacketReceiveListener() {
+        sendThread = new SendThread();
+        recvThread = new RecvThread(new RecvThread.OnPacketReceiveListener() {
             @Override
             public void onPacketReceive(Packet pkt) {
                 switch (pkt.getType()) {
@@ -180,7 +181,8 @@ public class BattleFragment extends Fragment {
                 }
             }
         });
-        dataThread.start();
+        sendThread.start();
+        recvThread.start();
     }
 
     private void initDataListener() {
@@ -188,7 +190,7 @@ public class BattleFragment extends Fragment {
             @Override
             public void onReceive(int bytesCount, byte[] data) {
                 Log.d(TAG, "Receive: " + bytesCount + " bytes. Cnt: " + (++recvCnt));
-                dataThread.recv(new Packet(data));
+                recvThread.recv(new Packet(data));
             }
         });
     }
@@ -203,6 +205,7 @@ public class BattleFragment extends Fragment {
     private void initTimeTxt(View v) {
         timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
         timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
+        prepareTimeTxt = (TextView) v.findViewById(R.id.battle_prepareTimeTxt);
     }
     
     private void initRestartBtn(View v) {
@@ -212,7 +215,7 @@ public class BattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setVisibility(View.GONE);
-                dataThread.send(Packet.restart());
+                sendThread.send(Packet.restart());
                 restart();
             }
         });
@@ -235,23 +238,51 @@ public class BattleFragment extends Fragment {
     private void prepare() {
         timeRemain = Config.TIME_ATTACK;
         attack = (type == Snake.Type.SERVER);
-        handler.obtainMessage(SafeHandler.MSG_TOAST, getString(R.string.game_about_to_start)
-                + CommonUtil.getAttackStr(act, attack)).sendToTarget();
+        handler.obtainMessage(SafeHandler.MSG_TOAST, CommonUtil.getAttackStr(act, attack)
+                + getString(R.string.you_snake_color)).sendToTarget();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (isAdded()) {
                     grid.setVisibility(View.VISIBLE);
-                    startGame();
+                    prepareTimeTxt.setVisibility(View.VISIBLE);
+                    prepareTimeTxt.setText("");
+                    if (timer == null) {
+                        timer = new Timer();
+                    }
+                    timer.schedule(new TimerTask() {
+                        private int prepareTimeRemain = Config.TIME_GAME_PREPARE;
+                        private final String startStr = getString(R.string.game_start);
+
+                        @Override
+                        public void run() {
+                            if (prepareTimeTxt.getText().toString().equals(startStr)) {
+                                handler.obtainMessage(SafeHandler.MSG_HIDE_PREPARE_TXT).sendToTarget();
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startGame();
+                                    }
+                                });
+                            } else if (prepareTimeRemain == 0) {
+                                handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME, startStr)
+                                        .sendToTarget();
+                            } else {
+                                handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME,
+                                        String.valueOf(prepareTimeRemain--)).sendToTarget();
+                            }
+                        }
+                    }, 0, 1000);
                 }
             }
-        }, 3000);
+        }, Config.DELAY_BATTLE_FRAGMENT);
     }
 
     /**
      * Start the game.
      */
     private void startGame() {
+        stopTimer();
         if (timer == null) {
             timer = new Timer();
         }
@@ -272,7 +303,7 @@ public class BattleFragment extends Fragment {
             @Override
             public void run() {
                 Pos food = map.createFood(lengthen = !lengthen);
-                dataThread.send(Packet.food(food.getX(), food.getY(), lengthen));
+                sendThread.send(Packet.food(food.getX(), food.getY(), lengthen));
             }
         }, 0, Config.INTERVAL_FOOD);
     }
@@ -284,7 +315,7 @@ public class BattleFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                dataThread.send(Packet.time(timeRemain - 1));
+                sendThread.send(Packet.time(timeRemain - 1));
                 handler.obtainMessage(SafeHandler.MSG_TIME, timeRemain - 1, 0).sendToTarget();
             }
         }, 0, 1000);
@@ -298,7 +329,7 @@ public class BattleFragment extends Fragment {
             @Override
             public void run() {
                 Direction direc = sensorCtrl.getDirection();
-                dataThread.send(Packet.direction(direc));
+                sendThread.send(Packet.direction(direc));
                 Snake.MoveResult res = mySnake.move(direc);
                 handleMoveResult(mySnake, res);
             }
@@ -389,6 +420,8 @@ public class BattleFragment extends Fragment {
         private static final int MSG_RESTART = 3;
         private static final int MSG_TIME = 4;
         private static final int MSG_SHOW_RESTART = 5;
+        private static final int MSG_UPDATE_PREPARE_TIME = 6;
+        private static final int MSG_HIDE_PREPARE_TXT = 7;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -430,6 +463,16 @@ public class BattleFragment extends Fragment {
                 case MSG_SHOW_RESTART:
                     if (f.isAdded()) {
                         f.restartBtn.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case MSG_UPDATE_PREPARE_TIME:
+                    if (f.isAdded()) {
+                        f.prepareTimeTxt.setText((String)msg.obj);
+                    }
+                    break;
+                case MSG_HIDE_PREPARE_TXT:
+                    if (f.isAdded()) {
+                        f.prepareTimeTxt.setVisibility(View.GONE);
                     }
                     break;
                 default:

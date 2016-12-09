@@ -22,5 +22,11 @@
         android:textSize="@dimen/text_2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_median"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_1"
+        android:layout_centerInParent="true"
+        android:id="@+id/battle_prepareTimeTxt"/>
 </RelativeLayout>
 

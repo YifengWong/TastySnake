@@ -20,13 +20,15 @@ public class Config {
     public static final int INTERVAL_FOOD = 1000;  // milliseconds
 
     public static final int DELAY_CONN_FRAGMENT = 1000;  // milliseconds
+    public static final int DELAY_BATTLE_FRAGMENT = 3000;  // milliseconds
 
     public static final int TIME_ATTACK = 30;  // seconds
+    public static final int TIME_GAME_PREPARE = 3;  // seconds
 
     public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
-    public static final int COLOR_SNAKE_SERVER = Color.RED;
-    public static final int COLOR_SNAKE_CLIENT = Color.BLUE;
+    public static final int COLOR_SNAKE_MY = Color.RED;
+    public static final int COLOR_SNAKE_ENEMY = Color.GRAY;
     public static final int COLOR_EMPTY_POINT = Color.WHITE;
     public static final int COLOR_MAP_BG = Color.WHITE;
 

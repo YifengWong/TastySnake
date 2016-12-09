@@ -1,5 +1,7 @@
 package com.example.stevennl.tastysnake.model;
 
+import android.graphics.Color;
+
 import com.example.stevennl.tastysnake.Config;
 
 import java.util.ArrayList;
@@ -40,18 +42,17 @@ public class Snake {
      *
      * @param type The type of the snake
      * @param map The game map
+     * @param color The color of the snake
      */
-    public Snake(Type type, Map map) {
+    public Snake(Type type, Map map, int color) {
         switch (type) {
             case SERVER:
-                color = Config.COLOR_SNAKE_SERVER;
                 direc = Direction.RIGHT;
                 for (int i = 3; i > 0; --i) {
                     bodies.add(new Pos(10, 6 + i));
                 }
                 break;
             case CLIENT:
-                color = Config.COLOR_SNAKE_CLIENT;
                 direc = Direction.RIGHT;
                 for (int i = 3; i > 0; --i) {
                     bodies.add(new Pos(40, 6 + i));
@@ -61,6 +62,7 @@ public class Snake {
                 break;
         }
         this.map = map;
+        this.color = color;
         this.row = map.getRowCount();
         this.col = map.getColCount();
         genType();
@@ -114,7 +116,7 @@ public class Snake {
                 if (bodies.get(i).getX() == bodies.get(j).getX() && bodies.get(i).getY() == bodies.get(j).getY())
                     return MoveResult.SUICIDE;
         int headColor = map.getPoint(head).getColor();
-        if ((headColor == Config.COLOR_SNAKE_CLIENT || headColor == Config.COLOR_SNAKE_SERVER) && headColor != color)
+        if ((headColor == Config.COLOR_SNAKE_ENEMY || headColor == Config.COLOR_SNAKE_MY) && headColor != color)
             return MoveResult.HIT_ENEMY;
         return MoveResult.SUC;
     }

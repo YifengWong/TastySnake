@@ -329,7 +329,6 @@ public class ConnectFragment extends Fragment {
 
     /**
      * A safe handler that circumvents memory leaks.
-     * Author: LCY
      */
     private static class SafeHandler extends Handler {
         private static final int MSG_ERR = 1;

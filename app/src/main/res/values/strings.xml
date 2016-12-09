@@ -5,16 +5,16 @@
     <string name="connect">Connect</string>
     <string name="game">Game</string>
     <string name="start">开始</string>
-    <string name="start_battle">Start Battle!</string>
+    <string name="game_start">游戏开始！</string>
     <string name="select_device">选择设备进行对战</string>
     <string name="connecting">连接中</string>
     <string name="device_conn_suc">设备配对成功！</string>
     <string name="switch_attack">攻守互换！</string>
     <string name="win">你赢了！</string>
     <string name="lose">你输了！</string>
-    <string name="you_attacker">你是攻击方</string>
-    <string name="you_defender">你是防守方</string>
-    <string name="game_about_to_start">游戏即将开始！</string>
+    <string name="you_attacker">你是攻击方！</string>
+    <string name="you_defender">你是防守方！</string>
+    <string name="you_snake_color">你的蛇是红色的！</string>
     <string name="pull_to_refresh">请下拉刷新</string>
 
     <string name="not_implement">Not Implemented</string>
