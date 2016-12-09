@@ -75,15 +75,15 @@ public class SensorController {
     public Direction getDirection() {
         if (Math.abs(yAccVal) < Math.abs(xAccVal)) {
             if ((xAccVal - Config.GRAVITY_SENSITIVITY) > yAccVal) {
-                return Direction.LEFT;
+                return Direction.DOWN;
             } else if ((xAccVal + Config.GRAVITY_SENSITIVITY) < yAccVal) {
-                return Direction.RIGHT;
+                return Direction.UP;
             }
         } else {
             if ((yAccVal + Config.GRAVITY_SENSITIVITY) < xAccVal) {
-                return Direction.UP;
+                return Direction.LEFT;
             } else if ((yAccVal - Config.GRAVITY_SENSITIVITY) > xAccVal) {
-                return Direction.DOWN;
+                return Direction.RIGHT;
             }
         }
         return Direction.NONE;

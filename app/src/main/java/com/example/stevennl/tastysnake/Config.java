@@ -12,17 +12,17 @@ public class Config {
     public static final int BLUETOOTH_DISCOVERABLE_TIME = 180;  // seconds
     public static final int BLUETOOTH_DISCOVER_TIME = 5000;  // milliseconds
 
-    public static final int MAP_ROW = 50;
-    public static final int MAP_COL = 30;
+    public static final int MAP_ROW = 30;
+    public static final int MAP_COL = 55;
 
     public static final int INTERVAL_DRAW = 30;  // milliseconds
-    public static final int INTERVAL_MOVE = 180;  // milliseconds
+    public static final int INTERVAL_MOVE = 80;  // milliseconds
     public static final int INTERVAL_FOOD = 1000;  // milliseconds
 
     public static final int DELAY_CONN_FRAGMENT = 1000;  // milliseconds
     public static final int DELAY_BATTLE_FRAGMENT = 3000;  // milliseconds
 
-    public static final int TIME_ATTACK = 30;  // seconds
+    public static final int TIME_ATTACK = 10;  // seconds
     public static final int TIME_GAME_PREPARE = 3;  // seconds
 
     public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;

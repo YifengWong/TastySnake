@@ -302,7 +302,7 @@ public class BattleFragment extends Fragment {
 
             @Override
             public void run() {
-                Pos food = map.createFood(lengthen = !lengthen);
+                Pos food = map.createFood(lengthen = true);
                 sendThread.send(Packet.food(food.getX(), food.getY(), lengthen));
             }
         }, 0, Config.INTERVAL_FOOD);

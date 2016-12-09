@@ -26,13 +26,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".controller.test.DrawableGridTestActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
             android:name=".controller.test.SensorTestActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".controller.game.GameActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
             android:name=".controller.test.PacketTestActivity"
             android:screenOrientation="portrait" />

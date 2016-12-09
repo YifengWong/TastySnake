@@ -48,14 +48,14 @@ public class Snake {
         switch (type) {
             case SERVER:
                 direc = Direction.RIGHT;
-                for (int i = 3; i > 0; --i) {
+                for (int i = 2; i > 0; --i) {
                     bodies.add(new Pos(10, 6 + i));
                 }
                 break;
             case CLIENT:
-                direc = Direction.RIGHT;
-                for (int i = 3; i > 0; --i) {
-                    bodies.add(new Pos(40, 6 + i));
+                direc = Direction.LEFT;
+                for (int i = 2; i > 0; --i) {
+                    bodies.add(new Pos(20, 49 - i));
                 }
                 break;
             default:
