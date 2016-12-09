@@ -2,6 +2,7 @@ package com.example.stevennl.tastysnake.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -22,7 +23,7 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
 
     private int rowCount = 1;
     private int colCount = 1;
-    private int bgColor;
+    private int bgColor = Color.TRANSPARENT;
 
     private int width = 0;
     private int height = 0;

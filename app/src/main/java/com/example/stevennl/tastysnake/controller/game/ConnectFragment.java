@@ -61,15 +61,15 @@ public class ConnectFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         act = (GameActivity)context;
-        handler = new SafeHandler(this);
-        manager = BluetoothManager.getInstance();
-        devices = new ArrayList<>();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initListeners();
+        handler = new SafeHandler(this);
+        manager = BluetoothManager.getInstance();
+        devices = new ArrayList<>();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ConnectFragment extends Fragment {
         initTitleTxt(v);
         initListView(v);
         initRefreshLayout(v);
-        startConnect();
+        prepare();
         return v;
     }
 
@@ -167,6 +167,20 @@ public class ConnectFragment extends Fragment {
                 }
             }
         });
+    }
+
+    /**
+     * Preparation before connection.
+     */
+    private void prepare() {
+        refreshLayout.setRefreshing(true);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(false);
+                startConnect();
+            }
+        }, Config.DELAY_CONN_FRAGMENT);
     }
 
     /**

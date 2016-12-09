@@ -10,6 +10,10 @@
     <string name="connecting">连接中</string>
     <string name="device_conn_suc">设备配对成功！</string>
     <string name="switch_attack">攻守互换！</string>
+    <string name="win">你赢了！</string>
+    <string name="lose">你输了！</string>
+    <string name="attacker">攻击方</string>
+    <string name="defender">防守方</string>
 
     <string name="not_implement">Not Implemented</string>
 

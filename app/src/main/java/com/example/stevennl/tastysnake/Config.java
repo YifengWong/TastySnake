@@ -16,10 +16,12 @@ public class Config {
     public static final int MAP_COL = 30;
 
     public static final int INTERVAL_DRAW = 30;  // milliseconds
-    public static final int INTERVAL_MOVE = 175;  // milliseconds
-    public static final int INTERVAL_FOOD = 3000;  // milliseconds
+    public static final int INTERVAL_MOVE = 150;  // milliseconds
+    public static final int INTERVAL_FOOD = 1000;  // milliseconds
 
-    public static final int TIME_ATTACK = 5;  // seconds
+    public static final int DELAY_CONN_FRAGMENT = 2000;  // milliseconds
+
+    public static final int TIME_ATTACK = 30;  // seconds
 
     public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;

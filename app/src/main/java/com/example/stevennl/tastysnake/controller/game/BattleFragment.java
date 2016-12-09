@@ -49,6 +49,7 @@ public class BattleFragment extends Fragment {
 
     private DrawableGrid grid;
     private TextView timeTxt;
+    private Button restartBtn;
 
     private Snake.Type type;
     private Map map;
@@ -194,8 +195,9 @@ public class BattleFragment extends Fragment {
 
     private void initGrid(View v) {
         grid = (DrawableGrid) v.findViewById(R.id.battle_grid);
-        grid.setMap(map);
+        grid.setVisibility(View.GONE);
         grid.setBgColor(Config.COLOR_MAP_BG);
+        grid.setMap(map);
     }
 
     private void initTimeTxt(View v) {
@@ -204,10 +206,12 @@ public class BattleFragment extends Fragment {
     }
     
     private void initRestartBtn(View v) {
-        Button restartBtn = (Button) v.findViewById(R.id.battle_restartBtn);
+        restartBtn = (Button) v.findViewById(R.id.battle_restartBtn);
+        restartBtn.setVisibility(View.GONE);
         restartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setVisibility(View.GONE);
                 dataThread.send(Packet.restart());
                 restart();
             }
@@ -220,7 +224,6 @@ public class BattleFragment extends Fragment {
     private void restart() {
         stopTimer();
         initSnake();
-        grid.setVisibility(View.INVISIBLE);
         grid.setMap(map);
         timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
         prepare();
@@ -232,19 +235,21 @@ public class BattleFragment extends Fragment {
     private void prepare() {
         timeRemain = Config.TIME_ATTACK;
         attack = (type == Snake.Type.SERVER);
+        handler.obtainMessage(SafeHandler.MSG_TOAST,
+                "游戏即将开始！你是" + getAttackStr()).sendToTarget();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                grid.setVisibility(View.VISIBLE);
                 startGame();
             }
-        }, 1000);  // Start the game after 1 second
+        }, 3000);
     }
 
     /**
      * Start the game.
      */
     private void startGame() {
-        grid.setVisibility(View.VISIBLE);
         if (timer == null) {
             timer = new Timer();
         }
@@ -260,17 +265,18 @@ public class BattleFragment extends Fragment {
      */
     private void startCreateFood() {
         timer.schedule(new TimerTask() {
+            private boolean lengthen = false;
+
             @Override
             public void run() {
-                boolean lengthen = (CommonUtil.randInt(2) == 0);
-                Pos food = map.createFood(lengthen);
+                Pos food = map.createFood(lengthen = !lengthen);
                 dataThread.send(Packet.food(food.getX(), food.getY(), lengthen));
             }
         }, 0, Config.INTERVAL_FOOD);
     }
 
     /**
-     * Start calculating attack/defend time.
+     * Start a thread to calculate remaining time.
      */
     private void startTiming() {
         timer.schedule(new TimerTask() {
@@ -302,6 +308,9 @@ public class BattleFragment extends Fragment {
      */
     private void stopGame() {
         stopTimer();
+        if (type == Snake.Type.SERVER) {
+            handler.obtainMessage(SafeHandler.MSG_SHOW_RESTART).sendToTarget();
+        }
     }
 
     /**
@@ -324,23 +333,39 @@ public class BattleFragment extends Fragment {
         if (!isAdded()) {
             return;
         }
-        String s = (snake == mySnake ? "My snake " : "Enemy snake ");
         switch (result) {
             case SUC:
                 break;
             case SUICIDE:
-            case HIT_ENEMY:
             case OUT:
-                handler.obtainMessage(SafeHandler.MSG_TOAST, s + result.name()).sendToTarget();
+                if (snake == mySnake) {
+                    handler.obtainMessage(SafeHandler.MSG_TOAST,
+                            getString(R.string.lose)).sendToTarget();
+                } else if (snake == enemySnake) {
+                    handler.obtainMessage(SafeHandler.MSG_TOAST,
+                            getString(R.string.win)).sendToTarget();
+                }
                 stopGame();
+                break;
+            case HIT_ENEMY:
+                handler.obtainMessage(SafeHandler.MSG_TOAST,
+                        attack ? getString(R.string.win) : getString(R.string.lose)).sendToTarget();
+                stopGame();
+                break;
             default:
                 break;
         }
     }
 
     /**
-     * Handle errors.
-     * Notice that this method is called in a sub-thread.
+     * Return role string (attacker or defender).
+     */
+    private String getAttackStr() {
+        return attack ? getString(R.string.attacker) : getString(R.string.defender);
+    }
+
+    /**
+     * Handle exceptions.
      *
      * @param code The error code
      */
@@ -368,6 +393,7 @@ public class BattleFragment extends Fragment {
         private static final int MSG_TOAST = 2;
         private static final int MSG_RESTART = 3;
         private static final int MSG_TIME = 4;
+        private static final int MSG_SHOW_RESTART = 5;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -402,9 +428,15 @@ public class BattleFragment extends Fragment {
                             f.attack = !f.attack;
                             f.timeRemain = Config.TIME_ATTACK;
                             CommonUtil.showToast(f.act, f.getString(R.string.switch_attack)
-                                    + " 你是" + (f.attack ? "攻击方" : "防守方"));
+                                    + " 你是" + f.getAttackStr());
                         }
                     }
+                    break;
+                case MSG_SHOW_RESTART:
+                    if (f.isAdded()) {
+                        f.restartBtn.setVisibility(View.VISIBLE);
+                    }
+                    break;
                 default:
                     break;
             }

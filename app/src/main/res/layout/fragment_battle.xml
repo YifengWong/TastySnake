@@ -7,8 +7,7 @@
     <com.example.stevennl.tastysnake.widget.DrawableGrid
         android:id="@+id/battle_grid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible" />
+        android:layout_height="match_parent"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
