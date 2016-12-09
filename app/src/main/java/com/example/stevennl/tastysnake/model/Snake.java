@@ -46,15 +46,15 @@ public class Snake {
             case SERVER:
                 color = Config.COLOR_SNAKE_SERVER;
                 direc = Direction.RIGHT;
-                for (int i = 10; i >= 0; i --) {
-                    bodies.add(new Pos(10, i));
+                for (int i = 3; i > 0; --i) {
+                    bodies.add(new Pos(10, 6 + i));
                 }
                 break;
             case CLIENT:
                 color = Config.COLOR_SNAKE_CLIENT;
                 direc = Direction.RIGHT;
-                for (int i = 10; i >= 0; i --) {
-                    bodies.add(new Pos(40, 10+i));
+                for (int i = 3; i > 0; --i) {
+                    bodies.add(new Pos(40, 6 + i));
                 }
                 break;
             default:

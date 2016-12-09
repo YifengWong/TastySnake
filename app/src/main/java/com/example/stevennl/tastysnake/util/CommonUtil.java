@@ -3,6 +3,8 @@ package com.example.stevennl.tastysnake.util;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.example.stevennl.tastysnake.R;
+
 import java.util.Random;
 
 /**
@@ -37,5 +39,15 @@ public class CommonUtil {
      */
     public static int randInt(int max) {
         return random.nextInt(max);
+    }
+
+    /**
+     * Return role string (attacker or defender).
+     *
+     * @param context The context
+     * @param attack If true, return attacker string, otherwise return defender string.
+     */
+    public static String getAttackStr(Context context, boolean attack) {
+        return attack ? context.getString(R.string.you_attacker) : context.getString(R.string.you_defender);
     }
 }

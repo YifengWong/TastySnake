@@ -235,13 +235,15 @@ public class BattleFragment extends Fragment {
     private void prepare() {
         timeRemain = Config.TIME_ATTACK;
         attack = (type == Snake.Type.SERVER);
-        handler.obtainMessage(SafeHandler.MSG_TOAST,
-                "游戏即将开始！你是" + getAttackStr()).sendToTarget();
+        handler.obtainMessage(SafeHandler.MSG_TOAST, getString(R.string.game_about_to_start)
+                + CommonUtil.getAttackStr(act, attack)).sendToTarget();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                grid.setVisibility(View.VISIBLE);
-                startGame();
+                if (isAdded()) {
+                    grid.setVisibility(View.VISIBLE);
+                    startGame();
+                }
             }
         }, 3000);
     }
@@ -358,13 +360,6 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Return role string (attacker or defender).
-     */
-    private String getAttackStr() {
-        return attack ? getString(R.string.attacker) : getString(R.string.defender);
-    }
-
-    /**
      * Handle exceptions.
      *
      * @param code The error code
@@ -428,7 +423,7 @@ public class BattleFragment extends Fragment {
                             f.attack = !f.attack;
                             f.timeRemain = Config.TIME_ATTACK;
                             CommonUtil.showToast(f.act, f.getString(R.string.switch_attack)
-                                    + " 你是" + f.getAttackStr());
+                                    + CommonUtil.getAttackStr(f.act, f.attack));
                         }
                     }
                     break;

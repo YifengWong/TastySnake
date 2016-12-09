@@ -187,12 +187,14 @@ public class ConnectFragment extends Fragment {
      * Start connection procedure.
      */
     private void startConnect() {
-        if (!manager.isEnabled()) {
-            startActivityForResult(manager.getEnableIntent(), REQ_BLUETOOTH_ENABLED);
-        } else {
-            reqDiscoverable();
+        if (isAdded()) {
+            if (!manager.isEnabled()) {
+                startActivityForResult(manager.getEnableIntent(), REQ_BLUETOOTH_ENABLED);
+            } else {
+                reqDiscoverable();
+            }
+            refreshLayout.setRefreshing(false);
         }
-        refreshLayout.setRefreshing(false);
     }
 
     /**

@@ -12,8 +12,9 @@
     <string name="switch_attack">攻守互换！</string>
     <string name="win">你赢了！</string>
     <string name="lose">你输了！</string>
-    <string name="attacker">攻击方</string>
-    <string name="defender">防守方</string>
+    <string name="you_attacker">你是攻击方</string>
+    <string name="you_defender">你是防守方</string>
+    <string name="game_about_to_start">游戏即将开始！</string>
 
     <string name="not_implement">Not Implemented</string>
 
