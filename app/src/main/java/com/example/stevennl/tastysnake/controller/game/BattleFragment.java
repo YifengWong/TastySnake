@@ -35,6 +35,7 @@ import java.util.TimerTask;
 
 /**
  * Game battle page.
+ * Author: LCY
  */
 public class BattleFragment extends Fragment {
     private static final String TAG = "BattleFragment";
@@ -58,7 +59,7 @@ public class BattleFragment extends Fragment {
     private Map map;
     private Snake mySnake;
     private Snake enemySnake;
-    private Snake.Type type;
+    private Snake.Type type;  // Distinguish server/client
 
     private int timeRemain;
     private boolean attack;
@@ -86,13 +87,12 @@ public class BattleFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        attack = (type == Snake.Type.SERVER);  // Default attacker is SERVER snake
+        attack = isServer();  // Default attacker is SERVER snake
         initHandler();
         initSnake();
         initManager();
         initSensor();
         initDataTransferThread();
-        initDataListener();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class BattleFragment extends Fragment {
 
     private void initSnake() {
         map = Map.gameMap();
-        Snake.Type enemyType = (type == Snake.Type.SERVER ? Snake.Type.CLIENT : Snake.Type.SERVER);
+        Snake.Type enemyType = (isServer() ? Snake.Type.CLIENT : Snake.Type.SERVER);
         mySnake = new Snake(type, map, Config.COLOR_SNAKE_MY);
         enemySnake = new Snake(enemyType, map, Config.COLOR_SNAKE_ENEMY);
     }
@@ -150,7 +150,18 @@ public class BattleFragment extends Fragment {
             @Override
             public void onError(int code, Exception e) {
                 Log.e(TAG, "Error code: " + code, e);
-                handleErr(code);
+                if (isAdded()) {
+                    handleErr(code);
+                }
+            }
+        });
+        manager.setDataListener(new OnDataReceiveListener() {
+            @Override
+            public void onReceive(int bytesCount, byte[] data) {
+                Log.d(TAG, "Receive: " + bytesCount + " bytes. Cnt: " + (++recvCnt));
+                if (recvThread != null && recvThread.isAlive()) {
+                    recvThread.recv(new Packet(data));
+                }
             }
         });
     }
@@ -172,7 +183,7 @@ public class BattleFragment extends Fragment {
                         map.createFood(pkt.getFoodX(), pkt.getFoodY(), false);
                         break;
                     case DIRECTION:
-                        Direction direc= pkt.getDirec();
+                        Direction direc = pkt.getDirec();
                         Snake.MoveResult res = enemySnake.move(direc);
                         handleMoveResult(enemySnake, res);
                         break;
@@ -181,7 +192,8 @@ public class BattleFragment extends Fragment {
                         handler.obtainMessage(SafeHandler.MSG_RESTART).sendToTarget();
                         break;
                     case TIME:
-                        handler.obtainMessage(SafeHandler.MSG_TIME, pkt.getTime(), 0).sendToTarget();
+                        timeRemain = pkt.getTime();
+                        handler.obtainMessage(SafeHandler.MSG_TIME).sendToTarget();
                         break;
                     default:
                         break;
@@ -190,16 +202,6 @@ public class BattleFragment extends Fragment {
         });
         sendThread.start();
         recvThread.start();
-    }
-
-    private void initDataListener() {
-        manager.setDataListener(new OnDataReceiveListener() {
-            @Override
-            public void onReceive(int bytesCount, byte[] data) {
-                Log.d(TAG, "Receive: " + bytesCount + " bytes. Cnt: " + (++recvCnt));
-                recvThread.recv(new Packet(data));
-            }
-        });
     }
 
     private void initGrid(View v) {
@@ -212,7 +214,7 @@ public class BattleFragment extends Fragment {
     private void initTimeTxt(View v) {
         prepareTimeTxt = (TextView) v.findViewById(R.id.battle_prepareTimeTxt);
         timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
-        timeRemain = Config.TIME_ATTACK;
+        timeRemain = Config.TIME_ATTACK - 1;
         updateTimeTxt();
     }
 
@@ -243,7 +245,7 @@ public class BattleFragment extends Fragment {
         stopTimer();
         initSnake();
         grid.setMap(map);
-        timeRemain = Config.TIME_ATTACK;
+        timeRemain = Config.TIME_ATTACK - 1;
         updateTimeTxt();
         updateRoleTxt();
         prepare();
@@ -294,7 +296,7 @@ public class BattleFragment extends Fragment {
         if (timer == null) {
             timer = new Timer();
         }
-        if (type == Snake.Type.SERVER) {
+        if (isServer()) {
             startCreateFood();
             startTiming();
         }
@@ -323,8 +325,8 @@ public class BattleFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                sendThread.send(Packet.time(timeRemain - 1));
-                handler.obtainMessage(SafeHandler.MSG_TIME, timeRemain - 1, 0).sendToTarget();
+                sendThread.send(Packet.time(timeRemain));
+                handler.obtainMessage(SafeHandler.MSG_TIME).sendToTarget();
             }
         }, 0, 1000);
     }
@@ -383,13 +385,13 @@ public class BattleFragment extends Fragment {
      */
     private void stopGame() {
         stopTimer();
-        if (type == Snake.Type.SERVER) {
+        if (isServer()) {
             handler.obtainMessage(SafeHandler.MSG_SHOW_RESTART).sendToTarget();
         }
     }
 
     /**
-     * Stop the timer in order to stop creating food and moving 'mySnake'.
+     * Stop the timer.
      */
     private void stopTimer() {
         if (timer != null) {
@@ -399,7 +401,7 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Update time remain TextView.
+     * Update remaining time TextView.
      */
     private void updateTimeTxt() {
         String timeStr = String.valueOf(timeRemain);
@@ -410,10 +412,17 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Update the content of the role TextView.
+     * Update the role TextView.
      */
     private void updateRoleTxt() {
         roleTxt.setText(CommonUtil.getAttackStr(act, attack));
+    }
+
+    /**
+     * Return true if current device is the bluetooth server.
+     */
+    private boolean isServer() {
+        return type == Snake.Type.SERVER;
     }
 
     /**
@@ -422,15 +431,11 @@ public class BattleFragment extends Fragment {
      * @param code The error code
      */
     private void handleErr(int code) {
-        if (!isAdded()) {
-            return;
-        }
         switch (code) {
             case OnErrorListener.ERR_SOCKET_CLOSE:
             case OnErrorListener.ERR_STREAM_READ:
             case OnErrorListener.ERR_STREAM_WRITE:
-                handler.obtainMessage(SafeHandler.MSG_ERR, getString(R.string.disconnect))
-                        .sendToTarget();
+                handler.obtainMessage(SafeHandler.MSG_ERR, getString(R.string.disconnect)).sendToTarget();
                 break;
             default:
                 break;
@@ -477,13 +482,15 @@ public class BattleFragment extends Fragment {
                     break;
                 case MSG_TIME:
                     if (f.isAdded()) {
-                        f.timeRemain = msg.arg1;
-                        if (f.timeRemain == 0) {
+                        if (f.timeRemain == -1) {
                             f.attack = !f.attack;
-                            f.timeRemain = Config.TIME_ATTACK;
+                            f.timeRemain = Config.TIME_ATTACK - 1;
                             f.updateRoleTxt();
                         }
                         f.updateTimeTxt();
+                        if (f.isServer()) {
+                            --f.timeRemain;
+                        }
                     }
                     break;
                 case MSG_SHOW_RESTART:

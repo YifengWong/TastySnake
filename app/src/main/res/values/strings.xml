@@ -5,7 +5,7 @@
     <string name="connect">Connect</string>
     <string name="game">Game</string>
     <string name="start">开始</string>
-    <string name="game_start">游戏开始！</string>
+    <string name="game_start">游戏开始</string>
     <string name="select_device">选择设备进行对战</string>
     <string name="connecting">设备连接中</string>
     <string name="device_conn_suc">设备配对成功！</string>

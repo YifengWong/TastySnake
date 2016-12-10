@@ -99,7 +99,7 @@ public class Packet implements Serializable {
                 break;
             case TIME:
                 builder.append(TYPE_TIME);
-                builder.append(x / 10 == 0 ? "0" + x : x);
+                builder.append((x == -1 || x / 10 != 0) ? x : "0" + x);
                 break;
             default:
                 break;
