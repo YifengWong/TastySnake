@@ -130,7 +130,7 @@ public class BattleFragment extends Fragment {
         manager.stopConnect();
         sendThread.quitSafely();
         recvThread.quitSafely();
-        stopGame();
+        stopGame(false);
     }
 
     private void initHandler() {
@@ -139,8 +139,8 @@ public class BattleFragment extends Fragment {
 
     private void initSnake() {
         map = Map.gameMap();
-        Snake.Type enemyType = (isServer() ? Snake.Type.CLIENT : Snake.Type.SERVER);
         mySnake = new Snake(type, map, Config.COLOR_SNAKE_MY);
+        Snake.Type enemyType = isServer() ? Snake.Type.CLIENT : Snake.Type.SERVER;
         enemySnake = new Snake(enemyType, map, Config.COLOR_SNAKE_ENEMY);
     }
 
@@ -195,6 +195,11 @@ public class BattleFragment extends Fragment {
                         timeRemain = pkt.getTime();
                         handler.obtainMessage(SafeHandler.MSG_TIME).sendToTarget();
                         break;
+                    case WIN:
+                        Snake.Type winner = pkt.getWinner();
+                        String infoStr = (winner == type ? getString(R.string.win) : getString(R.string.lose));
+                        handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
+                        stopGame(false);
                     default:
                         break;
                 }
@@ -229,8 +234,8 @@ public class BattleFragment extends Fragment {
         restartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setVisibility(View.GONE);
                 sendThread.send(Packet.restart(nextAttacker));
+                v.setVisibility(View.GONE);
                 attack = (type == nextAttacker);
                 nextAttacker = (nextAttacker == Snake.Type.SERVER ? Snake.Type.CLIENT : Snake.Type.SERVER);
                 restart();
@@ -361,19 +366,22 @@ public class BattleFragment extends Fragment {
                 break;
             case SUICIDE:
             case OUT:
-                if (snake == mySnake) {
-                    handler.obtainMessage(SafeHandler.MSG_TOAST,
-                            getString(R.string.lose)).sendToTarget();
-                } else if (snake == enemySnake) {
-                    handler.obtainMessage(SafeHandler.MSG_TOAST,
-                            getString(R.string.win)).sendToTarget();
+                if (isServer()) {
+                    Snake.Type winner = (snake == mySnake ? enemySnake.getType() : type);
+                    sendThread.send(Packet.win(winner));
+                    String infoStr = (type == winner ? getString(R.string.win) : getString(R.string.lose));
+                    handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
                 }
-                stopGame();
+                stopGame(true);
                 break;
             case HIT_ENEMY:
-                handler.obtainMessage(SafeHandler.MSG_TOAST,
-                        attack ? getString(R.string.win) : getString(R.string.lose)).sendToTarget();
-                stopGame();
+                if (isServer()) {
+                    Snake.Type winner = (attack ? type : enemySnake.getType());
+                    sendThread.send(Packet.win(winner));
+                    String infoStr = (attack ? getString(R.string.win) : getString(R.string.lose));
+                    handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
+                    stopGame(true);
+                }
                 break;
             default:
                 break;
@@ -382,21 +390,26 @@ public class BattleFragment extends Fragment {
 
     /**
      * Stop the game.
+     *
+     * @param showRestart If true, the restart button will be shown, false otherwise
      */
-    private void stopGame() {
+    private void stopGame(boolean showRestart) {
         stopTimer();
-        if (isServer()) {
+        if (showRestart && isServer()) {
             handler.obtainMessage(SafeHandler.MSG_SHOW_RESTART).sendToTarget();
         }
     }
 
     /**
-     * Stop the timer.
+     * Stop the timer. (thread-safe)
      */
+    private final Object stopTimerLock = new Object();
     private void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        synchronized (stopTimerLock) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
         }
     }
 
@@ -435,7 +448,8 @@ public class BattleFragment extends Fragment {
             case OnErrorListener.ERR_SOCKET_CLOSE:
             case OnErrorListener.ERR_STREAM_READ:
             case OnErrorListener.ERR_STREAM_WRITE:
-                handler.obtainMessage(SafeHandler.MSG_ERR, getString(R.string.disconnect)).sendToTarget();
+                handler.obtainMessage(SafeHandler.MSG_TOAST, getString(R.string.disconnect)).sendToTarget();
+                stopGame(false);
                 break;
             default:
                 break;
@@ -446,7 +460,6 @@ public class BattleFragment extends Fragment {
      * A safe handler that circumvents memory leaks.
      */
     private static class SafeHandler extends Handler {
-        private static final int MSG_ERR = 1;
         private static final int MSG_TOAST = 2;
         private static final int MSG_RESTART = 3;
         private static final int MSG_TIME = 4;
@@ -464,12 +477,6 @@ public class BattleFragment extends Fragment {
         public void handleMessage(Message msg) {
             BattleFragment f = fragment.get();
             switch (msg.what) {
-                case MSG_ERR:
-                    if (f.isAdded()) {
-                        CommonUtil.showToast(f.act, (String)msg.obj);
-                        f.stopGame();
-                    }
-                    break;
                 case MSG_TOAST:
                     if (f.isAdded()) {
                         CommonUtil.showToast(f.act, (String)msg.obj);

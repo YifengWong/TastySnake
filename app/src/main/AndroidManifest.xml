@@ -29,7 +29,7 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".controller.test.SensorTestActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
             android:name=".controller.game.GameActivity"
             android:screenOrientation="landscape" />

@@ -36,6 +36,8 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[8] = Packet.restart(Snake.Type.CLIENT);
                 pkts[9] = Packet.time(55);
                 pkts[10] = Packet.time(5);
+                pkts[11] = Packet.win(Snake.Type.SERVER);
+                pkts[12] = Packet.win(Snake.Type.CLIENT);
                 for (Packet pkt : pkts) {
                     if (pkt != null) {
                         byte[] raw = pkt.toBytes();

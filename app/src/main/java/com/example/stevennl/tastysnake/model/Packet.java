@@ -16,6 +16,7 @@ public class Packet implements Serializable {
     private static final char TYPE_DIRECTION = 'c';
     private static final char TYPE_RESTART = 'd';
     private static final char TYPE_TIME = 'e';
+    private static final char TYPE_WIN = 'f';
 
     private Type type;
     private int x;
@@ -30,7 +31,8 @@ public class Packet implements Serializable {
         FOOD_SHORTEN,
         DIRECTION,
         RESTART,
-        TIME
+        TIME,
+        WIN
     }
 
     /**
@@ -68,6 +70,9 @@ public class Packet implements Serializable {
                 type = Type.TIME;
                 x = Integer.parseInt(str.substring(1, 3));
                 break;
+            case TYPE_WIN:
+                type = Type.WIN;
+                x = str.charAt(1) - '0';
             default:
                 break;
         }
@@ -101,6 +106,9 @@ public class Packet implements Serializable {
                 builder.append(TYPE_TIME);
                 builder.append((x == -1 || x / 10 != 0) ? x : "0" + x);
                 break;
+            case WIN:
+                builder.append(TYPE_WIN);
+                builder.append(x);
             default:
                 break;
         }
@@ -153,11 +161,25 @@ public class Packet implements Serializable {
 
     /**
      * Create a TIME packet.
+     *
+     * @param t The time stored in the packet
      */
     public static Packet time(int t) {
         Packet pkt = new Packet();
         pkt.type = Type.TIME;
         pkt.x = t;
+        return pkt;
+    }
+
+    /**
+     * Create a WIN packet.
+     *
+     * @param winner The type of the winner snake
+     */
+    public static Packet win(Snake.Type winner) {
+        Packet pkt = new Packet();
+        pkt.type = Type.WIN;
+        pkt.x = winner.ordinal();
         return pkt;
     }
 
@@ -197,9 +219,16 @@ public class Packet implements Serializable {
     }
 
     /**
-     * Return current attacker.
+     * Return the attacker.
      */
     public Snake.Type getAttacker() {
+        return Snake.Type.values()[x];
+    }
+
+    /**
+     * Return the winner.
+     */
+    public Snake.Type getWinner() {
         return Snake.Type.values()[x];
     }
 
@@ -223,6 +252,8 @@ public class Packet implements Serializable {
             case TIME:
                 str = str + "\nTime: " + getTime();
                 break;
+            case WIN:
+                str = str + "\nWinner: " + getWinner().name();
             default:
                 break;
         }
