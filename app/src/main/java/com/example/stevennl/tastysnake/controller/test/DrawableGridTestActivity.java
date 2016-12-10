@@ -1,5 +1,6 @@
 package com.example.stevennl.tastysnake.controller.test;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
+import com.example.stevennl.tastysnake.model.Point;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;

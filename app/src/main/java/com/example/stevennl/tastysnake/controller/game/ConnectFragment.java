@@ -154,7 +154,7 @@ public class ConnectFragment extends Fragment {
         refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.connect_swipe_layout);
         refreshLayout.setColorSchemeResources(R.color.colorPrimary);
         refreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.white));
-        refreshLayout.setDistanceToTriggerSync(30);  // dips
+        refreshLayout.setDistanceToTriggerSync(20);  // dips
         refreshLayout.setSize(SwipeRefreshLayout.DEFAULT);
         refreshLayout.setNestedScrollingEnabled(true);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -256,7 +256,9 @@ public class ConnectFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                cancelDiscover();
+                if (isAdded()) {
+                    cancelDiscover();
+                }
             }
         }, Config.BLUETOOTH_DISCOVER_TIME);
     }
@@ -265,7 +267,7 @@ public class ConnectFragment extends Fragment {
      * Cancel bluetooth discovery process.
      */
     private void cancelDiscover() {
-        refreshLayout.setRefreshing(false);
+        refreshLayout.setRefreshing(titleTxt.getText().toString().equals(getString(R.string.connecting)));
         Log.d(TAG, "Discover finished.");
         manager.cancelDiscovery();
         if (devices.isEmpty()) {

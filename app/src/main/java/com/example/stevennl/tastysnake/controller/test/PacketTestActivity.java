@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Packet;
+import com.example.stevennl.tastysnake.model.Snake;
 
 public class PacketTestActivity extends AppCompatActivity {
     private TextView infoTxt;
@@ -31,9 +32,10 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[4] = Packet.direction(Direction.LEFT);
                 pkts[5] = Packet.direction(Direction.RIGHT);
                 pkts[6] = Packet.direction(Direction.NONE);
-                pkts[7] = Packet.restart();
-                pkts[8] = Packet.time(55);
-                pkts[9] = Packet.time(5);
+                pkts[7] = Packet.restart(Snake.Type.SERVER);
+                pkts[8] = Packet.restart(Snake.Type.CLIENT);
+                pkts[9] = Packet.time(55);
+                pkts[10] = Packet.time(5);
                 for (Packet pkt : pkts) {
                     if (pkt != null) {
                         byte[] raw = pkt.toBytes();

@@ -4,13 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.stevennl.tastysnake.controller.game.HomeFragment">
     <Button
-        android:layout_width="@dimen/start_btn_size"
-        android:layout_height="@dimen/start_btn_size"
         android:id="@+id/home_start_btn"
-        android:text="@string/start"
-        android:textAllCaps="false"
         android:layout_centerInParent="true"
-        android:background="@drawable/bg_start_btn"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_1"/>
+        style="@style/StartBtn"/>
 </RelativeLayout>

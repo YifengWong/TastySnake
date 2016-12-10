@@ -51,16 +51,18 @@ public class BattleFragment extends Fragment {
 
     private DrawableGrid grid;
     private TextView timeTxt;
+    private TextView roleTxt;
     private TextView prepareTimeTxt;
     private Button restartBtn;
 
-    private Snake.Type type;
     private Map map;
     private Snake mySnake;
     private Snake enemySnake;
+    private Snake.Type type;
 
     private int timeRemain;
     private boolean attack;
+    private Snake.Type nextAttacker = Snake.Type.CLIENT;  // Attacker of the next round
 
     // Debug fields
     private int recvCnt = 0;
@@ -84,6 +86,7 @@ public class BattleFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        attack = (type == Snake.Type.SERVER);  // Default attacker is SERVER snake
         initHandler();
         initSnake();
         initManager();
@@ -98,8 +101,14 @@ public class BattleFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_battle, container, false);
         initGrid(v);
         initTimeTxt(v);
+        initRoleTxt(v);
         initRestartBtn(v);
-        prepare();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                prepare();
+            }
+        }, Config.DELAY_BATTLE_FRAGMENT);
         return v;
     }
 
@@ -156,21 +165,19 @@ public class BattleFragment extends Fragment {
             @Override
             public void onPacketReceive(Packet pkt) {
                 switch (pkt.getType()) {
-                    case FOOD_LENGTHEN: {
+                    case FOOD_LENGTHEN:
                         map.createFood(pkt.getFoodX(), pkt.getFoodY(), true);
                         break;
-                    }
-                    case FOOD_SHORTEN: {
+                    case FOOD_SHORTEN:
                         map.createFood(pkt.getFoodX(), pkt.getFoodY(), false);
                         break;
-                    }
-                    case DIRECTION: {
+                    case DIRECTION:
                         Direction direc= pkt.getDirec();
                         Snake.MoveResult res = enemySnake.move(direc);
                         handleMoveResult(enemySnake, res);
                         break;
-                    }
                     case RESTART:
+                        attack = (type == pkt.getAttacker());
                         handler.obtainMessage(SafeHandler.MSG_RESTART).sendToTarget();
                         break;
                     case TIME:
@@ -203,11 +210,17 @@ public class BattleFragment extends Fragment {
     }
 
     private void initTimeTxt(View v) {
-        timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
-        timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
         prepareTimeTxt = (TextView) v.findViewById(R.id.battle_prepareTimeTxt);
+        timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
+        timeRemain = Config.TIME_ATTACK;
+        updateTimeTxt();
     }
-    
+
+    private void initRoleTxt(View v) {
+        roleTxt = (TextView) v.findViewById(R.id.battle_roleTxt);
+        updateRoleTxt();
+    }
+
     private void initRestartBtn(View v) {
         restartBtn = (Button) v.findViewById(R.id.battle_restartBtn);
         restartBtn.setVisibility(View.GONE);
@@ -215,7 +228,9 @@ public class BattleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setVisibility(View.GONE);
-                sendThread.send(Packet.restart());
+                sendThread.send(Packet.restart(nextAttacker));
+                attack = (type == nextAttacker);
+                nextAttacker = (nextAttacker == Snake.Type.SERVER ? Snake.Type.CLIENT : Snake.Type.SERVER);
                 restart();
             }
         });
@@ -228,7 +243,9 @@ public class BattleFragment extends Fragment {
         stopTimer();
         initSnake();
         grid.setMap(map);
-        timeTxt.setText(String.valueOf(Config.TIME_ATTACK));
+        timeRemain = Config.TIME_ATTACK;
+        updateTimeTxt();
+        updateRoleTxt();
         prepare();
     }
 
@@ -236,46 +253,37 @@ public class BattleFragment extends Fragment {
      * Preparation before starting the game.
      */
     private void prepare() {
-        timeRemain = Config.TIME_ATTACK;
-        attack = (type == Snake.Type.SERVER);
-        handler.obtainMessage(SafeHandler.MSG_TOAST, CommonUtil.getAttackStr(act, attack)
-                + getString(R.string.you_snake_color)).sendToTarget();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isAdded()) {
-                    grid.setVisibility(View.VISIBLE);
-                    prepareTimeTxt.setVisibility(View.VISIBLE);
-                    prepareTimeTxt.setText("");
-                    if (timer == null) {
-                        timer = new Timer();
-                    }
-                    timer.schedule(new TimerTask() {
-                        private int prepareTimeRemain = Config.TIME_GAME_PREPARE;
-                        private final String startStr = getString(R.string.game_start);
-
-                        @Override
-                        public void run() {
-                            if (prepareTimeTxt.getText().toString().equals(startStr)) {
-                                handler.obtainMessage(SafeHandler.MSG_HIDE_PREPARE_TXT).sendToTarget();
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startGame();
-                                    }
-                                });
-                            } else if (prepareTimeRemain == 0) {
-                                handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME, startStr)
-                                        .sendToTarget();
-                            } else {
-                                handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME,
-                                        String.valueOf(prepareTimeRemain--)).sendToTarget();
-                            }
-                        }
-                    }, 0, 1000);
-                }
+        if (isAdded()) {
+            grid.setVisibility(View.VISIBLE);
+            prepareTimeTxt.setVisibility(View.VISIBLE);
+            prepareTimeTxt.setText("");
+            if (timer == null) {
+                timer = new Timer();
             }
-        }, Config.DELAY_BATTLE_FRAGMENT);
+            timer.schedule(new TimerTask() {
+                private int prepareTimeRemain = Config.TIME_GAME_PREPARE;
+                private final String startStr = getString(R.string.game_start);
+
+                @Override
+                public void run() {
+                    if (prepareTimeTxt.getText().toString().equals(startStr)) {
+                        handler.obtainMessage(SafeHandler.MSG_HIDE_PREPARE_TXT).sendToTarget();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                startGame();
+                            }
+                        });
+                    } else if (prepareTimeRemain == 0) {
+                        handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME, startStr)
+                                .sendToTarget();
+                    } else {
+                        handler.obtainMessage(SafeHandler.MSG_UPDATE_PREPARE_TIME,
+                                String.valueOf(prepareTimeRemain--)).sendToTarget();
+                    }
+                }
+            }, 0, 1000);
+        }
     }
 
     /**
@@ -337,26 +345,6 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Stop the game.
-     */
-    private void stopGame() {
-        stopTimer();
-        if (type == Snake.Type.SERVER) {
-            handler.obtainMessage(SafeHandler.MSG_SHOW_RESTART).sendToTarget();
-        }
-    }
-
-    /**
-     * Stop the timer in order to stop creating food and moving 'mySnake'.
-     */
-    private void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
-
-    /**
      * Handle snake's move result.
      *
      * @param snake The snake who generated the move result
@@ -391,6 +379,44 @@ public class BattleFragment extends Fragment {
     }
 
     /**
+     * Stop the game.
+     */
+    private void stopGame() {
+        stopTimer();
+        if (type == Snake.Type.SERVER) {
+            handler.obtainMessage(SafeHandler.MSG_SHOW_RESTART).sendToTarget();
+        }
+    }
+
+    /**
+     * Stop the timer in order to stop creating food and moving 'mySnake'.
+     */
+    private void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    /**
+     * Update time remain TextView.
+     */
+    private void updateTimeTxt() {
+        String timeStr = String.valueOf(timeRemain);
+        if (timeRemain / 10 == 0) {
+            timeStr = "0" + timeStr;
+        }
+        timeTxt.setText(String.format(getString(R.string.switch_role_remain), timeStr));
+    }
+
+    /**
+     * Update the content of the role TextView.
+     */
+    private void updateRoleTxt() {
+        roleTxt.setText(CommonUtil.getAttackStr(act, attack));
+    }
+
+    /**
      * Handle exceptions.
      *
      * @param code The error code
@@ -422,6 +448,7 @@ public class BattleFragment extends Fragment {
         private static final int MSG_SHOW_RESTART = 5;
         private static final int MSG_UPDATE_PREPARE_TIME = 6;
         private static final int MSG_HIDE_PREPARE_TXT = 7;
+        private static final int MSG_UPDATE_ROLE = 8;
         private WeakReference<BattleFragment> fragment;
 
         private SafeHandler(BattleFragment fragment) {
@@ -451,13 +478,12 @@ public class BattleFragment extends Fragment {
                 case MSG_TIME:
                     if (f.isAdded()) {
                         f.timeRemain = msg.arg1;
-                        f.timeTxt.setText(String.valueOf(f.timeRemain));
                         if (f.timeRemain == 0) {
                             f.attack = !f.attack;
                             f.timeRemain = Config.TIME_ATTACK;
-                            CommonUtil.showToast(f.act, f.getString(R.string.switch_attack)
-                                    + CommonUtil.getAttackStr(f.act, f.attack));
+                            f.updateRoleTxt();
                         }
+                        f.updateTimeTxt();
                     }
                     break;
                 case MSG_SHOW_RESTART:
@@ -473,6 +499,11 @@ public class BattleFragment extends Fragment {
                 case MSG_HIDE_PREPARE_TXT:
                     if (f.isAdded()) {
                         f.prepareTimeTxt.setVisibility(View.GONE);
+                    }
+                    break;
+                case MSG_UPDATE_ROLE:
+                    if (f.isAdded()) {
+                        f.updateRoleTxt();
                     }
                     break;
                 default:

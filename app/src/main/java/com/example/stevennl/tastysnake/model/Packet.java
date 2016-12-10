@@ -1,5 +1,7 @@
 package com.example.stevennl.tastysnake.model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 /**
@@ -44,24 +46,23 @@ public class Packet implements Serializable {
     public Packet(byte[] raw) {
         String str = new String(raw);
         switch (str.charAt(0)) {
-            case TYPE_FOOD_LENGTHEN: {
+            case TYPE_FOOD_LENGTHEN:
                 type = Type.FOOD_LENGTHEN;
                 x = Integer.parseInt(str.substring(1, 3));
                 y = Integer.parseInt(str.substring(3, 5));
                 break;
-            }
-            case TYPE_FOOD_SHORTEN: {
+            case TYPE_FOOD_SHORTEN:
                 type = Type.FOOD_SHORTEN;
                 x = Integer.parseInt(str.substring(1, 3));
                 y = Integer.parseInt(str.substring(3, 5));
                 break;
-            }
             case TYPE_DIRECTION:
                 type = Type.DIRECTION;
                 direc = Direction.values()[str.charAt(1) - '0'];
                 break;
             case TYPE_RESTART:
                 type = Type.RESTART;
+                x = str.charAt(1) - '0';
                 break;
             case TYPE_TIME:
                 type = Type.TIME;
@@ -78,24 +79,23 @@ public class Packet implements Serializable {
     public byte[] toBytes() {
         StringBuilder builder = new StringBuilder();
         switch (type) {
-            case FOOD_LENGTHEN: {
+            case FOOD_LENGTHEN:
                 builder.append(TYPE_FOOD_LENGTHEN);
                 builder.append(x / 10 == 0 ? "0" + x : x);
                 builder.append(y / 10 == 0 ? "0" + y : y);
                 break;
-            }
-            case FOOD_SHORTEN: {
+            case FOOD_SHORTEN:
                 builder.append(TYPE_FOOD_SHORTEN);
                 builder.append(x / 10 == 0 ? "0" + x : x);
                 builder.append(y / 10 == 0 ? "0" + y : y);
                 break;
-            }
             case DIRECTION:
                 builder.append(TYPE_DIRECTION);
                 builder.append(direc.ordinal());
                 break;
             case RESTART:
                 builder.append(TYPE_RESTART);
+                builder.append(x);
                 break;
             case TIME:
                 builder.append(TYPE_TIME);
@@ -141,10 +141,13 @@ public class Packet implements Serializable {
 
     /**
      * Create a RESTART packet.
+     *
+     * @param attacker Current attacker
      */
-    public static Packet restart() {
+    public static Packet restart(Snake.Type attacker) {
         Packet pkt = new Packet();
         pkt.type = Type.RESTART;
+        pkt.x = attacker.ordinal();
         return pkt;
     }
 
@@ -194,12 +197,35 @@ public class Packet implements Serializable {
     }
 
     /**
+     * Return current attacker.
+     */
+    public Snake.Type getAttacker() {
+        return Snake.Type.values()[x];
+    }
+
+    /**
      * Return the string description of the packet.
      */
     @Override
     public String toString() {
-        return "Type: " + getType().name() + "\nFoodX: " + getFoodX()
-                + "\nFoodY: " + getFoodY() + "\nTime: " + getTime()
-                + "\nDirec: " + direc.name();
+        String str = "Type: " + getType().name();
+        switch (type) {
+            case FOOD_LENGTHEN:
+            case FOOD_SHORTEN:
+                str = str + "\nFoodX: " + getFoodX() + "\nFoodY: " + getFoodY();
+                break;
+            case DIRECTION:
+                str = str + "\nDirec: " + direc.name();
+                break;
+            case RESTART:
+                str = str + "\nAttacker: " + getAttacker().name();
+                break;
+            case TIME:
+                str = str + "\nTime: " + getTime();
+                break;
+            default:
+                break;
+        }
+        return str;
     }
 }

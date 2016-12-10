@@ -8,25 +8,35 @@
         android:id="@+id/battle_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:text="@string/restart"
-        android:id="@+id/battle_restartBtn" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/battle_timeTxt"
         android:textSize="@dimen/text_2"
         android:layout_centerHorizontal="true"
+        android:text="@string/test"
         android:layout_marginTop="@dimen/margin_median"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/battle_roleTxt"
+        android:textSize="@dimen/text_3"
+        android:layout_toEndOf="@id/battle_timeTxt"
+        android:layout_alignBaseline="@id/battle_timeTxt"
+        android:layout_marginStart="@dimen/margin_low"
+        android:text="@string/test"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_1"
         android:layout_centerInParent="true"
         android:id="@+id/battle_prepareTimeTxt"/>
+    <Button
+        android:id="@+id/battle_restartBtn"
+        style="@style/RestartBtn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/margin_low"
+        android:layout_marginBottom="@dimen/margin_low"/>
 </RelativeLayout>
 
