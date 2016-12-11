@@ -36,6 +36,7 @@
         <activity
             android:name=".controller.test.PacketTestActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".controller.test.DBTestActivity"></activity>
     </application>
 
 </manifest>

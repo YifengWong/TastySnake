@@ -38,6 +38,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/db_test"
+        android:textAllCaps="false"
+        android:id="@+id/main_db_test_btn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/game"
         android:textAllCaps="false"
         android:id="@+id/main_game_btn"/>

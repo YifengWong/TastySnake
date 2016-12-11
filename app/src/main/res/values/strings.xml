@@ -32,5 +32,6 @@
     <string name="drawable_grid_test">Test DrawableGrid</string>
     <string name="sensor_test">Test Sensor</string>
     <string name="pkt_test">Test Packet</string>
+    <string name="db_test">Test Database</string>
     <string name="test"> </string>
 </resources>
