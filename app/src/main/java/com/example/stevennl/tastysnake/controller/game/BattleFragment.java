@@ -402,15 +402,12 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Stop the timer. (thread-safe)
+     * Stop the timer.
      */
-    private final Object stopTimerLock = new Object();
     private void stopTimer() {
-        synchronized (stopTimerLock) {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
     }
 
