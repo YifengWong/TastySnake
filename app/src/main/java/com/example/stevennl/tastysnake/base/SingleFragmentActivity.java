@@ -32,7 +32,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
      * Replace current fragment(if exist) with a new fragment.
      *
      * @param fragment The new fragment
-     * @param anim whether to use animation
+     * @param anim If true, use fragment transition animation, false otherwise
      */
     public void replaceFragment(Fragment fragment, boolean anim) {
         FragmentManager manager = getSupportFragmentManager();

@@ -1,6 +1,7 @@
 package com.example.stevennl.tastysnake.controller.game;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -450,6 +451,14 @@ public class BattleFragment extends Fragment {
             case OnErrorListener.ERR_STREAM_WRITE:
                 handler.obtainMessage(SafeHandler.MSG_TOAST, getString(R.string.disconnect)).sendToTarget();
                 stopGame(false);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAdded()) {
+                            act.replaceFragment(new HomeFragment(), true);
+                        }
+                    }
+                }, 500);
                 break;
             default:
                 break;
