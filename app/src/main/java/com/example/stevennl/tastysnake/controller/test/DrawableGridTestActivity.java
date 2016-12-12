@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
@@ -41,6 +42,12 @@ public class DrawableGridTestActivity extends AppCompatActivity {
         DrawableGrid grid = (DrawableGrid) findViewById(R.id.drawablegrid_test_grid);
         grid.setMap(map);
         grid.setBgColor(Config.COLOR_MAP_BG);
+        grid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonUtil.showToast(DrawableGridTestActivity.this, "Click");
+            }
+        });
 //        for (int i = 0; i < Point.Type.values().length; ++i) {
 //            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
 //            map.getPoint(i, i).setType(Point.Type.values()[i]);

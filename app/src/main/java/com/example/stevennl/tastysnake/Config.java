@@ -17,7 +17,7 @@ public class Config {
 
     public static final int INTERVAL_DRAW = 30;  // milliseconds
     public static final int INTERVAL_MOVE = 80;  // milliseconds
-    public static final int INTERVAL_FOOD = 1000;  // milliseconds
+    public static final int INTERVAL_FOOD = 500;  // milliseconds
 
     public static final int DELAY_CONN_FRAGMENT = 1000;  // milliseconds
     public static final int DELAY_BATTLE_FRAGMENT = 3000;  // milliseconds
