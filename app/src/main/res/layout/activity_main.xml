@@ -44,6 +44,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/dialog_test"
+        android:textAllCaps="false"
+        android:id="@+id/main_dialog_test_btn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/game"
         android:textAllCaps="false"
         android:id="@+id/main_game_btn"/>

@@ -10,6 +10,7 @@ import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.controller.game.GameActivity;
 import com.example.stevennl.tastysnake.controller.test.BluetoothTestActivity;
 import com.example.stevennl.tastysnake.controller.test.DBTestActivity;
+import com.example.stevennl.tastysnake.controller.test.DialogTestActivity;
 import com.example.stevennl.tastysnake.controller.test.DrawableGridTestActivity;
 import com.example.stevennl.tastysnake.controller.test.PacketTestActivity;
 import com.example.stevennl.tastysnake.controller.test.SensorTestActivity;
@@ -62,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DBTestActivity.class));
+            }
+        });
+
+        Button dialogBtn = (Button) findViewById(R.id.main_dialog_test_btn);
+        dialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DialogTestActivity.class));
             }
         });
 
