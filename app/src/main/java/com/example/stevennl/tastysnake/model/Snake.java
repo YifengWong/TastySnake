@@ -50,13 +50,13 @@ public class Snake {
             case SERVER:
                 direc = Direction.RIGHT;
                 for (int i = 3; i > 0; --i) {
-                    bodies.add(new Pos(10, 6 + i));
+                    bodies.add(new Pos(Config.MAP_ROW / 4, 3 + i));
                 }
                 break;
             case CLIENT:
                 direc = Direction.LEFT;
                 for (int i = 3; i > 0; --i) {
-                    bodies.add(new Pos(20, 48 - i));
+                    bodies.add(new Pos(3 * Config.MAP_ROW / 4, Config.MAP_COL - 4 - i));
                 }
                 break;
             default:

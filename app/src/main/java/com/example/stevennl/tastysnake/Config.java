@@ -12,8 +12,8 @@ public class Config {
     public static final int BLUETOOTH_DISCOVERABLE_TIME = 180;  // seconds
     public static final int BLUETOOTH_DISCOVER_TIME = 5000;  // milliseconds
 
-    public static final int MAP_ROW = 30;
-    public static final int MAP_COL = 55;
+    public static final int MAP_ROW = 25;
+    public static final int MAP_COL = 49;
 
     public static final int INTERVAL_DRAW = 30;  // milliseconds
     public static final int INTERVAL_MOVE = 80;  // milliseconds
@@ -27,8 +27,8 @@ public class Config {
 
     public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
-    public static final int COLOR_SNAKE_MY = Color.RED;
-    public static final int COLOR_SNAKE_ENEMY = Color.GRAY;
+    public static final int COLOR_SNAKE_MY = Color.rgb(255, 50, 49);
+    public static final int COLOR_SNAKE_ENEMY = Color.rgb(50, 97, 255);
     public static final int COLOR_EMPTY_POINT = Color.WHITE;
     public static final int COLOR_MAP_BG = Color.WHITE;
 

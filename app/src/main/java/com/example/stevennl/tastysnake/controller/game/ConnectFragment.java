@@ -152,9 +152,9 @@ public class ConnectFragment extends Fragment {
 
     private void initRefreshLayout(View v) {
         refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.connect_swipe_layout);
-        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        refreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         refreshLayout.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.white));
-        refreshLayout.setDistanceToTriggerSync(20);  // dips
+        refreshLayout.setDistanceToTriggerSync(20);
         refreshLayout.setSize(SwipeRefreshLayout.DEFAULT);
         refreshLayout.setNestedScrollingEnabled(true);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

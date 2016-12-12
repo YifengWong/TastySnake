@@ -20,19 +20,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_2"
-        android:layout_centerInParent="true"
-        android:id="@+id/battle_infoTxt"/>
+        android:id="@+id/battle_roleTxt"
+        android:textSize="@dimen/text_3"
+        android:text="@string/test"
+        android:layout_toEndOf="@id/battle_timeTxt"
+        android:layout_alignBaseline="@id/battle_timeTxt"
+        android:layout_marginStart="@dimen/margin_low"
+        android:textColor="@color/role_txt"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/battle_roleTxt"
         android:textSize="@dimen/text_2"
-        android:text="@string/test"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/margin_low"
-        android:layout_marginEnd="@dimen/margin_low"
-        android:textColor="@color/role_txt"/>
+        android:layout_centerInParent="true"
+        android:id="@+id/battle_infoTxt"/>
 </RelativeLayout>
 

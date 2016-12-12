@@ -11,8 +11,8 @@
     <string name="device_conn_suc">设备配对成功！</string>
     <string name="win">你赢了！</string>
     <string name="lose">你输了！</string>
-    <string name="you_attacker">攻</string>
-    <string name="you_defender">防</string>
+    <string name="you_attacker">(攻)</string>
+    <string name="you_defender">(防)</string>
     <string name="pull_to_refresh">请下拉刷新</string>
     <string name="switch_role_remain">%1$s</string>
     <string name="click_to_restart">点击任意位置重新开始</string>

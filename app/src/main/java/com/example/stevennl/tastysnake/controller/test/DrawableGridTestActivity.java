@@ -49,7 +49,7 @@ public class DrawableGridTestActivity extends AppCompatActivity {
             }
         });
 //        for (int i = 0; i < Point.Type.values().length; ++i) {
-//            map.getPoint(i, i).setColor(Color.rgb(204, 0, 0));
+//            map.getPoint(i, i).setColor(Config.COLOR_SNAKE_MY);
 //            map.getPoint(i, i).setType(Point.Type.values()[i]);
 //        }
     }
@@ -89,10 +89,15 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                             break;
                     }
                     Log.d(TAG, "run: " + dir);
-                    map.createFood(lengthen = !lengthen);
                 }
             }
         }, 0, Config.INTERVAL_MOVE);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                map.createFood(lengthen = !lengthen);
+            }
+        }, 0, Config.INTERVAL_FOOD);
     }
 
     private void stopTimer() {
