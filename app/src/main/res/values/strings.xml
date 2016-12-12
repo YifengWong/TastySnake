@@ -19,13 +19,15 @@
 
     <string name="not_implement">Not Implemented</string>
 
-    <!-- Toast message -->
+    <!-- Toast infos -->
     <string name="bluetooth_not_support">对不起！您的设备不支持蓝牙功能！无法对战！</string>
     <string name="bluetooth_unable">蓝牙功能未打开！请重试！</string>
     <string name="device_discover_fail">无法发现设备！请重试！</string>
     <string name="device_discover_empty">没有发现任何设备!请重试！</string>
     <string name="device_conn_fail">设备连接失败！请重试！</string>
     <string name="disconnect">连接断开！请重新连接！</string>
+    <string name="wait_connecting">正在连接设备！请等待！</string>
+    <string name="connect_exception">连接异常！Code: %1$d</string>
 
     <!-- Testing -->
     <string name="bluetooth_test">Test Bluetooth</string>

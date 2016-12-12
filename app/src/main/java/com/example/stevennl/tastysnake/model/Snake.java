@@ -1,7 +1,5 @@
 package com.example.stevennl.tastysnake.model;
 
-import android.graphics.Color;
-
 import com.example.stevennl.tastysnake.Config;
 
 import java.util.ArrayList;
@@ -49,14 +47,16 @@ public class Snake {
         switch (type) {
             case SERVER:
                 direc = Direction.RIGHT;
-                for (int i = 3; i > 0; --i) {
-                    bodies.add(new Pos(Config.MAP_ROW / 4, 3 + i));
+                for (int i = Config.INIT_SNAKE_LENGTH; i > 0; --i) {
+                    bodies.add(new Pos(Config.MAP_ROW / 4,
+                            Config.INIT_SNAKE_HOR_OFFSET - 1 + i));
                 }
                 break;
             case CLIENT:
                 direc = Direction.LEFT;
-                for (int i = 3; i > 0; --i) {
-                    bodies.add(new Pos(3 * Config.MAP_ROW / 4, Config.MAP_COL - 4 - i));
+                for (int i = Config.INIT_SNAKE_LENGTH; i > 0; --i) {
+                    bodies.add(new Pos(3 * Config.MAP_ROW / 4,
+                            Config.MAP_COL - Config.INIT_SNAKE_HOR_OFFSET - i));
                 }
                 break;
             default:

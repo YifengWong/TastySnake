@@ -433,7 +433,7 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Handle exceptions.
+     * Handle errors.
      *
      * @param code The error code
      */
@@ -444,14 +444,14 @@ public class BattleFragment extends Fragment {
             case OnErrorListener.ERR_STREAM_WRITE:
                 stopGame(false);
                 handler.obtainMessage(SafeHandler.MSG_TOAST, getString(R.string.disconnect)).sendToTarget();
-                handler.postDelayed(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (isAdded()) {
                             act.replaceFragment(new HomeFragment(), true);
                         }
                     }
-                }, 500);
+                });
                 break;
             default:
                 break;

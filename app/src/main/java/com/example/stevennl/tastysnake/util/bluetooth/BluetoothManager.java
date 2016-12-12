@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDataReceiveListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
@@ -171,6 +172,7 @@ public class BluetoothManager {
                 }
             }, stateListener_, errorListener_);
             acceptThread.start();
+            Log.d(TAG, "Server running...");
         }
     }
 
@@ -194,6 +196,7 @@ public class BluetoothManager {
                 }
             }, stateListener_, errorListener_);
             connectThread.start();
+            Log.d(TAG, "Connecting...");
         }
     }
 

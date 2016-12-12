@@ -124,7 +124,7 @@ public class ConnectFragment extends Fragment {
             @Override
             public void onError(int code, Exception e) {
                 Log.e(TAG, "Error code: " + code, e);
-                errHandle(code);
+                handleErr(code);
             }
         };
     }
@@ -140,12 +140,15 @@ public class ConnectFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                cancelDiscover();
-                manager.stopServer();
-                BluetoothDevice device = devices.get(position);
-                titleTxt.setText(getString(R.string.connecting));
-                manager.connectDeviceAsync(device, stateListener, errorListener);
-                refreshLayout.setRefreshing(true);
+                if (manager.isClientConnecting()) {
+                    CommonUtil.showToast(act, getString(R.string.wait_connecting));
+                } else {
+                    cancelDiscover();
+                    BluetoothDevice device = devices.get(position);
+                    titleTxt.setText(getString(R.string.connecting));
+                    manager.connectDeviceAsync(device, stateListener, errorListener);
+                    refreshLayout.setRefreshing(true);
+                }
             }
         });
     }
@@ -235,7 +238,7 @@ public class ConnectFragment extends Fragment {
      * Start device discovery.
      */
     private void startDiscover() {
-        runServer();
+        manager.runServerAsync(stateListener, errorListener);
         refreshLayout.setRefreshing(true);
         devices.clear();
         adapter.notifyDataSetChanged();
@@ -296,37 +299,33 @@ public class ConnectFragment extends Fragment {
 
     /**
      * Handle errors.
-     * Notice that this method is called in a sub-thread.
      *
      * @param code The error code
      */
-    private void errHandle(int code) {
-        if (!isAdded()) return;
+    private void handleErr(int code) {
+        if (!isAdded()) {
+            return;
+        }
         switch (code) {
             case OnErrorListener.ERR_SERVER_SOCKET_ACCEPT:
+                manager.runServerAsync(stateListener, errorListener);
                 break;
             case OnErrorListener.ERR_CLIENT_SOCKET_CONNECT:
                 handler.obtainMessage(SafeHandler.MSG_ERR,
                         getString(R.string.device_conn_fail)).sendToTarget();
                 break;
             case OnErrorListener.ERR_SOCKET_CREATE:
-            case OnErrorListener.ERR_SOCKET_CLOSE:
             case OnErrorListener.ERR_STREAM_CREATE:
             case OnErrorListener.ERR_STREAM_READ:
             case OnErrorListener.ERR_STREAM_WRITE:
-                handler.obtainMessage(SafeHandler.MSG_ERR).sendToTarget();
+                handler.obtainMessage(SafeHandler.MSG_ERR,
+                        String.format(getString(R.string.connect_exception), code)).sendToTarget();
+                break;
+            case OnErrorListener.ERR_SOCKET_CLOSE:
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * Run a bluetooth server.
-     */
-    private void runServer() {
-        manager.runServerAsync(stateListener, errorListener);
-        Log.d(TAG, "Bluetooth server thread starts working...");
     }
 
     /**
@@ -344,21 +343,17 @@ public class ConnectFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             ConnectFragment f = fragment.get();
+            if (!f.isAdded()) {
+                return;
+            }
             switch (msg.what) {
                 case MSG_ERR:
-                    if (f.isAdded()) {
-                        Object info = msg.obj;
-                        if (info != null) {
-                            CommonUtil.showToast(f.getActivity(), (String)info);
-                        }
-                        f.refreshLayout.setRefreshing(false);
-                        f.titleTxt.setText(f.getString(R.string.select_device));
-                    }
+                    CommonUtil.showToast(f.act, (String)msg.obj);
+                    f.refreshLayout.setRefreshing(false);
+                    f.titleTxt.setText(f.getString(R.string.select_device));
                     break;
                 case MSG_REFRESH_ADAPTER:
-                    if (f.isAdded()) {
-                        f.adapter.notifyDataSetChanged();
-                    }
+                    f.adapter.notifyDataSetChanged();
                     break;
                 default:
                     break;
@@ -368,7 +363,6 @@ public class ConnectFragment extends Fragment {
 
     /**
      * Device ListView adapter.
-     * Author: LCY
      */
     private class ListViewAdapter extends ArrayAdapter<BluetoothDevice> {
         private LayoutInflater inflater;

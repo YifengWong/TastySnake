@@ -33,4 +33,7 @@ public class Config {
     public static final int COLOR_MAP_BG = Color.WHITE;
 
     public static final float GRAVITY_SENSITIVITY = 0.1f;  // lower(zero at least) -> more sensitive
+
+    public static final int INIT_SNAKE_HOR_OFFSET = 4;
+    public static final int INIT_SNAKE_LENGTH = 3;
 }
