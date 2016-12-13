@@ -8,4 +8,12 @@
         android:id="@+id/home_start_btn"
         android:layout_centerInParent="true"
         style="@style/StartBtn"/>
+    <com.example.stevennl.tastysnake.widget.SnakeImage
+        android:id="@+id/home_mySnake_img"
+        android:contentDescription="@null"
+        style="@style/MySnakeImg"/>
+    <com.example.stevennl.tastysnake.widget.SnakeImage
+        android:id="@+id/home_enemySnake_img"
+        android:contentDescription="@null"
+        style="@style/EnemySnakeImg"/>
 </RelativeLayout>

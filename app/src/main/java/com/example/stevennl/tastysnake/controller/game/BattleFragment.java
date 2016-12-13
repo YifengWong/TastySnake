@@ -107,7 +107,7 @@ public class BattleFragment extends Fragment {
             public void run() {
                 prepare();
             }
-        }, Config.DELAY_BATTLE_FRAGMENT);
+        }, Config.DELAY_BATTLE);
         return v;
     }
 
@@ -234,7 +234,7 @@ public class BattleFragment extends Fragment {
 
     private void initTimeTxt(View v) {
         timeTxt = (TextView) v.findViewById(R.id.battle_timeTxt);
-        timeRemain = Config.TIME_ATTACK - 1;
+        timeRemain = Config.DURATION_ATTACK - 1;
         updateTimeTxt();
     }
 
@@ -251,7 +251,7 @@ public class BattleFragment extends Fragment {
         stopTimer();
         initSnake();
         grid.setMap(map);
-        timeRemain = Config.TIME_ATTACK - 1;
+        timeRemain = Config.DURATION_ATTACK - 1;
         updateTimeTxt();
         updateRoleTxt();
         prepare();
@@ -270,7 +270,7 @@ public class BattleFragment extends Fragment {
                 timer = new Timer();
             }
             timer.schedule(new TimerTask() {
-                private int prepareTimeRemain = Config.TIME_GAME_PREPARE;
+                private int prepareTimeRemain = Config.DURATION_GAME_PREPARE;
                 private final String startStr = getString(R.string.game_start);
 
                 @Override
@@ -315,7 +315,7 @@ public class BattleFragment extends Fragment {
                 Pos food = map.createFood(lengthen = true);
                 sendThread.send(Packet.food(food.getX(), food.getY(), lengthen));
             }
-        }, 0, Config.INTERVAL_FOOD);
+        }, 0, Config.FREQUENCY_FOOD);
     }
 
     /**
@@ -343,7 +343,7 @@ public class BattleFragment extends Fragment {
                 Snake.MoveResult res = mySnake.move(direc);
                 handleMoveResult(mySnake, res);
             }
-        }, 0, Config.INTERVAL_MOVE);
+        }, 0, Config.FREQUENCY_MOVE);
     }
 
     /**
@@ -490,7 +490,7 @@ public class BattleFragment extends Fragment {
                 case MSG_UPDATE_TIME:
                     if (f.timeRemain == -1) {
                         f.attack = !f.attack;
-                        f.timeRemain = Config.TIME_ATTACK - 1;
+                        f.timeRemain = Config.DURATION_ATTACK - 1;
                         f.updateRoleTxt();
                     }
                     f.updateTimeTxt();

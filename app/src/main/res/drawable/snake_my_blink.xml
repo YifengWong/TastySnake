@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item android:drawable="@mipmap/snake_my" android:duration="1500" />
+    <item android:drawable="@mipmap/snake_my_close" android:duration="150" />
+    <item android:drawable="@mipmap/snake_my" android:duration="150" />
+    <item android:drawable="@mipmap/snake_my_close" android:duration="150" />
+    <item android:drawable="@mipmap/snake_my" android:duration="1000" />
+    <item android:drawable="@mipmap/snake_my_close" android:duration="150" />
+</animation-list>

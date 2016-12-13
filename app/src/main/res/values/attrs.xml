@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SnakeImageAttr">
+        <!-- The eye blink image. -->
+        <attr name="blinkImage" format="reference" />
+        <!-- The pressed image. -->
+        <attr name="pressedImage" format="reference" />
+        <!-- The offset to the margin. -->
+        <attr name="offsetMargin" format="dimension" />
+        <!-- The direction of the translation animation. -->
+        <attr name="direction" format="integer" />
+    </declare-styleable>
+</resources>

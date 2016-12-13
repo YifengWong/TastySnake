@@ -1,5 +1,6 @@
 package com.example.stevennl.tastysnake.controller.game;
 
+import android.animation.Animator;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnDiscoverListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnStateChangedListener;
+import com.example.stevennl.tastysnake.widget.SnakeImage;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ public class ConnectFragment extends Fragment {
     private TextView titleTxt;
     private ListViewAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
+    private SnakeImage mySnakeImg;
+    private SnakeImage enemySnakeImg;
 
     @Override
     public void onAttach(Context context) {
@@ -79,6 +83,7 @@ public class ConnectFragment extends Fragment {
         initTitleTxt(v);
         initListView(v);
         initRefreshLayout(v);
+        initSnakeImg(v);
         prepare();
         return v;
     }
@@ -116,7 +121,7 @@ public class ConnectFragment extends Fragment {
                 Log.d(TAG, "Data channel established.");
                 manager.stopServer();
                 if (isAdded()) {
-                    act.replaceFragment(BattleFragment.newInstance(type), true);
+                    handler.obtainMessage(SafeHandler.MSG_TO_BATTLE).sendToTarget();
                 }
             }
         };
@@ -172,6 +177,30 @@ public class ConnectFragment extends Fragment {
         });
     }
 
+    private void initSnakeImg(View v) {
+        mySnakeImg = (SnakeImage) v.findViewById(R.id.connect_mySnake_img);
+        enemySnakeImg = (SnakeImage) v.findViewById(R.id.connect_enemySnake_img);
+    }
+
+    /**
+     * Called when the back button is pressed.
+     */
+    public void onBackPressed() {
+        mySnakeImg.cancelAnim();
+        enemySnakeImg.cancelAnim();
+        mySnakeImg.startExit(null);
+        enemySnakeImg.startExit(new SnakeImage.AnimationEndListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (isAdded()) {
+                    manager.stopServer();
+                    manager.stopConnect();
+                    act.replaceFragment(new HomeFragment(), true);
+                }
+            }
+        });
+    }
+
     /**
      * Preparation before connection.
      */
@@ -180,10 +209,18 @@ public class ConnectFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                refreshLayout.setRefreshing(false);
-                startConnect();
+                if (isAdded()) {
+                    mySnakeImg.startEnter(null);
+                    enemySnakeImg.startEnter(new SnakeImage.AnimationEndListener() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            refreshLayout.setRefreshing(false);
+                            startConnect();
+                        }
+                    });
+                }
             }
-        }, Config.DELAY_CONN_FRAGMENT);
+        }, Config.DELAY_CONNECT);
     }
 
     /**
@@ -334,6 +371,7 @@ public class ConnectFragment extends Fragment {
     private static class SafeHandler extends Handler {
         private static final int MSG_ERR = 1;
         private static final int MSG_REFRESH_ADAPTER = 2;
+        private static final int MSG_TO_BATTLE = 3;
         private WeakReference<ConnectFragment> fragment;
 
         private SafeHandler(ConnectFragment fragment) {
@@ -342,7 +380,7 @@ public class ConnectFragment extends Fragment {
 
         @Override
         public void handleMessage(Message msg) {
-            ConnectFragment f = fragment.get();
+            final ConnectFragment f = fragment.get();
             if (!f.isAdded()) {
                 return;
             }
@@ -354,6 +392,19 @@ public class ConnectFragment extends Fragment {
                     break;
                 case MSG_REFRESH_ADAPTER:
                     f.adapter.notifyDataSetChanged();
+                    break;
+                case MSG_TO_BATTLE:
+                    f.mySnakeImg.cancelAnim();
+                    f.enemySnakeImg.cancelAnim();
+                    f.mySnakeImg.startExit(null);
+                    f.enemySnakeImg.startExit(new SnakeImage.AnimationEndListener() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            if (f.isAdded()) {
+                                f.act.replaceFragment(BattleFragment.newInstance(f.type), true);
+                            }
+                        }
+                    });
                     break;
                 default:
                     break;

@@ -1,8 +1,14 @@
 package com.example.stevennl.tastysnake.util;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 
 import java.util.Random;

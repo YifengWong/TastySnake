@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -149,7 +148,7 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
             while (drawing) {
                 try {
                     draw();
-                    Thread.sleep(Config.INTERVAL_DRAW);
+                    Thread.sleep(Config.FREQUENCY_DRAW);
                 } catch (Exception e) {
                     Log.e(TAG, "Error: ", e);
                 }

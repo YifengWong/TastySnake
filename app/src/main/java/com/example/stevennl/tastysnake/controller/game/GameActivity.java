@@ -30,9 +30,12 @@ public class GameActivity extends SingleFragmentActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 FragmentManager manager = getSupportFragmentManager();
-                Fragment f = manager.findFragmentById(getFrameLayoutId());
-                if (f.getClass().getName().equals(HomeFragment.class.getName())) {
-                    finish();
+                Fragment fragment = manager.findFragmentById(getFrameLayoutId());
+                String className = fragment.getClass().getName();
+                if (className.equals(HomeFragment.class.getName())) {
+                    ((HomeFragment)fragment).onBackPressed();
+                } else if (className.equals(ConnectFragment.class.getName())) {
+                    ((ConnectFragment)fragment).onBackPressed();
                 } else {
                     replaceFragment(new HomeFragment(), true);
                 }

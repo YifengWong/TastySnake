@@ -1,6 +1,5 @@
 package com.example.stevennl.tastysnake.controller.test;
 
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +9,6 @@ import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
-import com.example.stevennl.tastysnake.model.Point;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
@@ -91,13 +89,13 @@ public class DrawableGridTestActivity extends AppCompatActivity {
                     Log.d(TAG, "run: " + dir);
                 }
             }
-        }, 0, Config.INTERVAL_MOVE);
+        }, 0, Config.FREQUENCY_MOVE);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 map.createFood(lengthen = !lengthen);
             }
-        }, 0, Config.INTERVAL_FOOD);
+        }, 0, Config.FREQUENCY_FOOD);
     }
 
     private void stopTimer() {

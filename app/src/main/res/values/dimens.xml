@@ -12,4 +12,10 @@
     <dimen name="margin_high">130dp</dimen>
     <dimen name="margin_median">16dp</dimen>
     <dimen name="margin_low">6dp</dimen>
+
+    <dimen name="margin_snake_hor">50dp</dimen>
+    <dimen name="margin_snake_ver">-200dp</dimen>
+
+    <dimen name="width_startBtn">150dp</dimen>
+    <dimen name="height_startBtn">150dp</dimen>
 </resources>

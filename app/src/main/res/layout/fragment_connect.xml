@@ -3,10 +3,6 @@
     android:id="@+id/activity_drawable_grid_test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/margin_high"
-    android:paddingRight="@dimen/margin_high"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:gravity="center"
     android:background="@color/white"
@@ -15,7 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/margin_low"
+        android:layout_marginBottom="@dimen/margin_low"
+        android:layout_marginStart="@dimen/margin_high"
+        android:layout_marginEnd="@dimen/margin_high">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,5 +38,13 @@
                 android:id="@+id/connect_device_listView"/>
         </android.support.v4.widget.SwipeRefreshLayout>
     </LinearLayout>
+    <com.example.stevennl.tastysnake.widget.SnakeImage
+        android:id="@+id/connect_mySnake_img"
+        android:contentDescription="@null"
+        style="@style/MySnakeImg"/>
+    <com.example.stevennl.tastysnake.widget.SnakeImage
+        android:id="@+id/connect_enemySnake_img"
+        android:contentDescription="@null"
+        style="@style/EnemySnakeImg"/>
 </RelativeLayout>
 
