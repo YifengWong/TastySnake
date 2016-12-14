@@ -42,6 +42,16 @@ public class CommonUtil {
     }
 
     /**
+     * Return winner or loser string.
+     *
+     * @param context The context
+     * @param win If true, return winner string, otherwise return loser string.
+     */
+    public static String getWinLoseStr(Context context, boolean win) {
+        return win ? context.getString(R.string.win) : context.getString(R.string.lose);
+    }
+
+    /**
      * Return role string (attacker or defender).
      *
      * @param context The context

@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.controller.game.thread.RecvThread;
 import com.example.stevennl.tastysnake.controller.game.thread.SendThread;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
@@ -47,7 +46,6 @@ public class BattleFragment extends Fragment {
     private SensorController sensorCtrl;
 
     private SendThread sendThread;
-    private RecvThread recvThread;
 
     private DrawableGrid grid;
     private TextView timeTxt;
@@ -90,7 +88,7 @@ public class BattleFragment extends Fragment {
         initSnake();
         initManager();
         initSensor();
-        initDataTransferThread();
+        initSendThread();
     }
 
     @Override
@@ -127,7 +125,6 @@ public class BattleFragment extends Fragment {
         super.onDestroy();
         manager.stopConnect();
         sendThread.quitSafely();
-        recvThread.quitSafely();
         stopGame(false);
     }
 
@@ -156,23 +153,8 @@ public class BattleFragment extends Fragment {
         manager.setDataListener(new OnDataReceiveListener() {
             @Override
             public void onReceive(int bytesCount, byte[] data) {
-                Log.d(TAG, "Receive: " + bytesCount + " bytes. Cnt: " + (++recvCnt));
-                if (recvThread != null && recvThread.isAlive()) {
-                    recvThread.recv(new Packet(data));
-                }
-            }
-        });
-    }
-
-    private void initSensor() {
-        sensorCtrl = SensorController.getInstance(act);
-    }
-
-    private void initDataTransferThread() {
-        sendThread = new SendThread();
-        recvThread = new RecvThread(new RecvThread.OnPacketReceiveListener() {
-            @Override
-            public void onPacketReceive(Packet pkt) {
+                Packet pkt = new Packet(data);
+                Log.d(TAG, "Receive packet: " + pkt.toString() + " Cnt: " + (++recvCnt));
                 switch (pkt.getType()) {
                     case DIRECTION:
                         Direction direc = pkt.getDirec();
@@ -195,16 +177,22 @@ public class BattleFragment extends Fragment {
                         break;
                     case WIN:
                         stopGame(false);
-                        Snake.Type winner = pkt.getWinner();
-                        String infoStr = (winner == type ? getString(R.string.win) : getString(R.string.lose));
+                        String infoStr = CommonUtil.getWinLoseStr(act, pkt.getWinner() == type);
                         handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
                     default:
                         break;
                 }
             }
         });
+    }
+
+    private void initSensor() {
+        sensorCtrl = SensorController.getInstance(act);
+    }
+
+    private void initSendThread() {
+        sendThread = new SendThread();
         sendThread.start();
-        recvThread.start();
     }
 
     private void initGrid(View v) {

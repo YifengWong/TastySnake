@@ -241,19 +241,19 @@ public class Packet implements Serializable {
         switch (type) {
             case FOOD_LENGTHEN:
             case FOOD_SHORTEN:
-                str = str + "\nFoodX: " + getFoodX() + "\nFoodY: " + getFoodY();
+                str = str + " FoodX: " + getFoodX() + " FoodY: " + getFoodY();
                 break;
             case DIRECTION:
-                str = str + "\nDirec: " + direc.name();
+                str = str + " Direc: " + direc.name();
                 break;
             case RESTART:
-                str = str + "\nAttacker: " + getAttacker().name();
+                str = str + " Attacker: " + getAttacker().name();
                 break;
             case TIME:
-                str = str + "\nTime: " + getTime();
+                str = str + " Time: " + getTime();
                 break;
             case WIN:
-                str = str + "\nWinner: " + getWinner().name();
+                str = str + " Winner: " + getWinner().name();
             default:
                 break;
         }

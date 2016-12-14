@@ -51,10 +51,9 @@ public class SendThread extends HandlerThread {
 
         @Override
         public void handleMessage(Message msg) {
-            Packet pkt = null;
             switch (msg.what) {
                 case MSG_SEND:
-                    pkt = (Packet)msg.obj;
+                    Packet pkt = (Packet)msg.obj;
                     Log.d(TAG, "Send packet: " + pkt.toString() + " Cnt: " + (++sendCnt));
                     manager.get().sendToRemote(pkt.toBytes());
                     break;
