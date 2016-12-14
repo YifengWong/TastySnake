@@ -1,10 +1,15 @@
 package com.example.stevennl.tastysnake.util;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.stevennl.tastysnake.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -13,6 +18,7 @@ import java.util.Random;
 public class CommonUtil {
     private static final String TAG = "CommonUtil";
     private static final Random random = new Random();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US);
 
     /**
      * Show a Toast message
@@ -39,6 +45,25 @@ public class CommonUtil {
      */
     public static int randInt(int max) {
         return random.nextInt(max);
+    }
+
+    /**
+     * Convert date to string.
+     */
+    public static String formatDate(Date date) {
+        return dateFormat.format(date);
+    }
+
+    /**
+     * Convert string to date.
+     */
+    public static Date parseDateStr(String dateStr) {
+        try {
+            return dateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            Log.e(TAG, "Error:", e);
+            return null;
+        }
     }
 
     /**

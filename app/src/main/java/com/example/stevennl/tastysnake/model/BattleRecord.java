@@ -1,74 +1,119 @@
 package com.example.stevennl.tastysnake.model;
 
-import java.text.SimpleDateFormat;
+import android.content.Context;
+import android.widget.ArrayAdapter;
+
+import com.example.stevennl.tastysnake.util.CommonUtil;
+import com.example.stevennl.tastysnake.util.DBHelper;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Record of one battle.
- * Author:
+ * Author: QX
  */
 public class BattleRecord {
     private String timestamp;
     private boolean win;
     private Snake.MoveResult cause;
-    private int time;
+    private int duration;
     private int myLength;
     private int enemyLength;
 
     public BattleRecord() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date(System.currentTimeMillis());
-        timestamp = df.format(date);
-        win = false;
-        cause = Snake.MoveResult.SUICIDE;
-        time = 0;
-        myLength = 3;
-        enemyLength = 3;
     }
 
-    public BattleRecord(String timestamp, boolean win, Snake.MoveResult cause, int time, int myLength, int enemyLength) {
-        this.timestamp = timestamp;
+    public BattleRecord(boolean win, Snake.MoveResult cause,
+                        int duration, int myLength, int enemyLength) {
+        timestamp = CommonUtil.formatDate(new Date(System.currentTimeMillis()));
         this.win = win;
         this.cause = cause;
-        this.time = time;
+        this.duration = duration;
         this.myLength = myLength;
         this.enemyLength = enemyLength;
     }
 
+    @Override
+    public String toString() {
+        return timestamp + " " + win + " " + cause.name()
+                + " " + duration + " " + myLength + " " + enemyLength;
+    }
+
+    /**
+     * Insert this record to database.
+     *
+     * @param context The context
+     */
+    public void save(Context context) {
+        DBHelper.getInstance(context).insert(this);
+    }
+
+    /**
+     * Return all the BattleRecord in database.
+     *
+     * @param context The context
+     */
+    public static ArrayList<BattleRecord> getAll(Context context) {
+        return DBHelper.getInstance(context).getAllRecords();
+    }
+
+    /**
+     * Remove all the BattleRecord from database.
+     *
+     * @param context The context
+     */
+    public static void removeAll(Context context) {
+        DBHelper.getInstance(context).removeAllRecords();
+    }
+
+    /**
+     * Below are getters and setters
+     */
     public String getTimestamp() {
         return timestamp;
-    }
-    public boolean isWin() {
-        return win;
-    }
-    public Snake.MoveResult getCause() {
-        return cause;
-    }
-    public int getTime() {
-        return time;
-    }
-    public int getMyLength() {
-        return myLength;
-    }
-    public int getEnemyLength() {
-        return enemyLength;
     }
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    public boolean isWin() {
+        return win;
+    }
+
     public void setWin(boolean win) {
         this.win = win;
     }
+
+    public Snake.MoveResult getCause() {
+        return cause;
+    }
+
     public void setCause(Snake.MoveResult cause) {
         this.cause = cause;
     }
-    public void setTime(int time) {
-        this.time = time;
+
+    public int getDuration() {
+        return duration;
     }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getMyLength() {
+        return myLength;
+    }
+
     public void setMyLength(int myLength) {
         this.myLength = myLength;
     }
+
+    public int getEnemyLength() {
+        return enemyLength;
+    }
+
     public void setEnemyLength(int enemyLength) {
         this.enemyLength = enemyLength;
     }

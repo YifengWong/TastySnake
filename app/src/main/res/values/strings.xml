@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">TastySnake</string>
 
-    <string name="bye">Bye~</string>
     <string name="restart">重新开始</string>
+    <string name="generate">Gen</string>
+    <string name="remove_all">Remove All</string>
     <string name="connect">Connect</string>
+    <string name="bye">Bye~</string>
     <string name="game">Game</string>
     <string name="start">开始</string>
     <string name="game_start">游戏开始</string>

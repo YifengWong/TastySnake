@@ -12,28 +12,52 @@ import com.example.stevennl.tastysnake.model.Snake;
 import java.util.ArrayList;
 
 /**
- * Manage database CRUD operation.
- * Author:
+ * Manage database CRUD operation. Implemented as a singleton.
+ * Author: QX
  */
 public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
-    private static final String DB_NAME = "TastySnake";
-    private static final String TABLE_NAME = "battle_record";
+    private static DBHelper instance = null;
 
-    public DBHelper(Context context) {
-        super(context, DB_NAME, null, 1);
+    private static final String DB_NAME = "TastySnake.db";
+    private static final int DB_VERSION = 1;
+    private static final String TABLE_BATTLE_RECORD = "battle_record";
+    private static final String[] TABLE_COL = new String[]{
+            "timestamp", "win", "cause", "duration", "myLength", "enemyLength"};
+
+    /**
+     * Return the only instance.
+     */
+    public static DBHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new DBHelper(context);
+        }
+        return instance;
+    }
+
+    /**
+     * Initialize.
+     */
+    private DBHelper(Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE = "CREATE TABLE if not exists "
-                + TABLE_NAME
-                + "(_id INTEGER PRIMARY KEY, timestamp TEXT, win TEXT, cause INTEGER, time INTEGER, myLength INTEGER, enemyLength INTEGER)";
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_BATTLE_RECORD
+                + " (" + TABLE_COL[0] + " TEXT, "
+                + TABLE_COL[1] + " TEXT, "
+                + TABLE_COL[2] + " INTEGER, "
+                + TABLE_COL[3] + " INTEGER, "
+                + TABLE_COL[4] + " INTEGER, "
+                + TABLE_COL[5] + " INTEGER)";
         db.execSQL(CREATE_TABLE);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Do nothing
+    }
 
     /**
      * Insert a battle record to database.
@@ -44,16 +68,16 @@ public class DBHelper extends SQLiteOpenHelper {
         String timestamp = record.getTimestamp();
         boolean win = record.isWin();
         int cause = record.getCause().ordinal();
-        int time = record.getTime();
+        int time = record.getDuration();
         int myLength = record.getMyLength();
         int enemyLength = record.getEnemyLength();
-        cv.put("timestamp", timestamp);
-        cv.put("win", win);
-        cv.put("cause", cause);
-        cv.put("time", time);
-        cv.put("myLength", myLength);
-        cv.put("enemyLength", enemyLength);
-        db.insert(TABLE_NAME, null, cv);
+        cv.put(TABLE_COL[0], timestamp);
+        cv.put(TABLE_COL[1], win);
+        cv.put(TABLE_COL[2], cause);
+        cv.put(TABLE_COL[3], time);
+        cv.put(TABLE_COL[4], myLength);
+        cv.put(TABLE_COL[5], enemyLength);
+        db.insert(TABLE_BATTLE_RECORD, null, cv);
         db.close();
     }
 
@@ -63,20 +87,26 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<BattleRecord> getAllRecords() {
         ArrayList<BattleRecord> db_records = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_NAME,
-                new String[]{"timestamp", "win", "cause", "time", "myLength", "enemyLength"},
-                null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_BATTLE_RECORD, TABLE_COL, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BattleRecord temp = new BattleRecord();
-            temp.setTimestamp(cursor.getString(cursor.getColumnIndex("timestamp")));
-            temp.setWin(cursor.getString(cursor.getColumnIndex("win")).equals("1"));
-            temp.setCause(Snake.MoveResult.values()[cursor.getInt(cursor.getColumnIndex("cause"))]);
-            temp.setTime(cursor.getInt(cursor.getColumnIndex("time")));
-            temp.setMyLength(cursor.getInt(cursor.getColumnIndex("myLength")));
-            temp.setEnemyLength(cursor.getInt(cursor.getColumnIndex("enemyLength")));
+            temp.setTimestamp(cursor.getString(cursor.getColumnIndex(TABLE_COL[0])));
+            temp.setWin(cursor.getString(cursor.getColumnIndex(TABLE_COL[1])).equals("1"));
+            temp.setCause(Snake.MoveResult.values()[cursor.getInt(cursor.getColumnIndex(TABLE_COL[2]))]);
+            temp.setDuration(cursor.getInt(cursor.getColumnIndex(TABLE_COL[3])));
+            temp.setMyLength(cursor.getInt(cursor.getColumnIndex(TABLE_COL[4])));
+            temp.setEnemyLength(cursor.getInt(cursor.getColumnIndex(TABLE_COL[5])));
             db_records.add(temp);
         }
+        cursor.close();
         db.close();
         return db_records;
+    }
+
+    /**
+     * Delete all battle records.
+     */
+    public void removeAllRecords() {
+        // TODO
     }
 }

@@ -1,91 +1,68 @@
 package com.example.stevennl.tastysnake.controller.test;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.BattleRecord;
+import com.example.stevennl.tastysnake.model.Snake;
+import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.DBHelper;
 
 import java.util.ArrayList;
 
 public class DBTestActivity extends AppCompatActivity {
-
-    DBHelper testDB;
-    ArrayList<BattleRecord> testRecords = new ArrayList<>();
-    mAdapter adapter;
-    ListView db_listView;
+    private static final String TAG = "DBTestActivity";
+    private ArrayList<BattleRecord> records;
+    private ArrayAdapter<BattleRecord> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dbtest);
+        records = BattleRecord.getAll(this);
+        initListView();
+        initRemoveBtn();
+        initGenBtn();
+    }
 
-        db_listView = (ListView)findViewById(R.id.db_listView);
+    private void initListView() {
+        ListView listView = (ListView)findViewById(R.id.db_test_listView);
+        adapter = new ArrayAdapter<>(this, R.layout.item_list_record, records);
+        listView.setAdapter(adapter);
+    }
 
-        testDB = new DBHelper(this);
+    private void initRemoveBtn() {
+        Button removeBtn = (Button) findViewById(R.id.db_test_removeBtn);
+        removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BattleRecord.removeAll(DBTestActivity.this);
+            }
+        });
+    }
 
-//        testDB.insert(new BattleRecord());
-//        testDB.insert(new BattleRecord("2016/12/13 09:13:30", true, Snake.MoveResult.HIT_ENEMY, 300, 5, 6));
-
-
-        testRecords = testDB.getAllRecords();
-        adapter = new mAdapter(this, testRecords);
-        db_listView.setAdapter(adapter);
+    private void initGenBtn() {
+        Button testBtn = (Button) findViewById(R.id.db_test_genBtn);
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean win = (CommonUtil.randInt(2) == 0);
+                Snake.MoveResult[] values = Snake.MoveResult.values();
+                Snake.MoveResult cause = values[CommonUtil.randInt(values.length)];
+                int duration = CommonUtil.randInt(180);
+                int myLength = CommonUtil.randInt(50);
+                int enemyLength = CommonUtil.randInt(50);
+                new BattleRecord(win, cause, duration, myLength, enemyLength)
+                        .save(DBTestActivity.this);
+                records.clear();
+                records.addAll(BattleRecord.getAll(DBTestActivity.this));
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }
-
-class mAdapter extends BaseAdapter {
-    private Context mContext;
-    private ArrayList<BattleRecord> mBattleRecord;
-
-    public mAdapter(Context mContext, ArrayList<BattleRecord> mBattleRecord) {
-        this.mContext = mContext;
-        this.mBattleRecord = mBattleRecord;
-    }
-
-    @Override
-    public int getCount() {
-        return mBattleRecord.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        if (mBattleRecord == null)
-            return null;
-        return mBattleRecord.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null)
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.db_test_records, parent, false);
-        TextView timestamp = (TextView)convertView.findViewById(R.id.timestamp);
-        TextView win = (TextView)convertView.findViewById(R.id.win);
-        TextView cause = (TextView)convertView.findViewById(R.id.cause);
-        TextView time = (TextView)convertView.findViewById(R.id.time);
-        TextView myLength = (TextView)convertView.findViewById(R.id.myLength);
-        TextView enemyLength = (TextView)convertView.findViewById(R.id.enemyLength);
-        timestamp.setText(mBattleRecord.get(position).getTimestamp());
-        String isWin = (mBattleRecord.get(position).isWin()) ? "True" : "False";
-        win.setText(isWin);
-        cause.setText(mBattleRecord.get(position).getCause().toString());
-        time.setText(mBattleRecord.get(position).getTime() + "");
-        myLength.setText(mBattleRecord.get(position).getMyLength() + "");
-        enemyLength.setText(mBattleRecord.get(position).getEnemyLength() + "");
-        return convertView;
-    }
-}
-
