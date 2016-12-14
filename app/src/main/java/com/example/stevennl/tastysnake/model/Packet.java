@@ -17,6 +17,7 @@ public class Packet implements Serializable {
     private static final char TYPE_RESTART = 'd';
     private static final char TYPE_TIME = 'e';
     private static final char TYPE_WIN = 'f';
+    private static final char TYPE_PREPARED = 'g';
 
     private Type type;
     private int x;
@@ -32,7 +33,8 @@ public class Packet implements Serializable {
         DIRECTION,
         RESTART,
         TIME,
-        WIN
+        WIN,
+        PREPARED
     }
 
     /**
@@ -74,6 +76,10 @@ public class Packet implements Serializable {
                 type = Type.WIN;
                 x = str.charAt(1) - '0';
                 y = str.charAt(2) - '0';
+                break;
+            case TYPE_PREPARED:
+                type = Type.PREPARED;
+                break;
             default:
                 break;
         }
@@ -111,6 +117,10 @@ public class Packet implements Serializable {
                 builder.append(TYPE_WIN);
                 builder.append(x);
                 builder.append(y);
+                break;
+            case PREPARED:
+                builder.append(TYPE_PREPARED);
+                break;
             default:
                 break;
         }
@@ -184,6 +194,15 @@ public class Packet implements Serializable {
         pkt.type = Type.WIN;
         pkt.x = winner.ordinal();
         pkt.y = cause.ordinal();
+        return pkt;
+    }
+
+    /**
+     * Create a PREPARE packet.
+     */
+    public static Packet prepare() {
+        Packet pkt = new Packet();
+        pkt.type = Type.PREPARED;
         return pkt;
     }
 
@@ -265,6 +284,9 @@ public class Packet implements Serializable {
                 break;
             case WIN:
                 str = str + " Winner: " + getWinner().name() + " Cause: " + getCause().name();
+                break;
+            case PREPARED:
+                break;
             default:
                 break;
         }

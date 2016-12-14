@@ -22,7 +22,7 @@ public class Config {
     public static final int DELAY_HOME = 600;  // ms
     public static final int DELAY_HOME_FINISH = 200;  // ms
     public static final int DELAY_CONNECT = 1000;  // ms
-    public static final int DELAY_BATTLE = 3000;  // ms
+    public static final int DELAY_BATTLE = 1000;  // ms
     public static final int DELAY_ROLE_SWITCH_INFO = 1000;  // ms
 
     public static final int DURATION_ATTACK = 10;  // s

@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DialogAnim">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
     <style name="StartBtn" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">@dimen/width_startBtn</item>
         <item name="android:layout_height">@dimen/height_startBtn</item>
