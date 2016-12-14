@@ -13,30 +13,26 @@ import com.example.stevennl.tastysnake.widget.HelpDialog;
 
 public class DialogTestActivity extends AppCompatActivity {
     private static final String TAG = "DialogTestActivity";
-
     private HelpDialog helpDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diaglog_test);
+
+        helpDialog = new HelpDialog(this, new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                CommonUtil.showToast(DialogTestActivity.this, "Closed!");
+            }
+        });
+
         Button btn = (Button) findViewById(R.id.dialog_test_btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommonUtil.showToast(DialogTestActivity.this, "Click");
                 helpDialog.show();
             }
         });
-
-        helpDialog = new HelpDialog(this, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO Something
-                Log.d("HelpDialog", "the listener called");
-            }
-        });
     }
-
-
 }

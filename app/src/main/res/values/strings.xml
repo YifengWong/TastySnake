@@ -7,6 +7,8 @@
     <string name="connect">Connect</string>
     <string name="bye">Bye~</string>
     <string name="game">Game</string>
+    <string name="confirm">确定</string>
+    <string name="help">Help</string>
     <string name="start">开始</string>
     <string name="game_start">游戏开始</string>
     <string name="select_device">选择设备进行对战</string>
@@ -23,6 +25,15 @@
     <string name="attack_turn">攻！</string>
 
     <string name="not_implement">Not Implemented</string>
+
+    <!-- Help infos -->
+    <string name="help_info">1.请记住自己永远是红色的蛇！\n\n
+        2.时刻留意上方倒计时！确认自己是攻方还是守方，决定策略。\n\n
+        3.每隔 %1$d 秒将会转换一次攻守能力。\n\n
+        4.两方产生碰撞，都将会判定为攻击者胜利！\n\n
+        5.吃到战场上的果子，会导致身体变长，导致自身处于劣势，无论是攻击者还是防守者都应尽量避免变长。\n\n
+        6.作为攻击者，请毫不犹豫地追击对手吧！\n\n
+        7.撞到自己的身体或者战场边界将会被判定为失败。</string>
 
     <!-- Toast infos -->
     <string name="bluetooth_not_support">对不起！您的设备不支持蓝牙功能！无法对战！</string>

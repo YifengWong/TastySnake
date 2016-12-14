@@ -41,7 +41,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".controller.test.DialogTestActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

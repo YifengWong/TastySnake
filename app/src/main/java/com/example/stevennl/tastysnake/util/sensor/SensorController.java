@@ -18,7 +18,7 @@ import com.example.stevennl.tastysnake.model.Direction;
  * Y    0       0       -5      7
  * Z    7       7       8       6
  *
- * Author: CrazeWong
+ * Author: Yifeng Wong
  */
 public class SensorController {
     private static final String TAG = "SensorController";
