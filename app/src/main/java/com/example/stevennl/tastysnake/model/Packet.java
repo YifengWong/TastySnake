@@ -73,6 +73,7 @@ public class Packet implements Serializable {
             case TYPE_WIN:
                 type = Type.WIN;
                 x = str.charAt(1) - '0';
+                y = str.charAt(2) - '0';
             default:
                 break;
         }
@@ -109,6 +110,7 @@ public class Packet implements Serializable {
             case WIN:
                 builder.append(TYPE_WIN);
                 builder.append(x);
+                builder.append(y);
             default:
                 break;
         }
@@ -175,11 +177,13 @@ public class Packet implements Serializable {
      * Create a WIN packet.
      *
      * @param winner The type of the winner snake
+     * @param cause The cause of the game ending
      */
-    public static Packet win(Snake.Type winner) {
+    public static Packet win(Snake.Type winner, Snake.MoveResult cause) {
         Packet pkt = new Packet();
         pkt.type = Type.WIN;
         pkt.x = winner.ordinal();
+        pkt.y = cause.ordinal();
         return pkt;
     }
 
@@ -233,6 +237,13 @@ public class Packet implements Serializable {
     }
 
     /**
+     * Return the cause of game ending.
+     */
+    public Snake.MoveResult getCause() {
+        return Snake.MoveResult.values()[y];
+    }
+
+    /**
      * Return the string description of the packet.
      */
     @Override
@@ -253,7 +264,7 @@ public class Packet implements Serializable {
                 str = str + " Time: " + getTime();
                 break;
             case WIN:
-                str = str + " Winner: " + getWinner().name();
+                str = str + " Winner: " + getWinner().name() + " Cause: " + getCause().name();
             default:
                 break;
         }

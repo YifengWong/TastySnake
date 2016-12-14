@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.controller.game.thread.SendThread;
+import com.example.stevennl.tastysnake.model.BattleRecord;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Packet;
@@ -59,6 +60,7 @@ public class BattleFragment extends Fragment {
 
     private boolean gameStarted = false;
     private int timeRemain;
+    private int duration;  // Duration(seconds) of one battle
     private boolean attack;
     private Snake.Type nextAttacker = Snake.Type.CLIENT;
 
@@ -173,11 +175,15 @@ public class BattleFragment extends Fragment {
                         break;
                     case TIME:
                         timeRemain = pkt.getTime();
+                        ++duration;
                         handler.obtainMessage(SafeHandler.MSG_UPDATE_TIME).sendToTarget();
                         break;
                     case WIN:
                         stopGame(false);
-                        String infoStr = CommonUtil.getWinLoseStr(act, pkt.getWinner() == type);
+                        boolean win = (pkt.getWinner() == type);
+                        Snake.MoveResult cause = pkt.getCause();
+                        saveRecord(win, cause);
+                        String infoStr = CommonUtil.getWinLoseStr(act, win);
                         handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
                     default:
                         break;
@@ -249,6 +255,7 @@ public class BattleFragment extends Fragment {
      */
     private void prepare() {
         gameStarted = true;
+        duration = 0;
         if (isAdded()) {
             grid.setVisibility(View.VISIBLE);
             infoTxt.setVisibility(View.VISIBLE);
@@ -314,6 +321,7 @@ public class BattleFragment extends Fragment {
             @Override
             public void run() {
                 sendThread.send(Packet.time(timeRemain));
+                ++duration;
                 handler.obtainMessage(SafeHandler.MSG_UPDATE_TIME).sendToTarget();
             }
         }, 0, 1000);
@@ -335,39 +343,45 @@ public class BattleFragment extends Fragment {
     }
 
     /**
-     * Handle snake's move result.
+     * Handle snake's move result. (thread-safe)
      *
      * @param snake The snake who generated the move result
      * @param result The move result.
      */
+    private final Object hmrLock = new Object();
     private void handleMoveResult(Snake snake, Snake.MoveResult result) {
-        if (!isAdded()) {
-            return;
-        }
-        switch (result) {
-            case SUC:
-                break;
-            case SUICIDE:
-            case OUT:
-                if (isServer()) {
-                    Snake.Type winner = (snake == mySnake ? enemySnake.getType() : type);
-                    sendThread.send(Packet.win(winner));
-                    String infoStr = (type == winner ? getString(R.string.win) : getString(R.string.lose));
-                    handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
-                }
-                stopGame(true);
-                break;
-            case HIT_ENEMY:
-                if (isServer()) {
-                    Snake.Type winner = (attack ? type : enemySnake.getType());
-                    sendThread.send(Packet.win(winner));
-                    String infoStr = (attack ? getString(R.string.win) : getString(R.string.lose));
-                    handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
+        synchronized (hmrLock) {
+            if (!isAdded() || !gameStarted) {
+                return;
+            }
+            switch (result) {
+                case SUC:
+                    break;
+                case SUICIDE:
+                case OUT:
+                    if (isServer()) {
+                        Snake.Type winner = (snake == mySnake ? enemySnake.getType() : type);
+                        sendThread.send(Packet.win(winner, result));
+                        boolean win = (type == winner);
+                        saveRecord(win, result);
+                        String infoStr = (win ? getString(R.string.win) : getString(R.string.lose));
+                        handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
+                    }
                     stopGame(true);
-                }
-                break;
-            default:
-                break;
+                    break;
+                case HIT_ENEMY:
+                    if (isServer()) {
+                        Snake.Type winner = (attack ? type : enemySnake.getType());
+                        sendThread.send(Packet.win(winner, result));
+                        saveRecord(attack, result);
+                        String infoStr = (attack ? getString(R.string.win) : getString(R.string.lose));
+                        handler.obtainMessage(SafeHandler.MSG_TOAST, infoStr).sendToTarget();
+                        stopGame(true);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -418,6 +432,19 @@ public class BattleFragment extends Fragment {
      */
     private boolean isServer() {
         return type == Snake.Type.SERVER;
+    }
+
+    /**
+     * Save a {@link BattleRecord} to database.
+     *
+     * @param win True if current device wins the round, false otherwise
+     * @param cause The cause of the game ending
+     */
+    private void saveRecord(boolean win, Snake.MoveResult cause) {
+        BattleRecord record = new BattleRecord(win, cause, duration,
+                mySnake.getLength(), enemySnake.getLength());
+        Log.d(TAG, "Save record: " + record.toString());
+        record.save(act);
     }
 
     /**

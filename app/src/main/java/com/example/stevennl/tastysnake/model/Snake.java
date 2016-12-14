@@ -37,6 +37,20 @@ public class Snake {
     }
 
     /**
+     * Return the type of the snake.
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * Return the length of the snake.
+     */
+    public int getLength() {
+        return bodies.size();
+    }
+
+    /**
      * Initialize.
      *
      * @param type The type of the snake
@@ -105,13 +119,6 @@ public class Snake {
         map.setPoint(bodies.get(0), new Point(color, types.get(0)));
         map.setPoint(bodies.get(1), new Point(color, types.get(1)));
         return moveResult;
-    }
-
-    /**
-     * Return the type of the snake.
-     */
-    public Type getType() {
-        return type;
     }
 
     /**

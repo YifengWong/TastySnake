@@ -36,8 +36,12 @@ public class PacketTestActivity extends AppCompatActivity {
                 pkts[8] = Packet.restart(Snake.Type.CLIENT);
                 pkts[9] = Packet.time(55);
                 pkts[10] = Packet.time(5);
-                pkts[11] = Packet.win(Snake.Type.SERVER);
-                pkts[12] = Packet.win(Snake.Type.CLIENT);
+                pkts[11] = Packet.win(Snake.Type.SERVER, Snake.MoveResult.OUT);
+                pkts[12] = Packet.win(Snake.Type.SERVER, Snake.MoveResult.SUICIDE);
+                pkts[13] = Packet.win(Snake.Type.SERVER, Snake.MoveResult.HIT_ENEMY);
+                pkts[14] = Packet.win(Snake.Type.CLIENT, Snake.MoveResult.OUT);
+                pkts[15] = Packet.win(Snake.Type.CLIENT, Snake.MoveResult.SUICIDE);
+                pkts[16] = Packet.win(Snake.Type.CLIENT, Snake.MoveResult.HIT_ENEMY);
                 for (Packet pkt : pkts) {
                     if (pkt != null) {
                         byte[] raw = pkt.toBytes();
