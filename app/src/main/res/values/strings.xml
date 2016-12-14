@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TastySnake</string>
+    <string name="app_name">Snake</string>
 
     <string name="restart">重新开始</string>
     <string name="generate">Gen</string>
