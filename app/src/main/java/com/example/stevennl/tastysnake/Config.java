@@ -15,20 +15,21 @@ public class Config {
     public static final int MAP_ROW = 25;
     public static final int MAP_COL = 49;
 
-    public static final int FREQUENCY_DRAW = 30;  // ms
+    public static final int FREQUENCY_DRAW = 10;  // ms
     public static final int FREQUENCY_MOVE = 80;  // ms
     public static final int FREQUENCY_FOOD = 500;  // ms
 
-    public static final int DELAY_HOME = 800;  // ms
+    public static final int DELAY_HOME = 700;  // ms
     public static final int DELAY_HOME_FINISH = 200;  // ms
     public static final int DELAY_CONNECT = 1000;  // ms
     public static final int DELAY_BATTLE = 3000;  // ms
+    public static final int DELAY_ROLE_SWITCH_INFO = 1000;  // ms
 
     public static final int DURATION_ATTACK = 10;  // s
     public static final int DURATION_GAME_PREPARE = 3;  // s
     public static final int DURATION_SNAKE_ANIM = 400;  // ms
 
-    public static final int COLOR_FOOD_LENGTHEN = Color.GREEN;
+    public static final int COLOR_FOOD_LENGTHEN = Color.parseColor("#81C784");
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
     public static final int COLOR_SNAKE_MY = Color.rgb(255, 50, 49);
     public static final int COLOR_SNAKE_ENEMY = Color.rgb(50, 97, 255);

@@ -1,14 +1,8 @@
 package com.example.stevennl.tastysnake.util;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 
 import java.util.Random;
@@ -54,6 +48,17 @@ public class CommonUtil {
      * @param attack If true, return attacker string, otherwise return defender string.
      */
     public static String getAttackStr(Context context, boolean attack) {
-        return attack ? context.getString(R.string.you_attacker) : context.getString(R.string.you_defender);
+        return attack ? context.getString(R.string.role_attacker) : context.getString(R.string.role_defender);
+    }
+
+    /**
+     * Return role info string.
+     *
+     * @param context The context
+     * @param attack If true, return attack info string, otherwise return defend info string.
+     */
+    public static String getAttackInfoStr(Context context, boolean attack) {
+        return attack ? context.getString(R.string.attack_turn)
+                : context.getString(R.string.defend_turn);
     }
 }

@@ -48,6 +48,16 @@ public class SnakeImage extends ImageView {
     public SnakeImage(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "Constructor called.");
+        if (attrs != null) {
+            initCustomAttr(context, attrs);
+        }
+        startBlinkAnim();
+    }
+
+    /**
+     * Initialize custom attributes.
+     */
+    private void initCustomAttr(Context context, AttributeSet attrs) {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SnakeImageAttr);
         blinkImgId = arr.getResourceId(R.styleable.SnakeImageAttr_blinkImage, -1);
         pressedImgId = arr.getResourceId(R.styleable.SnakeImageAttr_pressedImage, -1);
@@ -56,7 +66,6 @@ public class SnakeImage extends ImageView {
         int direcIndex = arr.getInteger(R.styleable.SnakeImageAttr_direction, Direction.NONE.ordinal());
         direc = Direction.values()[direcIndex];
         arr.recycle();
-        startBlinkAnim();
     }
 
     /**

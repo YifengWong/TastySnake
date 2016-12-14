@@ -1,6 +1,7 @@
 package com.example.stevennl.tastysnake.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.stevennl.tastysnake.Config;
+import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Point;
 
@@ -24,13 +27,10 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
     private int rowCount = 1;
     private int colCount = 1;
     private int bgColor = Color.TRANSPARENT;
+    private boolean showGridLine = false;
 
-    private int width = 0;
-    private int height = 0;
     private int horInterval = 0;
     private int verInterval = 0;
-    private int horLineCnt = 0;
-    private int verLineCnt = 0;
     private int horOffset = 0;
     private int verOffset = 0;
 
@@ -73,8 +73,20 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
     public DrawableGrid(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "Constructor called.");
+        if (attrs != null) {
+            initCustomAttr(context, attrs);
+        }
         initSurfaceView();
         initPaint();
+    }
+
+    /**
+     * Initialize custom attributes.
+     */
+    private void initCustomAttr(Context context, AttributeSet attrs) {
+        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.DrawableGridAttr);
+        showGridLine = arr.getBoolean(R.styleable.DrawableGridAttr_showGridLine, false);
+        arr.recycle();
     }
 
     /**
@@ -176,16 +188,18 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
      * Compute sizes and drawing locations of the grid.
      */
     private void computeSize() {
-        width = getWidth();
-        height = getHeight();
-        horLineCnt = rowCount + 1;
-        verLineCnt = colCount + 1;
-        int horRemain = width - verLineCnt;
-        int verRemain = height - horLineCnt;
-        horInterval = horRemain / colCount;
-        verInterval = verRemain / rowCount;
-        horOffset = (horRemain % colCount) / 2;
-        verOffset = (verRemain % rowCount) / 2;
+        int width = getWidth();
+        int height = getHeight();
+        if (showGridLine) {
+            int horLineCnt = rowCount + 1;
+            int verLineCnt = colCount + 1;
+            width -= verLineCnt;
+            height -= horLineCnt;
+        }
+        horInterval = width / colCount;
+        verInterval = height / rowCount;
+        horOffset = (width % colCount) / 2;
+        verOffset = (height % rowCount) / 2;
     }
 
     /**
@@ -195,13 +209,19 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
      */
     private void drawMapContent(Canvas canvas) {
         if (map == null) return;
+        float left, top, right, bottom;
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
                 paint.setColor(map.getPoint(i, j).getColor());
-                float left = horOffset + 1 + j * (horInterval + 1);
-                float top = verOffset + 1 + i * (verInterval + 1);
-                float right = left + horInterval - 1;
-                float bottom = top + verInterval - 1;
+                if (showGridLine) {
+                    left = horOffset + 1 + j * (horInterval + 1);
+                    top = verOffset + 1 + i * (verInterval + 1);
+                } else {
+                    left = horOffset + j * horInterval;
+                    top = verOffset + i * verInterval;
+                }
+                right = left + horInterval;
+                bottom = top + verInterval;
                 drawGrid(left, top, right, bottom, map.getPoint(i, j).getType(), canvas);
             }
         }
@@ -231,7 +251,7 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
                 break;
             case FOOD_LENGTHEN:
             case FOOD_SHORTEN:
-                canvas.drawCircle(centerHor, centerVer, (right - left) / 2, paint);
+                canvas.drawCircle(centerHor, centerVer, 0.8f * (right - left) / 2, paint);
                 break;
             case HEAD_L:
                 canvas.drawRect(centerHor, top + offsetVer, right, bottom - offsetVer, paint);

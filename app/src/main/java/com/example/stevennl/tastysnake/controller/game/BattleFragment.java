@@ -57,7 +57,7 @@ public class BattleFragment extends Fragment {
     private Map map;
     private Snake mySnake;
     private Snake enemySnake;
-    private Snake.Type type;  // Distinguish server/client
+    private Snake.Type type = Snake.Type.CLIENT;  // Distinguish server/client
 
     private boolean gameStarted = false;
     private int timeRemain;
@@ -79,7 +79,6 @@ public class BattleFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "Snake type: " + type.name());
         act = (GameActivity)context;
     }
 
@@ -175,16 +174,16 @@ public class BattleFragment extends Fragment {
             @Override
             public void onPacketReceive(Packet pkt) {
                 switch (pkt.getType()) {
+                    case DIRECTION:
+                        Direction direc = pkt.getDirec();
+                        Snake.MoveResult res = enemySnake.move(direc);
+                        handleMoveResult(enemySnake, res);
+                        break;
                     case FOOD_LENGTHEN:
                         map.createFood(pkt.getFoodX(), pkt.getFoodY(), true);
                         break;
                     case FOOD_SHORTEN:
                         map.createFood(pkt.getFoodX(), pkt.getFoodY(), false);
-                        break;
-                    case DIRECTION:
-                        Direction direc = pkt.getDirec();
-                        Snake.MoveResult res = enemySnake.move(direc);
-                        handleMoveResult(enemySnake, res);
                         break;
                     case RESTART:
                         attack = (type == pkt.getAttacker());
@@ -297,8 +296,9 @@ public class BattleFragment extends Fragment {
             timer = new Timer();
         }
         if (isServer()) {
-            startCreateFood();
             startTiming();
+        } else {
+            startCreateFood();
         }
         startMove();
     }
@@ -476,7 +476,7 @@ public class BattleFragment extends Fragment {
 
         @Override
         public void handleMessage(Message msg) {
-            BattleFragment f = fragment.get();
+            final BattleFragment f = fragment.get();
             if (!f.isAdded()) {
                 return;
             }
@@ -492,6 +492,18 @@ public class BattleFragment extends Fragment {
                         f.attack = !f.attack;
                         f.timeRemain = Config.DURATION_ATTACK - 1;
                         f.updateRoleTxt();
+                        if (f.gameStarted) {
+                            obtainMessage(MSG_UPDATE_INFO,
+                                    CommonUtil.getAttackInfoStr(f.act,f.attack)).sendToTarget();
+                            postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (f.isAdded() && f.gameStarted) {
+                                        obtainMessage(MSG_HIDE_INFO).sendToTarget();
+                                    }
+                                }
+                            }, Config.DELAY_ROLE_SWITCH_INFO);
+                        }
                     }
                     f.updateTimeTxt();
                     if (f.isServer()) {
