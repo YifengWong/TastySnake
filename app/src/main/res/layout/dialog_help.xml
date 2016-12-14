@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/dialog_help_text"
-        android:layout_gravity="center"
-        android:padding="@dimen/margin_median"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"/>
-
-</LinearLayout>
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/dialog_help_infoTxt"
+            android:padding="@dimen/margin_median"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"/>
+    </ScrollView>
+</RelativeLayout>

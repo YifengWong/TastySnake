@@ -19,7 +19,7 @@ public class Config {
     public static final int FREQUENCY_MOVE = 80;  // ms
     public static final int FREQUENCY_FOOD = 500;  // ms
 
-    public static final int DELAY_HOME = 700;  // ms
+    public static final int DELAY_HOME = 600;  // ms
     public static final int DELAY_HOME_FINISH = 200;  // ms
     public static final int DELAY_CONNECT = 1000;  // ms
     public static final int DELAY_BATTLE = 3000;  // ms
