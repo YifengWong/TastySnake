@@ -46,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_BATTLE_RECORD
                 + " (" + TABLE_COL[0] + " TEXT, "
-                + TABLE_COL[1] + " TEXT, "
+                + TABLE_COL[1] + " INTEGER, "
                 + TABLE_COL[2] + " INTEGER, "
                 + TABLE_COL[3] + " INTEGER, "
                 + TABLE_COL[4] + " INTEGER, "
@@ -91,7 +91,7 @@ public class DBHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             BattleRecord temp = new BattleRecord();
             temp.setTimestamp(CommonUtil.parseDateStr(cursor.getString(cursor.getColumnIndex(TABLE_COL[0]))));
-            temp.setWin(cursor.getString(cursor.getColumnIndex(TABLE_COL[1])).equals("1"));
+            temp.setWin(cursor.getInt(cursor.getColumnIndex(TABLE_COL[1])) > 0);
             temp.setCause(Snake.MoveResult.values()[cursor.getInt(cursor.getColumnIndex(TABLE_COL[2]))]);
             temp.setDuration(cursor.getInt(cursor.getColumnIndex(TABLE_COL[3])));
             temp.setMyLength(cursor.getInt(cursor.getColumnIndex(TABLE_COL[4])));
