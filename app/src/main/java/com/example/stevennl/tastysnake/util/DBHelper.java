@@ -104,10 +104,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Delete all battle records.
+     * Remove all battle records.
      */
     public void removeAllRecords() {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_BATTLE_RECORD, null, new String[]{});
+        db.close();
     }
 }

@@ -4,9 +4,7 @@ A snake battle game on Android.
 
 ## Documentation
 
-1. [database](./doc/database.md)
-
-2. [data_analysis](./doc/data_analysis.md)
+See [doc](./doc).
 
 ## License
 
