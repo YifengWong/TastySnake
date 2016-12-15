@@ -14,7 +14,8 @@
     <dimen name="margin_low">6dp</dimen>
 
     <dimen name="margin_snake_hor">50dp</dimen>
-    <dimen name="margin_snake_ver">-200dp</dimen>
+    <dimen name="margin_snake_ver_neg">-200dp</dimen>
+    <dimen name="margin_snake_hide_info">100dp</dimen>
 
     <dimen name="width_startBtn">150dp</dimen>
     <dimen name="height_startBtn">150dp</dimen>

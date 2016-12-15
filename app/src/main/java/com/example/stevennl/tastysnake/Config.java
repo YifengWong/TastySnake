@@ -19,15 +19,18 @@ public class Config {
     public static final int FREQUENCY_MOVE = 80;  // ms
     public static final int FREQUENCY_FOOD = 500;  // ms
 
-    public static final int DELAY_HOME = 600;  // ms
+    public static final int DELAY_HOME_FRAG = 600;  // ms
     public static final int DELAY_HOME_FINISH = 200;  // ms
+    public static final int DELAY_HOME_CLICKME = 3000;  // ms
+    public static final int DELAY_ANALYSIS_FRAG = 1000;  // ms
     public static final int DELAY_CONNECT = 1000;  // ms
-    public static final int DELAY_BATTLE = 1000;  // ms
+    public static final int DELAY_BATTLE_FRAG = 1000;  // ms
     public static final int DELAY_ROLE_SWITCH_INFO = 1000;  // ms
 
     public static final int DURATION_ATTACK = 10;  // s
     public static final int DURATION_GAME_PREPARE = 3;  // s
     public static final int DURATION_SNAKE_ANIM = 400;  // ms
+    public static final int DURATION_ANALYSIS_INFO = 1500;  // ms
 
     public static final int COLOR_FOOD_LENGTHEN = Color.parseColor("#81C784");
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;

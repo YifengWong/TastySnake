@@ -2,6 +2,7 @@
     <string name="app_name">Snake</string>
 
     <string name="restart">重新开始</string>
+    <string name="click_me">点我！</string>
     <string name="generate">Gen</string>
     <string name="remove_all">Remove All</string>
     <string name="connect">Connect</string>
@@ -27,7 +28,6 @@
 
     <string name="not_implement">Not Implemented</string>
 
-    <!-- Help infos -->
     <string name="help_info">1.请记住自己永远是红色的蛇！\n\n
         2.时刻留意上方倒计时！确认自己是攻方还是守方，决定策略。\n\n
         3.每隔 %1$d 秒将会转换一次攻守能力。\n\n
@@ -36,6 +36,15 @@
         6.作为攻击者，请毫不犹豫地追击对手吧！\n\n
         7.撞到自己的身体或者战场边界将会被判定为失败。</string>
 
+    <string name="analysis_info">您到目前为止一共进行了 %1$d 局游戏\n\n
+        赢 %2$d 局，其中智商碾压 %3$d 局，侥幸获胜 %4$d 局\n\n
+        输 %5$d 局，其中被对方戏耍 %6$d 局，因失误失败 %7$d 局\n\n
+        每一局的平均时长为 %8$d 秒\n\n
+        每一局你的蛇的平均长度为 %9$d 节\n\n
+        每一局对方的蛇的平均长度为 %10$d 节\n\n
+        您的能力指数为 %11$d\n\n
+        您的技术评估为 %12$d</string>
+    
     <!-- Toast infos -->
     <string name="bluetooth_not_support">对不起！您的设备不支持蓝牙功能！无法对战！</string>
     <string name="bluetooth_unable">蓝牙功能未打开！请重试！</string>

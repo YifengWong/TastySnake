@@ -26,14 +26,14 @@
     <style name="SnakeImg">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="offsetMargin">@dimen/margin_snake_ver</item>
+        <item name="offsetMargin">@dimen/margin_snake_ver_neg</item>
     </style>
 
     <style name="MySnakeImg" parent="SnakeImg">
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_marginStart">@dimen/margin_snake_hor</item>
-        <item name="android:layout_marginBottom">@dimen/margin_snake_ver</item>
+        <item name="android:layout_marginBottom">@dimen/margin_snake_ver_neg</item>
         <item name="blinkImage">@drawable/snake_my_blink</item>
         <item name="pressedImage">@mipmap/snake_my_die</item>
         <item name="direction">0</item>
@@ -43,7 +43,7 @@
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_marginEnd">@dimen/margin_snake_hor</item>
-        <item name="android:layout_marginTop">@dimen/margin_snake_ver</item>
+        <item name="android:layout_marginTop">@dimen/margin_snake_ver_neg</item>
         <item name="blinkImage">@drawable/snake_enemy_blink</item>
         <item name="pressedImage">@mipmap/snake_enemy_die</item>
         <item name="direction">2</item>

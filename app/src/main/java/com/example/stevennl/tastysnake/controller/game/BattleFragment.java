@@ -114,7 +114,7 @@ public class BattleFragment extends Fragment {
                 showHelpInfo();
                 grid.setVisibility(View.VISIBLE);
             }
-        }, Config.DELAY_BATTLE);
+        }, Config.DELAY_BATTLE_FRAG);
         return v;
     }
 

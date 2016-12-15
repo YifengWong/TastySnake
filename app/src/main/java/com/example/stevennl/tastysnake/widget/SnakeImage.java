@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.example.stevennl.tastysnake.Config;
@@ -29,6 +30,7 @@ public class SnakeImage extends ImageView {
     private int offsetMarginPixel;
 
     private ObjectAnimator anim;
+    private View.OnClickListener onClickListener;
 
     /**
      * Initialize from code.
@@ -177,6 +179,14 @@ public class SnakeImage extends ImageView {
         }
     }
 
+    /**
+     * Set an {@link OnClickListener}.
+     */
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -185,6 +195,9 @@ public class SnakeImage extends ImageView {
                 break;
             case MotionEvent.ACTION_UP:
                 startBlinkAnim();
+                if (onClickListener != null) {
+                    onClickListener.onClick(this);
+                }
                 break;
             default:
                 break;

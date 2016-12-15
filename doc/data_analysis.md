@@ -14,7 +14,7 @@ Data analysis in local device.
 
 2. 赢X局，其中[智商碾压](#definition)A局，[侥幸获胜](#definition)B局。
 
-3. 输Y局，其中[被对方戏耍](#definition)C局, [因失误失败](#definition)D局。
+3. 输Y局，其中[被对方戏耍](#definition)C局，[因失误失败](#definition)D局。
 
 4. 每一局的平均时长为T秒。
 
