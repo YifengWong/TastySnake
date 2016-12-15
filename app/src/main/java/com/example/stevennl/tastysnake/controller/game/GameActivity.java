@@ -1,14 +1,10 @@
 package com.example.stevennl.tastysnake.controller.game;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.example.stevennl.tastysnake.base.SingleFragmentActivity;
-import com.example.stevennl.tastysnake.util.CommonUtil;
 
 /**
  * Activity controlling the game.
@@ -17,9 +13,6 @@ import com.example.stevennl.tastysnake.util.CommonUtil;
 public class GameActivity extends SingleFragmentActivity {
     private static final String TAG = "GameActivity";
 
-    /**
-     * Return the first fragment shown in the activity.
-     */
     @Override
     protected Fragment createFragment() {
         return new HomeFragment();

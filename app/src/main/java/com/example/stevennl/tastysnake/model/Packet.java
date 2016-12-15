@@ -1,7 +1,5 @@
 package com.example.stevennl.tastysnake.model;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
 /**

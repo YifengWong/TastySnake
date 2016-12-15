@@ -10,47 +10,41 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="@color/windowBg"
     tools:context="com.example.stevennl.tastysnake.controller.MainActivity">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/bluetooth_test"
-        android:textAllCaps="false"
         android:id="@+id/main_bluetooth_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/drawable_grid_test"
-        android:textAllCaps="false"
         android:id="@+id/main_drawableGrid_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sensor_test"
-        android:textAllCaps="false"
         android:id="@+id/main_sensor_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/pkt_test"
-        android:textAllCaps="false"
         android:id="@+id/main_pkt_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/db_test"
-        android:textAllCaps="false"
         android:id="@+id/main_db_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dialog_test"
-        android:textAllCaps="false"
         android:id="@+id/main_dialog_test_btn"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/game"
-        android:textAllCaps="false"
         android:id="@+id/main_game_btn"/>
 </LinearLayout>

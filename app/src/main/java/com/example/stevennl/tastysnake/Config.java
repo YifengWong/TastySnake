@@ -32,15 +32,18 @@ public class Config {
     public static final int DURATION_SNAKE_ANIM = 400;  // ms
     public static final int DURATION_ANALYSIS_INFO = 1000;  // ms
 
-    public static final int COLOR_FOOD_LENGTHEN = Color.parseColor("#81C784");
-    public static final int COLOR_FOOD_SHORTEN = Color.BLACK;
-    public static final int COLOR_SNAKE_MY = Color.rgb(255, 50, 49);
-    public static final int COLOR_SNAKE_ENEMY = Color.rgb(50, 97, 255);
-    public static final int COLOR_EMPTY_POINT = Color.WHITE;
-    public static final int COLOR_MAP_BG = Color.WHITE;
-
     public static final float GRAVITY_SENSITIVITY = 0.1f;  // lower(zero at least) -> more sensitive
 
     public static final int INIT_SNAKE_HOR_OFFSET = 4;
     public static final int INIT_SNAKE_LENGTH = 3;
+
+    /**
+     * Color fields are initialized in {@link TastySnakeApplication}.
+     */
+    public static int COLOR_FOOD_LENGTHEN;
+    public static int COLOR_FOOD_SHORTEN;
+    public static int COLOR_SNAKE_MY;
+    public static int COLOR_SNAKE_ENEMY;
+    public static int COLOR_EMPTY_POINT;
+    public static int COLOR_MAP_BG;
 }
