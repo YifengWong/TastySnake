@@ -111,4 +111,15 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_BATTLE_RECORD, null, new String[]{});
         db.close();
     }
+
+    /**
+     * Return number of records in database
+     */
+    public int getCount() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_BATTLE_RECORD, TABLE_COL, null, null, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
 }
