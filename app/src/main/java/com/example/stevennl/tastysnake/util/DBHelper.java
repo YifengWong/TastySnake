@@ -65,16 +65,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insert(BattleRecord record) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        String timestamp = record.getTimestamp();
+        String timestamp = CommonUtil.formatDate(record.getTimestamp());
         boolean win = record.isWin();
         int cause = record.getCause().ordinal();
-        int time = record.getDuration();
+        int duration = record.getDuration();
         int myLength = record.getMyLength();
         int enemyLength = record.getEnemyLength();
         cv.put(TABLE_COL[0], timestamp);
         cv.put(TABLE_COL[1], win);
         cv.put(TABLE_COL[2], cause);
-        cv.put(TABLE_COL[3], time);
+        cv.put(TABLE_COL[3], duration);
         cv.put(TABLE_COL[4], myLength);
         cv.put(TABLE_COL[5], enemyLength);
         db.insert(TABLE_BATTLE_RECORD, null, cv);
@@ -90,7 +90,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_BATTLE_RECORD, TABLE_COL, null, null, null, null, null);
         while (cursor.moveToNext()) {
             BattleRecord temp = new BattleRecord();
-            temp.setTimestamp(cursor.getString(cursor.getColumnIndex(TABLE_COL[0])));
+            temp.setTimestamp(CommonUtil.parseDateStr(cursor.getString(cursor.getColumnIndex(TABLE_COL[0]))));
             temp.setWin(cursor.getString(cursor.getColumnIndex(TABLE_COL[1])).equals("1"));
             temp.setCause(Snake.MoveResult.values()[cursor.getInt(cursor.getColumnIndex(TABLE_COL[2]))]);
             temp.setDuration(cursor.getInt(cursor.getColumnIndex(TABLE_COL[3])));
@@ -107,6 +107,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * Delete all battle records.
      */
     public void removeAllRecords() {
-        // TODO
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_BATTLE_RECORD, null, new String[]{});
     }
 }
