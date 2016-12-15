@@ -9,7 +9,6 @@
     <string name="bye">Bye~</string>
     <string name="game">Game</string>
     <string name="confirm">确定</string>
-    <string name="help">Help</string>
     <string name="start">开始</string>
     <string name="game_start">游戏开始</string>
     <string name="wait_game_start">等待游戏开始</string>
@@ -26,8 +25,6 @@
     <string name="defend_turn">防！</string>
     <string name="attack_turn">攻！</string>
 
-    <string name="not_implement">Not Implemented</string>
-
     <string name="help_info">1.请记住自己永远是红色的蛇！\n\n
         2.时刻留意上方倒计时！确认自己是攻方还是守方，决定策略。\n\n
         3.每隔 %1$d 秒将会转换一次攻守能力。\n\n
@@ -42,10 +39,19 @@
         每一局的平均时长为 %8$d 秒\n\n
         每一局你的蛇的平均长度为 %9$d 节\n\n
         每一局对方的蛇的平均长度为 %10$d 节\n\n
-        您的能力指数为 %11$d\n\n
-        您的技术评估为 %12$d</string>
-    
-    <!-- Toast infos -->
+        您的能力指数为: %11$d\n\n
+        您的技术评估为: %12$s</string>
+
+    <!-- Data analysis -->
+    <string-array name="rank_array">
+        <item>王者</item>
+        <item>大师</item>
+        <item>黄金</item>
+        <item>白银</item>
+        <item>青铜</item>
+    </string-array>
+
+    <!-- Toast -->
     <string name="bluetooth_not_support">对不起！您的设备不支持蓝牙功能！无法对战！</string>
     <string name="bluetooth_unable">蓝牙功能未打开！请重试！</string>
     <string name="device_discover_fail">无法发现设备！请重试！</string>

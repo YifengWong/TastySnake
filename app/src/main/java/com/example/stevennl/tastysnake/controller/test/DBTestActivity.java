@@ -55,10 +55,10 @@ public class DBTestActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean win = (CommonUtil.randInt(2) == 0);
                 Snake.MoveResult[] values = Snake.MoveResult.values();
-                Snake.MoveResult cause = values[CommonUtil.randInt(values.length)];
+                Snake.MoveResult cause = values[CommonUtil.randInt(values.length - 1)];
                 int duration = CommonUtil.randInt(300);
-                int myLength = CommonUtil.randInt(50);
-                int enemyLength = CommonUtil.randInt(50);
+                int myLength = CommonUtil.randInt(30);
+                int enemyLength = CommonUtil.randInt(30);
                 new BattleRecord(win, cause, duration, myLength, enemyLength)
                         .save(DBTestActivity.this);
                 records.clear();

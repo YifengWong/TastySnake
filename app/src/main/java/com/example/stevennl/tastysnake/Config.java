@@ -30,7 +30,7 @@ public class Config {
     public static final int DURATION_ATTACK = 10;  // s
     public static final int DURATION_GAME_PREPARE = 3;  // s
     public static final int DURATION_SNAKE_ANIM = 400;  // ms
-    public static final int DURATION_ANALYSIS_INFO = 1500;  // ms
+    public static final int DURATION_ANALYSIS_INFO = 1000;  // ms
 
     public static final int COLOR_FOOD_LENGTHEN = Color.parseColor("#81C784");
     public static final int COLOR_FOOD_SHORTEN = Color.BLACK;

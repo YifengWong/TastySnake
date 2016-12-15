@@ -2,7 +2,9 @@
 
 Use [database](./database.md) data to analyze user's behaviour.
 
-Author: [@stevennL](https://github.com/stevennL)
+Author: [@stevennL](https://github.com/stevennL) [@xuanqu](https://github.com/xuanqu)
+
+Source: [AnalysisData.java](../app/src/main/java/com/example/stevennl/tastysnake/model/AnalysisData.java)
 
 ## Local
 
@@ -10,21 +12,21 @@ Data analysis in local device.
 
 ### Description
 
-1. 您到目前为止一共进行了N局游戏。
+* 您到目前为止一共进行了N局游戏。
 
-2. 赢X局，其中[智商碾压](#definition)A局，[侥幸获胜](#definition)B局。
+* 赢X局，其中智商碾压A局，侥幸获胜B局。
 
-3. 输Y局，其中[被对方戏耍](#definition)C局，[因失误失败](#definition)D局。
+* 输Y局，其中被对方戏耍C局，因失误失败D局。
 
-4. 每一局的平均时长为T秒。
+* 每一局的平均时长为T秒。
 
-5. 每一局你的蛇的平均长度为L1节。
+* 每一局你的蛇的平均长度为L1节。
 
-6. 每一局对方的蛇的平均长度为L2节。
+* 每一局对方的蛇的平均长度为L2节。
 
-7. 您的能力指数为W。
+* 您的能力指数为W。
 
-8. 您的技术评估为P。
+* 您的技术评估为P。
 
 ### Definition
 

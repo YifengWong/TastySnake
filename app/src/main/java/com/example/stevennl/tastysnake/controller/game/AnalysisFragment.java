@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.model.AnalysisData;
 
 /**
  * Data analysis page.
@@ -48,7 +49,6 @@ public class AnalysisFragment extends Fragment {
             public void run() {
                 if (isAdded()) {
                     showInfo();
-
                 }
             }
         }, Config.DELAY_ANALYSIS_FRAG);
@@ -57,6 +57,10 @@ public class AnalysisFragment extends Fragment {
 
     private void initInfoTxt(View v) {
         infoTxt = (TextView) v.findViewById(R.id.analysis_infoTxt);
+        AnalysisData data = AnalysisData.create(act);
+        String info = String.format(getString(R.string.analysis_info), data.N, data.X,
+                data.A, data.B, data.Y, data.C, data.D, data.T, data.L1, data.L2, data.W, data.P);
+        infoTxt.setText(info);
     }
 
     /**
