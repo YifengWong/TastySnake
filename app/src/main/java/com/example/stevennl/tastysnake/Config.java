@@ -15,7 +15,7 @@ public class Config {
     public static final int MAP_ROW = 25;
     public static final int MAP_COL = 49;
 
-    public static final int FREQUENCY_DRAW = 10;  // ms
+    public static final int FREQUENCY_DRAW = 20;  // ms
     public static final int FREQUENCY_MOVE = 80;  // ms
     public static final int FREQUENCY_FOOD = 500;  // ms
 

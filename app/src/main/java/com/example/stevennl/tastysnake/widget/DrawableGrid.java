@@ -212,17 +212,17 @@ public class DrawableGrid extends SurfaceView implements SurfaceHolder.Callback 
         float left, top, right, bottom;
         for (int i = 0; i < rowCount; ++i) {
             for (int j = 0; j < colCount; ++j) {
-                paint.setColor(map.getPoint(i, j).getColor());
-                if (showGridLine) {
-                    left = horOffset + 1 + j * (horInterval + 1);
-                    top = verOffset + 1 + i * (verInterval + 1);
-                } else {
-                    left = horOffset + j * horInterval;
-                    top = verOffset + i * verInterval;
+                Point point = map.getPoint(i, j);
+                if (showGridLine || point.getType() != Point.Type.BLANK) {
+                    paint.setColor(point.getColor());
+                    left = (showGridLine ? horOffset + 1 + j * (horInterval + 1)
+                            : horOffset + j * horInterval);
+                    top = (showGridLine ? verOffset + 1 + i * (verInterval + 1)
+                            : verOffset + i * verInterval);
+                    right = left + horInterval;
+                    bottom = top + verInterval;
+                    drawGrid(left, top, right, bottom, point.getType(), canvas);
                 }
-                right = left + horInterval;
-                bottom = top + verInterval;
-                drawGrid(left, top, right, bottom, map.getPoint(i, j).getType(), canvas);
             }
         }
     }
