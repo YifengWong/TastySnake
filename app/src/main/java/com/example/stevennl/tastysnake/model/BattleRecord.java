@@ -1,7 +1,6 @@
 package com.example.stevennl.tastysnake.model;
 
 import android.content.Context;
-import android.widget.ArrayAdapter;
 
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.DBHelper;
@@ -14,7 +13,7 @@ import java.util.Date;
  * Author: QX
  */
 public class BattleRecord {
-    private String timestamp;
+    private Date timestamp;
     private boolean win;
     private Snake.MoveResult cause;
     private int duration;
@@ -26,7 +25,7 @@ public class BattleRecord {
 
     public BattleRecord(boolean win, Snake.MoveResult cause,
                         int duration, int myLength, int enemyLength) {
-        timestamp = CommonUtil.formatDate(new Date(System.currentTimeMillis()));
+        timestamp = new Date(System.currentTimeMillis());
         this.win = win;
         this.cause = cause;
         this.duration = duration;
@@ -36,7 +35,7 @@ public class BattleRecord {
 
     @Override
     public String toString() {
-        return timestamp + " " + win + " " + cause.name()
+        return CommonUtil.formatDate(timestamp) + " " + win + " " + cause.name()
                 + " " + duration + " " + myLength + " " + enemyLength;
     }
 
@@ -70,11 +69,11 @@ public class BattleRecord {
     /**
      * Below are getters and setters
      */
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 

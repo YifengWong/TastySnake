@@ -11,7 +11,6 @@ import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.BattleRecord;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
-import com.example.stevennl.tastysnake.util.DBHelper;
 
 import java.util.ArrayList;
 
@@ -42,6 +41,9 @@ public class DBTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 BattleRecord.removeAll(DBTestActivity.this);
+                records.clear();
+                records.addAll(BattleRecord.getAll(DBTestActivity.this));
+                adapter.notifyDataSetChanged();
             }
         });
     }
