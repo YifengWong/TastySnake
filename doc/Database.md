@@ -1,12 +1,16 @@
-# Database Configuration
+# Database
 
 Name: TastySnake.db
+
+Version: 1
+
+Author: [@xuanqu](https://github.com/xuanqu)
 
 Source: [DBHelper.java](../app/src/main/java/com/example/stevennl/tastysnake/util/DBHelper.java)
 
 ## Table
 
-### battle_record:
+### 1. battle_record:
 
 | Name | Type In Code | Type In DB | Comment |
 |------|--------------|------------|---------|
