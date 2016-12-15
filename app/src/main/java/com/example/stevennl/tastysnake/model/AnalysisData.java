@@ -3,7 +3,6 @@ package com.example.stevennl.tastysnake.model;
 import android.content.Context;
 
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.util.DBHelper;
 
 import java.util.ArrayList;
 
@@ -60,7 +59,7 @@ public class AnalysisData {
             L1 += myLength;
             L2 += enemyLength;
         }
-        data.N = DBHelper.getInstance(context).getCount();
+        data.N = records.size();
         data.X = X;
         data.A = A;
         data.B = B;
