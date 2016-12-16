@@ -1,6 +1,5 @@
 package com.example.stevennl.tastysnake.controller.game;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.model.AnalysisData;
+import com.example.stevennl.tastysnake.util.CommonUtil;
 
 /**
  * Data analysis page.
@@ -21,7 +21,6 @@ import com.example.stevennl.tastysnake.model.AnalysisData;
  */
 public class AnalysisFragment extends Fragment {
     private static final String TAG = "AnalysisFragment";
-    private static final String ATTR_ALPHA = "alpha";
     private GameActivity act;
     private Handler handler;
 
@@ -48,7 +47,7 @@ public class AnalysisFragment extends Fragment {
             @Override
             public void run() {
                 if (isAdded()) {
-                    showInfo();
+                    CommonUtil.showViewPretty(infoTxt);
                 }
             }
         }, Config.DELAY_ANALYSIS_FRAG);
@@ -66,13 +65,5 @@ public class AnalysisFragment extends Fragment {
             info = getString(R.string.analysis_no_data);
         }
         infoTxt.setText(info);
-    }
-
-    /**
-     * Show analysis result.
-     */
-    private void showInfo() {
-        ObjectAnimator.ofFloat(infoTxt, ATTR_ALPHA, 0, 1)
-                .setDuration(Config.DURATION_ANALYSIS_INFO).start();
     }
 }

@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/windowBg"
     tools:context="com.example.stevennl.tastysnake.controller.game.ConnectFragment">
     <LinearLayout
         android:layout_width="match_parent"

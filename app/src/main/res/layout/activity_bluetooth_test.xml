@@ -9,7 +9,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:background="@color/windowBg"
     tools:context="com.example.stevennl.tastysnake.controller.test.BluetoothTestActivity">
     <ScrollView
         android:layout_width="match_parent"

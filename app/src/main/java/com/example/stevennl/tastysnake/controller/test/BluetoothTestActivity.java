@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.listener.OnErrorListener;
@@ -26,7 +27,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class BluetoothTestActivity extends AppCompatActivity {
+public class BluetoothTestActivity extends BaseActivity {
     private static final String TAG = "BluetoothTestActivity";
     private static final int REQ_BLUETOOTH_ENABLED = 1;
     private static final int REQ_BLUETOOTH_DISCOVERABLE = 2;

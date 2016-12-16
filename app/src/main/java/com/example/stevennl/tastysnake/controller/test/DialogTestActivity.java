@@ -8,10 +8,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 import com.example.stevennl.tastysnake.widget.HelpDialog;
 
-public class DialogTestActivity extends AppCompatActivity {
+public class DialogTestActivity extends BaseActivity {
     private static final String TAG = "DialogTestActivity";
     private HelpDialog helpDialog;
 

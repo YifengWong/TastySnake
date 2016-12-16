@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/windowBg"
     tools:context="com.example.stevennl.tastysnake.controller.test.DBTestActivity">
     <ListView
         android:id="@+id/db_test_listView"

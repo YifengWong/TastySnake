@@ -7,11 +7,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Packet;
 import com.example.stevennl.tastysnake.model.Snake;
 
-public class PacketTestActivity extends AppCompatActivity {
+public class PacketTestActivity extends BaseActivity {
     private TextView infoTxt;
 
     @Override

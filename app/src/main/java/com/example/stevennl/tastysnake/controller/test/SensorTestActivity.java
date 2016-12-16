@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 
-public class SensorTestActivity extends AppCompatActivity {
+public class SensorTestActivity extends BaseActivity {
     private Handler sensorHandler;
     private Runnable sensorRunnable = new Runnable() {
         @Override

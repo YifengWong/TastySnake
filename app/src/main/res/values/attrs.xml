@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SnakeImageAttr">
-        <!-- The eye blink image. -->
         <attr name="blinkImage" format="reference" />
-        <!-- The pressed image. -->
         <attr name="pressedImage" format="reference" />
-        <!-- The offset to the margin. -->
         <attr name="offsetMargin" format="dimension" />
-        <!-- The direction of the translation animation. -->
         <attr name="direction" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="DrawableGridAttr">
-        <!-- Whether to draw the line between grids. -->
         <attr name="showGridLine" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ThemeAttr">
+        <attr name="colorDialogBg" format="reference|color" />
+        <attr name="colorRoleTxt" format="reference|color" />
+        <attr name="colorFoodLengthen" format="reference|color" />
+        <attr name="colorFoodShorten" format="reference|color" />
+        <attr name="colorSnakeMy" format="reference|color" />
+        <attr name="colorSnakeEnemy" format="reference|color" />
+        <attr name="colorEmptyPoint" format="reference|color" />
+        <attr name="colorMapBg" format="reference|color" />
     </declare-styleable>
 </resources>

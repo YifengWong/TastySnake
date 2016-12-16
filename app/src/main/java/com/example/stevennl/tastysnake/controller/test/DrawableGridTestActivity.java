@@ -1,12 +1,12 @@
 package com.example.stevennl.tastysnake.controller.test;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.model.Direction;
 import com.example.stevennl.tastysnake.model.Map;
 import com.example.stevennl.tastysnake.model.Snake;
@@ -17,7 +17,7 @@ import com.example.stevennl.tastysnake.widget.DrawableGrid;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DrawableGridTestActivity extends AppCompatActivity {
+public class DrawableGridTestActivity extends BaseActivity {
     private static final String TAG = "GridTestActivity";
 
     private Snake mySnake;

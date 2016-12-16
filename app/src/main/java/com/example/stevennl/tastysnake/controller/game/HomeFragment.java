@@ -2,6 +2,7 @@ package com.example.stevennl.tastysnake.controller.game;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 import com.example.stevennl.tastysnake.util.CommonUtil;
+import com.example.stevennl.tastysnake.util.SharedPrefUtil;
 import com.example.stevennl.tastysnake.util.bluetooth.BluetoothManager;
 import com.example.stevennl.tastysnake.widget.SnakeImage;
 
@@ -52,24 +54,9 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         initClickMeTxt(v);
         initStartBtn(v);
-        initSnakeImg(v);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isAdded() && !started) {
-                    mySnakeImg.startEnter(null);
-                    enemySnakeImg.startEnter(null);
-                }
-            }
-        }, Config.DELAY_HOME_FRAG);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isAdded() && !started) {
-                    clickMeTxt.setVisibility(View.VISIBLE);
-                }
-            }
-        }, Config.DELAY_HOME_CLICKME);
+        initSnakeMyImg(v);
+        initSnakeEnemyImg(v);
+        start();
         return v;
     }
 
@@ -87,11 +74,7 @@ public class HomeFragment extends Fragment {
                     CommonUtil.showToast(act, getString(R.string.bluetooth_not_support));
                 } else if (!started) {
                     started = true;
-                    clickMeTxt.setVisibility(View.GONE);
-                    mySnakeImg.cancelAnim();
-                    enemySnakeImg.cancelAnim();
-                    mySnakeImg.startExit(null);
-                    enemySnakeImg.startExit(new SnakeImage.AnimationEndListener() {
+                    showExitAnim(new SnakeImage.AnimationEndListener() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             if (isAdded()) {
@@ -104,17 +87,12 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void initSnakeImg(View v) {
+    private void initSnakeMyImg(View v) {
         mySnakeImg = (SnakeImage) v.findViewById(R.id.home_mySnake_img);
-        enemySnakeImg = (SnakeImage) v.findViewById(R.id.home_enemySnake_img);
         mySnakeImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickMeTxt.setVisibility(View.GONE);
-                mySnakeImg.cancelAnim();
-                enemySnakeImg.cancelAnim();
-                mySnakeImg.startExit(null);
-                enemySnakeImg.startExit(new SnakeImage.AnimationEndListener() {
+                showExitAnim(new SnakeImage.AnimationEndListener() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         if (isAdded()) {
@@ -126,15 +104,54 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void initSnakeEnemyImg(View v) {
+        enemySnakeImg = (SnakeImage) v.findViewById(R.id.home_enemySnake_img);
+        enemySnakeImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Config.ThemeType[] values = Config.ThemeType.values();
+                Config.theme = values[(Config.theme.ordinal() + 1) % values.length];
+                showExitAnim(new SnakeImage.AnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        startActivity(new Intent(act, GameActivity.class));
+                        act.finish();
+                    }
+                });
+                SharedPrefUtil.saveThemeType(act);
+            }
+        });
+    }
+
+    /**
+     * Start showing the page content.
+     */
+    private void start() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isAdded() && !started) {
+                    mySnakeImg.startEnter(null);
+                    enemySnakeImg.startEnter(null);
+                }
+            }
+        }, Config.DELAY_HOME_FRAG);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isAdded() && !started) {
+                    clickMeTxt.setVisibility(View.VISIBLE);
+                }
+            }
+        }, Config.DELAY_HOME_CLICKME);
+    }
+
     /**
      * Called when the back button is pressed.
      */
     public void onBackPressed() {
-        clickMeTxt.setVisibility(View.GONE);
-        mySnakeImg.cancelAnim();
-        enemySnakeImg.cancelAnim();
-        mySnakeImg.startExit(null);
-        enemySnakeImg.startExit(new SnakeImage.AnimationEndListener() {
+        startBtn.setText(R.string.bye);
+        showExitAnim(new SnakeImage.AnimationEndListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 handler.postDelayed(new Runnable() {
@@ -145,7 +162,19 @@ public class HomeFragment extends Fragment {
                 }, Config.DELAY_HOME_FINISH);
             }
         });
+    }
+
+    /**
+     * Show animations when exiting the window.
+     *
+     * @param endListener Called when the animation is finished
+     */
+    private void showExitAnim(SnakeImage.AnimationEndListener endListener) {
         startBtn.setClickable(false);
-        startBtn.setText(R.string.bye);
+        clickMeTxt.setVisibility(View.GONE);
+        mySnakeImg.cancelAnim();
+        enemySnakeImg.cancelAnim();
+        mySnakeImg.startExit(null);
+        enemySnakeImg.startExit(endListener);
     }
 }

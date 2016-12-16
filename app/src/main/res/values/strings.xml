@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Snake</string>
+    <string name="app_name">攻防贪吃蛇</string>
 
     <string name="restart">重新开始</string>
     <string name="click_me">点我！</string>

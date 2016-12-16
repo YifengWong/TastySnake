@@ -5,16 +5,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
-import android.view.WindowManager;
 
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 
 /**
  * Activity having only one fragment.
  * Author: LCY
  */
-public abstract class SingleFragmentActivity extends AppCompatActivity {
+public abstract class SingleFragmentActivity extends BaseActivity {
 
     /**
      * Return the fragment in the activity.

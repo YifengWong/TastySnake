@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.controller.game.GameActivity;
 import com.example.stevennl.tastysnake.controller.test.BluetoothTestActivity;
 import com.example.stevennl.tastysnake.controller.test.DBTestActivity;
@@ -15,14 +18,22 @@ import com.example.stevennl.tastysnake.controller.test.DrawableGridTestActivity;
 import com.example.stevennl.tastysnake.controller.test.PacketTestActivity;
 import com.example.stevennl.tastysnake.controller.test.SensorTestActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
+    private ViewGroup rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        rootView = (ViewGroup) findViewById(R.id.activity_main);
         initBtns();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rootView.setBackgroundColor(Config.COLOR_MAP_BG);
     }
 
     private void initBtns() {

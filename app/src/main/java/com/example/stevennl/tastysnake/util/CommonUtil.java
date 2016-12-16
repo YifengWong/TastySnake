@@ -1,9 +1,12 @@
 package com.example.stevennl.tastysnake.util;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.example.stevennl.tastysnake.Config;
 import com.example.stevennl.tastysnake.R;
 
 import java.text.ParseException;
@@ -17,6 +20,7 @@ import java.util.Random;
  */
 public class CommonUtil {
     private static final String TAG = "CommonUtil";
+    private static final String ATTR_ALPHA = "alpha";
     private static final Random random = new Random();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US);
 
@@ -38,6 +42,16 @@ public class CommonUtil {
         if (context != null) {
             Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Show a view gracefully.
+     *
+     * @param v The view to be shown
+     */
+    public static void showViewPretty(View v) {
+        ObjectAnimator.ofFloat(v, ATTR_ALPHA, 0, 1)
+                .setDuration(Config.DURATION_SHOW_PRETTY).start();
     }
 
     /**

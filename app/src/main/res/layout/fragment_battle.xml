@@ -4,7 +4,6 @@
     android:id="@+id/activity_drawable_grid_test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windowBg"
     tools:context="com.example.stevennl.tastysnake.controller.game.BattleFragment">
     <com.example.stevennl.tastysnake.widget.DrawableGrid
         android:id="@+id/battle_grid"
@@ -28,7 +27,7 @@
         android:layout_toEndOf="@id/battle_timeTxt"
         android:layout_alignBaseline="@id/battle_timeTxt"
         android:layout_marginStart="@dimen/margin_low"
-        android:textColor="@color/roleText"/>
+        android:textColor="?colorRoleTxt"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

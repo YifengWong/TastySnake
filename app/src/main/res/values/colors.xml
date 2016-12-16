@@ -4,23 +4,16 @@
     <color name="colorPrimaryDark">#009688</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="bgLight">#d9d9d9</color>
+    <color name="bgLight">#cccccc</color>
     <color name="bgDark">#ff000000</color>
-
-    <color name="windowBg">@color/bgLight</color>
-    <color name="dialogBg">@color/bgLight</color>
-
-    <!-- Widget -->
     <color name="defaultTextViewText">#6f6f6f</color>
     <color name="defaultButtonText">@color/bgLight</color>
-    <color name="roleText">#cc0000</color>
-    <color name="refreshLayoutBg">@color/windowBg</color>
 
-    <!-- Game config -->
+    <color name="bgDialog">@color/bgLight</color>
+
+    <color name="roleText">#cc0000</color>
     <color name="foodLengthen">#81C784</color>
     <color name="foodShorten">#6f6f6f</color>
     <color name="snakeMy">#ff3431</color>
     <color name="snakeEnemy">#3262ff</color>
-    <color name="emptyPoint">@color/windowBg</color>
-    <color name="mapBg">@color/windowBg</color>
 </resources>

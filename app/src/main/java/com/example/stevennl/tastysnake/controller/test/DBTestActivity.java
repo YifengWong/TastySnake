@@ -8,13 +8,14 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.stevennl.tastysnake.R;
+import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.model.BattleRecord;
 import com.example.stevennl.tastysnake.model.Snake;
 import com.example.stevennl.tastysnake.util.CommonUtil;
 
 import java.util.ArrayList;
 
-public class DBTestActivity extends AppCompatActivity {
+public class DBTestActivity extends BaseActivity {
     private static final String TAG = "DBTestActivity";
     private ArrayList<BattleRecord> records;
     private ArrayAdapter<BattleRecord> adapter;
