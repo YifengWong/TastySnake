@@ -29,13 +29,16 @@ public class AnalysisData {
      * Create data to analyze.
      *
      * @param context The context
+     * @return An {@link AnalysisData} object, or null if no data in DB
      */
     public static AnalysisData create(Context context) {
-        // TODO Compute parameters using data from DB
         String[] rank = context.getResources().getStringArray(R.array.rank_array);
         AnalysisData data = new AnalysisData();
         int X = 0, A = 0, B = 0, Y = 0, C = 0, D = 0, T = 0, L1 = 0, L2 = 0;
         ArrayList<BattleRecord> records = BattleRecord.getAll(context);
+        if (records.isEmpty()) {
+            return null;
+        }
         for (int i = 0; i < records.size(); i++) {
             boolean win = records.get(i).isWin();
             Snake.MoveResult cause = records.get(i).getCause();

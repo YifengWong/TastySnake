@@ -41,6 +41,7 @@
         每一局对方的蛇的平均长度为 %10$d 节\n\n
         您的能力指数为: %11$d\n\n
         您的技术评估为: %12$s</string>
+    <string name="analysis_no_data">您还未进行过游戏，快去战斗吧！</string>
 
     <!-- Data analysis -->
     <string-array name="rank_array">

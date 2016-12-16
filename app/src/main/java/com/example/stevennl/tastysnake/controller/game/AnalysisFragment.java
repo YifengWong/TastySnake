@@ -57,9 +57,14 @@ public class AnalysisFragment extends Fragment {
 
     private void initInfoTxt(View v) {
         infoTxt = (TextView) v.findViewById(R.id.analysis_infoTxt);
+        String info;
         AnalysisData data = AnalysisData.create(act);
-        String info = String.format(getString(R.string.analysis_info), data.N, data.X,
-                data.A, data.B, data.Y, data.C, data.D, data.T, data.L1, data.L2, data.W, data.P);
+        if (data != null) {
+            info = String.format(getString(R.string.analysis_info), data.N, data.X, data.A,
+                    data.B, data.Y, data.C, data.D, data.T, data.L1, data.L2, data.W, data.P);
+        } else {
+            info = getString(R.string.analysis_no_data);
+        }
         infoTxt.setText(info);
     }
 
