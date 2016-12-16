@@ -16,6 +16,7 @@ import com.example.stevennl.tastysnake.controller.test.DBTestActivity;
 import com.example.stevennl.tastysnake.controller.test.DialogTestActivity;
 import com.example.stevennl.tastysnake.controller.test.DrawableGridTestActivity;
 import com.example.stevennl.tastysnake.controller.test.PacketTestActivity;
+import com.example.stevennl.tastysnake.controller.test.RequestTestActivity;
 import com.example.stevennl.tastysnake.controller.test.SensorTestActivity;
 
 public class MainActivity extends BaseActivity {
@@ -82,6 +83,14 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DialogTestActivity.class));
+            }
+        });
+
+        Button reqBtn = (Button) findViewById(R.id.main_req_test_btn);
+        reqBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, RequestTestActivity.class));
             }
         });
 

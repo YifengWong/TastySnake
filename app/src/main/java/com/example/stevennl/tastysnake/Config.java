@@ -35,6 +35,9 @@ public class Config {
     public static final int BLUETOOTH_DISCOVERABLE_TIME = 180;  // s
     public static final int BLUETOOTH_DISCOVER_TIME = 5000;  // ms
 
+    public static final String URL_SERVER = "http://192.168.199.105/api/testReq";
+    public static final int REQ_TIMEOUT = 3000;
+
     public enum ThemeType {LIGHT, DARK}
     public static ThemeType theme = ThemeType.LIGHT;
 

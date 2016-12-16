@@ -44,6 +44,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/request_test"
+        android:id="@+id/main_req_test_btn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/game"
         android:id="@+id/main_game_btn"/>
 </LinearLayout>

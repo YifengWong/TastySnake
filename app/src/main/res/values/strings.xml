@@ -1,13 +1,15 @@
 <resources>
     <string name="app_name">攻防贪吃蛇</string>
 
-    <string name="restart">重新开始</string>
-    <string name="click_me">点我！</string>
+    <string name="get">GET</string>
+    <string name="post">POST</string>
     <string name="generate">Gen</string>
     <string name="remove_all">Remove All</string>
     <string name="connect">Connect</string>
     <string name="bye">Bye~</string>
     <string name="game">Game</string>
+    <string name="restart">重新开始</string>
+    <string name="click_me">点我！</string>
     <string name="confirm">确定</string>
     <string name="start">开始</string>
     <string name="game_start">游戏开始</string>
@@ -70,5 +72,6 @@
     <string name="pkt_test">Test Packet</string>
     <string name="db_test">Test Database</string>
     <string name="dialog_test">Test Dialog</string>
+    <string name="request_test">Test Request</string>
     <string name="test"> </string>
 </resources>
