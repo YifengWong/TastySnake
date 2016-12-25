@@ -6,27 +6,36 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.stevennl.tastysnake.R;
-import com.example.stevennl.tastysnake.base.BaseActivity;
 import com.example.stevennl.tastysnake.util.sensor.SensorController;
 
-public class SensorTestActivity extends BaseActivity {
+public class SensorTestActivity extends AppCompatActivity {
     private Handler sensorHandler;
     private Runnable sensorRunnable = new Runnable() {
         @Override
         public void run() {
-            textShow.setText(sController.getDirection().toString());
-            sensorHandler.postDelayed(sensorRunnable, 100);
+            xShow.setText("X: " + sController.getxAccVal() + "");
+            yShow.setText("Y: " + sController.getyAccVal() + "");
+            xAccShow.setText("X Acc: " + sController.getAccXAcc() + "");
+            yAccShow.setText("Y Acc: " + sController.getAccYAcc() + "");
+            sensorHandler.postDelayed(sensorRunnable, 80);
         }
     };
 
     private SensorController sController;
-    private TextView textShow;
+    private TextView xShow;
+    private TextView yShow;
+    private TextView xAccShow;
+    private TextView yAccShow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor_test);
-        textShow = (TextView) findViewById(R.id.sensor_test_txt);
+        xShow = (TextView) findViewById(R.id.sensor_test_x_txt);
+        yShow = (TextView) findViewById(R.id.sensor_test_y_txt);
+
+        xAccShow = (TextView) findViewById(R.id.sensor_test_x_acc_txt);
+        yAccShow = (TextView) findViewById(R.id.sensor_test_y_acc_txt);
 
         sController = SensorController.getInstance(this);
         sController.register();

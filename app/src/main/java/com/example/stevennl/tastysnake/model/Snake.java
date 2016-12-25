@@ -37,6 +37,11 @@ public class Snake {
     }
 
     /**
+     * Return the direction of the snake.
+     */
+    public Direction getDirec() { return direc; }
+
+    /**
      * Return the type of the snake.
      */
     public Type getType() {

@@ -72,7 +72,13 @@ public class DrawableGridTestActivity extends BaseActivity {
             @Override
             public void run() {
                 if (mySnake != null && enemySnake != null) {
-                    Direction dir = sensorCtrl.getDirection();
+                    Direction dir = Direction.NONE;
+                    Direction snakeDirec = mySnake.getDirec();
+                    if (snakeDirec == Direction.DOWN || snakeDirec == Direction.UP) {
+                        dir = sensorCtrl.getLRDirection();
+                    } else if (snakeDirec == Direction.LEFT || snakeDirec == Direction.RIGHT) {
+                        dir = sensorCtrl.getUDDirection();
+                    }
                     Snake.MoveResult res = mySnake.move(dir);
                     switch (res) {
                         case SUC:
